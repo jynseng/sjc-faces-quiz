@@ -1,0 +1,58 @@
+html {
+  font-size: 100%;
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.3;
+  margin: 0px;
+  padding: 0px;
+  background-color: pink;
+}
+
+h1 {
+  font-family: Helvetica;
+  font-size: 34pt;
+}
+
+.Header {
+  position: static;
+  display: block;
+  text-align: center;
+}
+
+#Timer {
+  text-align: center;
+  font-size: 22pt;
+}
+
+form {
+  display: block;
+  text-align: center;
+}
+
+input {
+  border-radius: 4px;
+  font-size: 14pt;
+}
+
+input[type=text] {
+  font-style: italic;
+  color: grey;
+}
+
+#skip {
+  display: block;
+  text-align: center;
+}
+
+.ImageContainer {
+  max-width: 320px;
+  max-height: 320px;
+  overflow: hidden;
+}
