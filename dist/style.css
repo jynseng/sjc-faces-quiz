@@ -26,6 +26,17 @@ h1 {
   text-align: center;
 }
 
+#Popup {
+  background-color: grey;
+  border-width: 1px;
+  display: absolute;
+  max-width: 45%;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  padding-bottom: 14px;
+}
+
 #Timer {
   text-align: center;
   font-size: 22pt;
@@ -42,17 +53,40 @@ input {
 }
 
 input[type=text] {
-  font-style: italic;
-  color: grey;
+  color: black;
 }
 
-#skip {
+button {
   display: block;
   text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 4px;
+  padding: 4px;
 }
 
-.ImageContainer {
-  max-width: 320px;
-  max-height: 320px;
+#scorecard {
+  font-size: 18pt;
+}
+
+#ImageContainer {
+  display: flex;
+  width: 320px;
+  height: 320px;
   overflow: hidden;
+  justify-content: center;
+  align-items: center;
+  border-radius: 7px;
+  border: 4px solid white;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#ImageContainer img {
+  width: 100%;
+  display: block;
+}
+
+#scorecard {
+  text-align: center;
 }

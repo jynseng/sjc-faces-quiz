@@ -6,18 +6,24 @@
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>SJC Faces Quiz</title>
         <link rel="stylesheet" href="dist/style.css">
+        <link rel="icon" type="image/png" href="/assets/favicon.png">
+        <audio id="dingSFX" src="/assets/ESM_Vibrant_Game_Slot_Machine_Ding_1_Arcade_Cartoon_Quirky_Comedy_Comedic_Kid_Childish_Fun_Bouncy.wav" preload="auto"></audio>
     </head>
     <body>
         <section class="Main">
             <div class="Header"> <h1>SJC Faces Quiz</h1> </div>
+            <div id="Popup"><h3>How to play</h3><p>Guess the name of each person shown. 1 point for a first name, 2 points for first and last (spelling counts)</p>
+                <button onclick="gameInit()">Start Game</button></div>
             <div class="QuizContainer">
                 <div id="Timer">00:00</div>
-                <div id="ImageContainer"></div>
-                <form>
-                    <input type="text" value="Who is this?">
-                    <input type="submit" value=">">
-                    <input type="button" value="Skip" id="skip">
+                <div id="scorecard"><strong>Score: </strong><strong id="score"></strong></div>
+                <div id="ImageContainer"><img id="image"></div>
+                <form id="quizForm">
+                    <input type="text" id="textinput" name="inputbox" placeholder="Who is this?" autocomplete="off">
+                    <input type="button" id="submit" onclick="checkAnswer(this.form)" value=">"></button>
                 </form>
+                <button onclick="loadNewFace()" id="skip">Skip</button>
+                <button onclick="gameInit()" id="replay">Play Again</button>
             </div>
         </section>
     </body>
