@@ -12,12 +12,13 @@
     <body>
         <section class="Main">
             <div class="Header"> <h1>SJC Faces Quiz</h1> </div>
-            <div id="Popup"><h3>How to play</h3><p>Guess the name of each person shown. 1 point for a first name, 2 points for first and last (spelling counts)</p>
+            <div id="popup"><h3>How to play</h3><p>Guess the name of each person shown. 1 point for a first name, 2 points for first and last (spelling counts)</p>
                 <button onclick="gameInit()">Start Game</button></div>
             <div class="QuizContainer">
                 <div id="Timer">00:00</div>
                 <div id="scorecard"><strong>Score: </strong><strong id="score"></strong></div>
-                <div id="ImageContainer"><img id="image"></div>
+                <p id="nameOverlay">First Last</p>
+                <div id="ImageContainer"><div class="image" id="imageElement" unselectable="on"></div></div>
                 <form id="quizForm">
                     <input type="text" id="textinput" name="inputbox" placeholder="Who is this?" autocomplete="off">
                     <input type="button" id="submit" onclick="checkAnswer(this.form)" value=">"></button>

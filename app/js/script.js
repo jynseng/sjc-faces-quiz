@@ -1,8 +1,9 @@
 var faces_all = [];
 var faces_working = [];
 var score = 0; // Current score: +1 for first name, +2 for first & last
-var answer = ""; // Name of current person
+var answer = ""; // Name of current person in readable format
 var gameOver = false; // Has player gone through all available faces?
+var timer = document.getElementById("Timer");
 
 document.getElementById("replay").style.display = "none";
 document.getElementById("submit").disabled = true;
@@ -28,8 +29,10 @@ var nicknamesPath = "nicknames.txt";
 
 // Initialize game with specified time limit, reset score, start with first face 
 function gameInit() {
-    document.getElementById("Popup").style.display = "none"; // Hide popup window
+    startTimer(59);
+    document.getElementById("popup").style.display = "none"; // Hide popup window
     document.getElementById("submit").disabled = false;
+    document.getElementById("skip").disabled = false;
     document.getElementById("textinput").value = "";
     document.getElementById("replay").style.display = "none";
     faces_working = faces_all;
@@ -37,7 +40,6 @@ function gameInit() {
     score = 0;
     document.getElementById("score").innerText = score;
     loadNewFace();
-    startTimer(60);
 }
 
 // Show popup window on page load to set preferences and start game.
@@ -64,18 +66,24 @@ function loadNewFace() {
     // Choose a random img in folder (if more than one) and set img src
     var randomImg = Math.floor(Math.random() * faces_working[randomFace].length);
     var path = faces_working[randomFace][randomImg];
-    document.getElementById("image").src = path;
-    
+    //document.getElementById("image").src = path;
+    document.getElementById("imageElement").style.backgroundImage = 'url("'+path+'")';
     delete faces_working[randomFace]; // Remove face so it's not repeated
 }
 
 // Start a countdown timer for game
 function startTimer(seconds) {
-    var timer = document.getElementById("Timer");
     var timeRemaining = seconds;
 
     var gameTimer = setInterval(function() {
-        timer.innerHTML = "00:"+timeRemaining;
+        var minutes = Math.floor(timeRemaining / 60);
+        var remainingSeconds = timeRemaining % 60;
+        
+        var formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
+        var formattedSeconds = remainingSeconds < 10 ? "0" + remainingSeconds : remainingSeconds;
+        formattedMinutes + ":" + formattedSeconds;
+        
+        timer.innerHTML = formattedMinutes + ":" + formattedSeconds;
         timeRemaining -= 1;
         if (timeRemaining <= 0 || gameOver) {
             clearInterval(gameTimer);
@@ -88,10 +96,10 @@ function startTimer(seconds) {
 
 // Check if user's input is correct or not
 function checkAnswer(form) {
-    //"clean" input of case, minor spelling errors
+    //Allow minor spelling errors
     //Display "correct"/"incorrect" text
 
-    var input = form.inputbox.value.replace(/[^a-zA-Z0-9\s]/g, "").toLowerCase().trim().split(" "); // Remove special characters, converter to lower
+    var input = form.inputbox.value.replace(/[^a-zA-Z0-9\s-]/g, "").toLowerCase().trim().split(" "); // Remove special characters, converter to lower
     var correct = answer.toLowerCase().replace(/'/g, "").split(" ");
 
     // Check if first name matches, if yes then check second name if there is one
@@ -109,15 +117,35 @@ function checkAnswer(form) {
         // Play correct "ding" sfx
         var ding = document.getElementById("dingSFX");
         ding.play();
+        flashGreen();
     } else {
         console.log("Incorrect :(");
     }
 
+    // Update the score
     var scoreCard = document.getElementById("score");
     scoreCard.innerText = score;
 
+    // Flash the correct answer over the image
+    var overlay = document.getElementById("nameOverlay");
+    overlay.innerHTML = answer;
+    overlay.style.opacity = "1";
+    setTimeout(function() {
+        overlay.style.opacity = "0";
+    }, 600);
+
     document.getElementById("textinput").value = ""; // Reset input box
     loadNewFace();
+}
+
+// Flash the score text green for .3 seconds
+function flashGreen() {
+    var score = document.getElementById("score");
+    score.classList.add("green");
+
+    setTimeout(function() {
+        score.classList.remove("green");
+    }, 300);
 }
 
 // Handle end of game, lock input, show leaderboard
@@ -127,9 +155,15 @@ function gameEnd() {
     document.getElementById("replay").style.display = "block";
 }
 
+// Register enter key as a click on submit button
 document.getElementById("quizForm").addEventListener("keypress", function(event) {
     if (event.key === "Enter") {
       event.preventDefault(); // Prevent form submission
       document.getElementById("submit").click(); // Simulate a click on the submit button
     }
-});
+  });
+
+// Block righ-clicks to prevent cheating
+document.getElementById("imageElement").addEventListener('contextmenu', function(event) {
+    event.preventDefault();
+  });
