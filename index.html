@@ -7,13 +7,28 @@
         <title>SJC Faces Quiz</title>
         <link rel="stylesheet" href="dist/style.css">
         <link rel="icon" type="image/png" href="/assets/favicon.png">
-        <audio id="dingSFX" src="/assets/ESM_Vibrant_Game_Slot_Machine_Ding_1_Arcade_Cartoon_Quirky_Comedy_Comedic_Kid_Childish_Fun_Bouncy.wav" preload="auto"></audio>
     </head>
     <body>
         <section class="Main">
             <div class="Header"> <h1>SJC Faces Quiz</h1> </div>
-            <div id="popup"><h3>How to play</h3><p>Guess the name of each person shown. 1 point for a first name, 2 points for first and last (spelling counts)</p>
-                <button onclick="gameInit()">Start Game</button></div>
+            <div class="popup" id="howToPlay"><h3>How to play</h3><p>Guess the name of each person shown.<br>• 1 point for correct first name<br>• 2 points for first and last<br>(Spelling counts)</p>
+                <button onclick="gameInit()">Legoooo</button></div>
+            <div class="popup" id="gameoverWindow" style="display: none;">
+                <h2>High Scores</h2>
+                <table>
+                    <head>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Name</th>
+                            <th>Score</th>
+                        </tr>
+                    </head>
+                    <tbody id="leaderboard"></tbody>
+                </table>
+                <input type="text" placholder="name" maxlength="7">
+                <input type="submit" value="Enter">
+                <button onclick="gameInit()">Play Again</button>
+            </div>
             <div class="QuizContainer">
                 <div id="Timer">00:00</div>
                 <div id="scorecard"><strong>Score: </strong><strong id="score"></strong></div>
@@ -21,12 +36,13 @@
                 <div id="ImageContainer"><div class="image" id="imageElement" unselectable="on"></div></div>
                 <form id="quizForm">
                     <input type="text" id="textinput" name="inputbox" placeholder="Who is this?" autocomplete="off">
-                    <input type="button" id="submit" onclick="checkAnswer(this.form)" value=">"></button>
+                    <input type="button" id="submit" onclick="checkAnswer(this.form)" value=">">
                 </form>
                 <button onclick="loadNewFace()" id="skip">Skip</button>
-                <button onclick="gameInit()" id="replay">Play Again</button>
+                <button onclick="gameInit()" id="restart">Restart</button>
             </div>
         </section>
     </body>
     <script src="app/js/script.js"></script>
+    <script id="nicknamesjson" src="nicknames.json" type="application/json"></script>
 </html>

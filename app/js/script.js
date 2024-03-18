@@ -1,11 +1,16 @@
 var faces_all = [];
 var faces_working = [];
+var nicknames;
 var score = 0; // Current score: +1 for first name, +2 for first & last
+var wrong = 0; // Number of wrong answers
+var skips = 0; // Number of faces skipped
 var answer = ""; // Name of current person in readable format
 var gameOver = false; // Has player gone through all available faces?
 var timer = document.getElementById("Timer");
+var gameTimer;
+var ding1 = new Audio("/assets/ESM_Vibrant_Game_Slot_Machine_Ding_1_Arcade_Cartoon_Quirky_Comedy_Comedic_Kid_Childish_Fun_Bouncy.wav");
+var ding2 = new Audio("/assets/ESM_Vibrant_Game_Slot_Machine_Ding_1_Arcade_Cartoon_Quirky_Comedy_Comedic_Kid_Childish_Fun_Bouncy.wav");
 
-document.getElementById("replay").style.display = "none";
 document.getElementById("submit").disabled = true;
 
 fetch('app/data.php?' + new URLSearchParams({set: 'all'}), {
@@ -25,21 +30,33 @@ fetch('app/data.php?' + new URLSearchParams({set: 'all'}), {
         console.error('Fetch error:', error);
     });
 
-var nicknamesPath = "nicknames.txt";
+fetch("nicknames.json")
+    .then(response => {
+        return response.text();
+    })
+    .then(text => {
+        nicknames = JSON.parse(text);
+    })
+    .catch(error => {
+        console.error('Fetch error:', error);
+    })
 
 // Initialize game with specified time limit, reset score, start with first face 
 function gameInit() {
-    startTimer(59);
-    document.getElementById("popup").style.display = "none"; // Hide popup window
+    clearInterval(gameTimer);
+    startTimer(10);
+    document.getElementById("howToPlay").style.display = "none"; // Hide popup window
     document.getElementById("submit").disabled = false;
     document.getElementById("skip").disabled = false;
     document.getElementById("textinput").value = "";
-    document.getElementById("replay").style.display = "none";
+    document.getElementById("gameoverWindow").style.display = "none";
     faces_working = faces_all;
     gameOver = false;
     score = 0;
+    wrong = 0;
     document.getElementById("score").innerText = score;
     loadNewFace();
+    document.getElementById("textinput").focus();
 }
 
 // Show popup window on page load to set preferences and start game.
@@ -61,7 +78,6 @@ function loadNewFace() {
     var randomFace = keys[randomIndex];
 
     answer = randomFace.replace(/_/g, " ");
-    console.log(answer);
 
     // Choose a random img in folder (if more than one) and set img src
     var randomImg = Math.floor(Math.random() * faces_working[randomFace].length);
@@ -74,52 +90,59 @@ function loadNewFace() {
 // Start a countdown timer for game
 function startTimer(seconds) {
     var timeRemaining = seconds;
+    
+    // Start first second of timer
+    updateTimer(timeRemaining);
+    timeRemaining -= 1;
 
-    var gameTimer = setInterval(function() {
-        var minutes = Math.floor(timeRemaining / 60);
+    gameTimer = setInterval(function() {
+        if (timeRemaining <= 0 || gameOver) {
+            clearInterval(gameTimer);
+            gameEnd();
+            timer.innerHTML = "00:00";
+            return;
+        }
+        updateTimer(timeRemaining);
+        timeRemaining -= 1;
+    }, 1000);
+}
+
+// Update the timer element in html with leading zeros.
+function updateTimer(timeRemaining) {
+    var minutes = Math.floor(timeRemaining / 60);
         var remainingSeconds = timeRemaining % 60;
         
+        // Add leading zero to seconds and minutes
         var formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
         var formattedSeconds = remainingSeconds < 10 ? "0" + remainingSeconds : remainingSeconds;
         formattedMinutes + ":" + formattedSeconds;
         
         timer.innerHTML = formattedMinutes + ":" + formattedSeconds;
-        timeRemaining -= 1;
-        if (timeRemaining <= 0 || gameOver) {
-            clearInterval(gameTimer);
-            timer.innerHTML = "00:00";
-            gameEnd();
-            return;
-        }
-    }, 1000);
 }
 
 // Check if user's input is correct or not
 function checkAnswer(form) {
-    //Allow minor spelling errors
-    //Display "correct"/"incorrect" text
-
     var input = form.inputbox.value.replace(/[^a-zA-Z0-9\s-]/g, "").toLowerCase().trim().split(" "); // Remove special characters, converter to lower
     var correct = answer.toLowerCase().replace(/'/g, "").split(" ");
 
-    // Check if first name matches, if yes then check second name if there is one
-    // Scan the nicknames.txt file, check if the name is there, then load the nickname
-    altName = "";
+    var nicknameKeys = Object.keys(nicknames);
 
-    if (input[0] === correct[0] || input[0] === altName) {
+    // Check if first name matches, if yes then check last name in input if there is one
+    if (input[0] === correct[0] || (nicknameKeys.includes(answer) && nicknames[answer] === input[0])) {
         score++;
-        console.log("First name correct!");
+
+        // Play correct "ding" sfx
+        ding1.play();
+        flashGreen();
+
         // Show "correct" text
         if (input.length > 1 && input[1] === correct[1]) {
             score++;
-            console.log("Second name correct!");
+            setTimeout(function() {
+                ding2.play();}, 130);
         } 
-        // Play correct "ding" sfx
-        var ding = document.getElementById("dingSFX");
-        ding.play();
-        flashGreen();
     } else {
-        console.log("Incorrect :(");
+        wrong++;
     }
 
     // Update the score
@@ -152,7 +175,58 @@ function flashGreen() {
 function gameEnd() {
     document.getElementById("submit").disabled = true;
     document.getElementById("skip").disabled = true;
-    document.getElementById("replay").style.display = "block";
+    document.getElementById("gameoverWindow").style.display = "block";
+    console.log("Incorrect: " + wrong);
+    // Show leaderboard and ranking, # wrong, # correct
+    // Balloons on screen & sfx if new high score
+
+    fetch("scores.json")
+    .then(response => {
+        return response.json();
+    })
+    .then(data => {
+        // Display top 10 score leaderboard
+        var leaderboardTable = document.getElementById("leaderboard");
+        var sortedScores = data.scores.sort((a,b) => b.score - a.score);
+        var index = 0;
+        var newScoreAdded;
+
+        for (var i=0; i < Math.min(sortedScores.length, 10); i++) {
+            var row = leaderboardTable.insertRow();
+            var rankCell = row.insertCell(0);
+            var nameCell = row.insertCell(1);
+            var scoreCell = row.insertCell(2);
+            var ending = "th";
+            if (i === 0) {
+                ending = "st"; 
+            } else if (i === 1) {
+                ending = "nd";
+            } else if (i === 2) {
+                ending = "rd";
+            }
+            rankCell.textContent = i + 1 + ending;
+
+            if (sortedScores[index].score < score && !newScoreAdded) {
+                var newEntry = {"name": "NewName", "score": score};
+                data.scores.splice(i, 0, newEntry);
+                nameCell.textContent = "NewName";
+                scoreCell.textContent = score;
+                index++;
+                newScoreAdded = true;
+            } else {
+                nameCell.textContent = data.scores[index].name;
+                scoreCell.textContent = data.scores[index].score;
+            }
+            console.log(leaderboard);
+            console.log("i= " + i + " index= " + index);
+            index++;
+        }
+        var updatedData = JSON.stringify(leaderboard);
+        // Send updatedData back to server
+    })
+    .catch(error => {
+        console.error('Fetch error:', error);
+    })
 }
 
 // Register enter key as a click on submit button
