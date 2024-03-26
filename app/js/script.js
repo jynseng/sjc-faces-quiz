@@ -8,8 +8,13 @@ var answer = ""; // Name of current person in readable format
 var gameOver = false; // Has player gone through all available faces?
 var timer = document.getElementById("Timer");
 var gameTimer;
-var ding1 = new Audio("/assets/ESM_Vibrant_Game_Slot_Machine_Ding_1_Arcade_Cartoon_Quirky_Comedy_Comedic_Kid_Childish_Fun_Bouncy.wav");
-var ding2 = new Audio("/assets/ESM_Vibrant_Game_Slot_Machine_Ding_1_Arcade_Cartoon_Quirky_Comedy_Comedic_Kid_Childish_Fun_Bouncy.wav");
+var ding1 = new Audio("/assets/ESM_Correct_Answer_Bling_3_Sound_FX_Arcade_Casino_Kids_Mobile_App_Positive_Achievement_Win.wav");
+var ding2 = new Audio("/assets/ESM_Correct_Answer_Bling_3_Sound_FX_Arcade_Casino_Kids_Mobile_App_Positive_Achievement_Win.wav");
+var newHighScoreSFX = new Audio("/assets/ESM_Positive_Correct_Bling_v3_Sound_FX_Arcade_Casino_Kids_Mobile_App.wav");
+var newRecordSFX = new Audio("/assets/ESM_Casino_Win_Pattern_8_Sound_FX_Arcade_Kids_Mobile_App.wav");
+ding1.volume = 0.7;
+ding2.volume = 0.7;
+newHighScoreSFX.volume = 0.8;
 
 document.getElementById("submit").disabled = true;
 
@@ -189,13 +194,9 @@ function gameEnd() {
         var leaderboardTable = document.getElementById("leaderboard");
         var sortedScores = data.scores.sort((a,b) => b.score - a.score);
         var index = 0;
-        var newScoreAdded;
-
-        for (var i=0; i < Math.min(sortedScores.length, 10); i++) {
-            var row = leaderboardTable.insertRow();
-            var rankCell = row.insertCell(0);
-            var nameCell = row.insertCell(1);
-            var scoreCell = row.insertCell(2);
+        var newScoreAdded = false;
+7
+        for (var i = 0, row; row = leaderboardTable.rows[i]; i++) {
             var ending = "th";
             if (i === 0) {
                 ending = "st"; 
@@ -204,25 +205,89 @@ function gameEnd() {
             } else if (i === 2) {
                 ending = "rd";
             }
-            rankCell.textContent = i + 1 + ending;
+            row.cells[0].textContent = i + 1 + ending.toUpperCase();
 
             if (sortedScores[index].score < score && !newScoreAdded) {
-                var newEntry = {"name": "NewName", "score": score};
+                var newEntry = {"name": "You!", "score": score};
                 data.scores.splice(i, 0, newEntry);
-                nameCell.textContent = "NewName";
-                scoreCell.textContent = score;
-                index++;
+                row.cells[1].textContent = "NewName".toUpperCase(); // Change to user input
+                row.cells[2].textContent = score;
+                row.style.color = "white";
                 newScoreAdded = true;
+                
+                // Make score blink for 10 seconds
+                var text = row;
+                var blinker = setInterval(function() {
+                    text.style.visibility = (text.style.visibility == 'hidden' ? 'visible' : 'hidden');
+                }, 400);
+                setTimeout(function() {
+                    clearInterval(blinker);
+                  }, 10000);
+
+                if (i === 0) {
+                    newRecordSFX.play();
+                    // Confetti fx
+                } else {
+                    newHighScoreSFX.play();
+                }
             } else {
-                nameCell.textContent = data.scores[index].name;
-                scoreCell.textContent = data.scores[index].score;
+                row.cells[1].textContent = data.scores[i].name.toUpperCase();
+                row.cells[2].textContent = data.scores[i].score;
+                row.style.color = "black";
             }
-            console.log(leaderboard);
-            console.log("i= " + i + " index= " + index);
             index++;
         }
-        var updatedData = JSON.stringify(leaderboard);
-        // Send updatedData back to server
+
+        // for (var i=0; i < Math.min(sortedScores.length, 10); i++) {
+        //     var row = leaderboardTable.insertRow();
+        //     var rankCell = row.insertCell(0);
+        //     var nameCell = row.insertCell(1);
+        //     var scoreCell = row.insertCell(2);
+        //     var ending = "th";
+        //     if (i === 0) {
+        //         ending = "st"; 
+        //     } else if (i === 1) {
+        //         ending = "nd";
+        //     } else if (i === 2) {
+        //         ending = "rd";
+        //     }
+        //     rankCell.textContent = i + 1 + ending;
+
+        //     if (sortedScores[index].score < score && !newScoreAdded) {
+        //         var newEntry = {"name": "You!", "score": score};
+        //         data.scores.splice(i, 0, newEntry);
+        //         nameCell.textContent = "NewName"; // Change to user input
+        //         nameCell.style.color = "white";
+        //         rankCell.style.color = "white";
+        //         scoreCell.textContent = score;
+        //         scoreCell.style.color = "white";
+        //         newScoreAdded = true;
+        //         // Make score flash/blink
+        //         if (i === 0) {
+        //             newRecordSFX.play();
+        //             // Confetti fx
+        //         } else {
+        //             newHighScoreSFX.play();
+        //         }
+        //     } else {
+        //         nameCell.textContent = data.scores[index].name;
+        //         scoreCell.textContent = data.scores[index].score;
+        //     }
+        //     index++;
+        // }
+
+        // If score not in top 10, show below leaderboard
+        // if (!newScoreAdded) {
+        //     var row = leaderboardTable.insertRow();
+        //     var rankCell = row.insertCell(0);
+        //     var nameCell = row.insertCell(1);
+        //     var scoreCell = row.insertCell(2);
+        //     rankCell.textContent = ":'(";
+        //     nameCell.textContent = "User";
+        //     scoreCell.textContent = score;
+        // }
+        // var updatedData = JSON.stringify(leaderboard);
+        // // Send updatedData back to server
     })
     .catch(error => {
         console.error('Fetch error:', error);
