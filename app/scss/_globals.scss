@@ -41,7 +41,7 @@ h1 {
     z-index: 99;
     border-radius: 6px;
     left: 50%;
-    top: 25%;
+    top: 450px;
     transform: translate(-50%, -50%);
 }
 
@@ -125,4 +125,14 @@ table {
     font-size: 15pt;
     border-spacing: 15px;
     line-height: 22pt;
+}
+
+#scoreInput {
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 15pt;
+    color: white;
+    caret-color: white;
+    background: transparent;
+    border: none;
 }

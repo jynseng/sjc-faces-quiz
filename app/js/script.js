@@ -53,6 +53,7 @@ function gameInit() {
     document.getElementById("howToPlay").style.display = "none"; // Hide popup window
     document.getElementById("submit").disabled = false;
     document.getElementById("skip").disabled = false;
+    document.getElementById("textinput").disabled = false;
     document.getElementById("textinput").value = "";
     document.getElementById("gameoverWindow").style.display = "none";
     faces_working = faces_all;
@@ -180,6 +181,7 @@ function flashGreen() {
 function gameEnd() {
     document.getElementById("submit").disabled = true;
     document.getElementById("skip").disabled = true;
+    document.getElementById("textinput").disabled = true;
     document.getElementById("gameoverWindow").style.display = "block";
     console.log("Incorrect: " + wrong);
     // Show leaderboard and ranking, # wrong, # correct
@@ -195,7 +197,7 @@ function gameEnd() {
         var sortedScores = data.scores.sort((a,b) => b.score - a.score);
         var index = 0;
         var newScoreAdded = false;
-7
+
         for (var i = 0, row; row = leaderboardTable.rows[i]; i++) {
             var ending = "th";
             if (i === 0) {
@@ -208,21 +210,31 @@ function gameEnd() {
             row.cells[0].textContent = i + 1 + ending.toUpperCase();
 
             if (sortedScores[index].score < score && !newScoreAdded) {
-                var newEntry = {"name": "You!", "score": score};
+                var newEntry = {"name": "Player", "score": score};
                 data.scores.splice(i, 0, newEntry);
-                row.cells[1].textContent = "NewName".toUpperCase(); // Change to user input
+                row.cells[1].innerHTML = "";
+
+                // User input text field
+                var input = document.createElement("input");
+                input.type = "text";
+                input.maxLength = "7";
+                input.size = "7";
+                input.id = "scoreInput";
+                row.cells[1].appendChild(input);
+                input.focus();
+
                 row.cells[2].textContent = score;
                 row.style.color = "white";
                 newScoreAdded = true;
                 
-                // Make score blink for 10 seconds
+                // Make score blink for 5 seconds
                 var text = row;
                 var blinker = setInterval(function() {
-                    text.style.visibility = (text.style.visibility == 'hidden' ? 'visible' : 'hidden');
+                    text.style.opacity = (text.style.opacity == '0' ? '1' : '0');
                 }, 400);
                 setTimeout(function() {
                     clearInterval(blinker);
-                  }, 10000);
+                  }, 5000);
 
                 if (i === 0) {
                     newRecordSFX.play();
@@ -301,6 +313,14 @@ document.getElementById("quizForm").addEventListener("keypress", function(event)
       document.getElementById("submit").click(); // Simulate a click on the submit button
     }
   });
+
+  // IDK if we need this
+// document.getElementById("gameoverWindow").addEventListener("keypress", function(event) {
+// if (event.key === "Enter") {
+//     event.preventDefault(); // Prevent form submission
+//     //document.getElementById("submit").click(); // Simulate a click on the submit button
+// }
+// });
 
 // Block righ-clicks to prevent cheating
 document.getElementById("imageElement").addEventListener('contextmenu', function(event) {
