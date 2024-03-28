@@ -183,9 +183,6 @@ function gameEnd() {
     document.getElementById("skip").disabled = true;
     document.getElementById("textinput").disabled = true;
     document.getElementById("gameoverWindow").style.display = "block";
-    console.log("Incorrect: " + wrong);
-    // Show leaderboard and ranking, # wrong, # correct
-    // Balloons on screen & sfx if new high score
 
     fetch("scores.json")
     .then(response => {
@@ -209,10 +206,12 @@ function gameEnd() {
             }
             row.cells[0].textContent = i + 1 + ending.toUpperCase();
 
+            // If new score is top ten, add to leaderboard
             if (sortedScores[index].score < score && !newScoreAdded) {
-                var newEntry = {"name": "Player", "score": score};
-                data.scores.splice(i, 0, newEntry);
                 row.cells[1].innerHTML = "";
+                newScoreAdded = true;
+                row.cells[2].textContent = score;
+                row.style.color = "white";
 
                 // User input text field
                 var input = document.createElement("input");
@@ -223,10 +222,18 @@ function gameEnd() {
                 row.cells[1].appendChild(input);
                 input.focus();
 
-                row.cells[2].textContent = score;
-                row.style.color = "white";
-                newScoreAdded = true;
-                
+                // Add new score to scores array
+                var newEntry = {"name": "NewPlayer", "score": score};
+                sortedScores.splice(i, 0, newEntry);
+                var newEntryIndex = i;
+                document.getElementById("gameoverWindow").addEventListener("keypress", function(event) {
+                    if (event.key === "Enter") {
+                        sortedScores[newEntryIndex].name = input.value;
+                        input.blur();
+                        console.log(data);
+                    }
+                    });
+
                 // Make score blink for 5 seconds
                 var text = row;
                 var blinker = setInterval(function() {
@@ -249,6 +256,8 @@ function gameEnd() {
             }
             index++;
         }
+        var updatedData = JSON.stringify(data);
+        // Send updatedData back to server
 
         // for (var i=0; i < Math.min(sortedScores.length, 10); i++) {
         //     var row = leaderboardTable.insertRow();
@@ -298,8 +307,6 @@ function gameEnd() {
         //     nameCell.textContent = "User";
         //     scoreCell.textContent = score;
         // }
-        // var updatedData = JSON.stringify(leaderboard);
-        // // Send updatedData back to server
     })
     .catch(error => {
         console.error('Fetch error:', error);
@@ -313,14 +320,6 @@ document.getElementById("quizForm").addEventListener("keypress", function(event)
       document.getElementById("submit").click(); // Simulate a click on the submit button
     }
   });
-
-  // IDK if we need this
-// document.getElementById("gameoverWindow").addEventListener("keypress", function(event) {
-// if (event.key === "Enter") {
-//     event.preventDefault(); // Prevent form submission
-//     //document.getElementById("submit").click(); // Simulate a click on the submit button
-// }
-// });
 
 // Block righ-clicks to prevent cheating
 document.getElementById("imageElement").addEventListener('contextmenu', function(event) {
