@@ -10,8 +10,8 @@
     </head>
     <body>
         <section class="Main">
-            <div class="Header"> <h1>SJC Faces Quiz</h1> </div>
-            <div class="popup" id="howToPlay"><h3>How to play</h3><p>Guess the name of each person shown.<br>• 1 point for correct first name<br>• 2 points for first and last<br>(Spelling counts)</p>
+            <div class="Header"> <h1>SJC Faces Game</h1> </div>
+            <div class="popup" id="howToPlay"><h3>How to Play</h3><p>Guess the name of each person shown.<br>• 1 point for correct first name<br>• 2 points for first and last<br>(Spelling counts)</p>
                 <button onclick="gameInit()">Legoooo</button></div>
             <div class="popup" id="gameoverWindow" style="display: none;">
                 <h2>HIGH SCORES</h2>
@@ -91,7 +91,9 @@
                 <button onclick="gameInit()" id="restart">Restart</button>
             </div>
         </section>
+        <canvas id="confettiCanvas"></canvas>
     </body>
+    <script src="app/js/confetti.js"></script>
     <script src="app/js/script.js"></script>
     <script id="nicknamesjson" src="nicknames.json" type="application/json"></script>
 </html>

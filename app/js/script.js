@@ -6,8 +6,9 @@ var wrong = 0; // Number of wrong answers
 var skips = 0; // Number of faces skipped
 var answer = ""; // Name of current person in readable format
 var gameOver = false; // Has player gone through all available faces?
-var timer = document.getElementById("Timer");
+const timer = document.getElementById("Timer");
 var gameTimer;
+var confetti = false; // Has confetti been animated already?
 var ding1 = new Audio("/assets/ESM_Correct_Answer_Bling_3_Sound_FX_Arcade_Casino_Kids_Mobile_App_Positive_Achievement_Win.wav");
 var ding2 = new Audio("/assets/ESM_Correct_Answer_Bling_3_Sound_FX_Arcade_Casino_Kids_Mobile_App_Positive_Achievement_Win.wav");
 var newHighScoreSFX = new Audio("/assets/ESM_Positive_Correct_Bling_v3_Sound_FX_Arcade_Casino_Kids_Mobile_App.wav");
@@ -18,9 +19,9 @@ newHighScoreSFX.volume = 0.8;
 
 document.getElementById("submit").disabled = true;
 
+// Get faces from server
 fetch('app/data.php?' + new URLSearchParams({set: 'all'}), {
     method: 'GET',
-    //headers: {'Content-Type': 'application/json',},
 })
     .then(response => {
         if (!response.ok) {
@@ -35,6 +36,7 @@ fetch('app/data.php?' + new URLSearchParams({set: 'all'}), {
         console.error('Fetch error:', error);
     });
 
+// Get list of nicknames
 fetch("nicknames.json")
     .then(response => {
         return response.text();
@@ -56,6 +58,7 @@ function gameInit() {
     document.getElementById("textinput").disabled = false;
     document.getElementById("textinput").value = "";
     document.getElementById("gameoverWindow").style.display = "none";
+    document.getElementById("confettiCanvas").style.display = "none";
     faces_working = faces_all;
     gameOver = false;
     score = 0;
@@ -190,6 +193,7 @@ function gameEnd() {
     })
     .then(data => {
         // Display top 10 score leaderboard
+        clearInterval(blinker);
         var leaderboardTable = document.getElementById("leaderboard");
         var sortedScores = data.scores.sort((a,b) => b.score - a.score);
         var index = 0;
@@ -228,24 +232,29 @@ function gameEnd() {
                 var newEntryIndex = i;
                 document.getElementById("gameoverWindow").addEventListener("keypress", function(event) {
                     if (event.key === "Enter") {
-                        sortedScores[newEntryIndex].name = input.value;
+                        sortedScores[newEntryIndex].name = input.value.replace(/[^a-zA-Z0-9\s-]/g, "").toLowerCase().trim();
+                        console.log(sortedScores[newEntryIndex]);
                         input.blur();
-                        console.log(data);
+                        text.style.opacity = "1";
+                        clearInterval(blinker);
+                        input.disabled = true;
                     }
                     });
 
-                // Make score blink for 5 seconds
+                // Make score blink for 20 seconds
                 var text = row;
                 var blinker = setInterval(function() {
                     text.style.opacity = (text.style.opacity == '0' ? '1' : '0');
                 }, 400);
                 setTimeout(function() {
                     clearInterval(blinker);
-                  }, 5000);
-
+                    text.style.opacity = "1";
+                  }, 20000);
+                // If new top score, play confetti and sfx
                 if (i === 0) {
                     newRecordSFX.play();
-                    // Confetti fx
+                    document.getElementById("confettiCanvas").style.display = "block";
+                    if (!confetti) { animate(); } // Play confetti effect
                 } else {
                     newHighScoreSFX.play();
                 }
@@ -256,57 +265,17 @@ function gameEnd() {
             }
             index++;
         }
-        var updatedData = JSON.stringify(data);
-        // Send updatedData back to server
+        
 
-        // for (var i=0; i < Math.min(sortedScores.length, 10); i++) {
-        //     var row = leaderboardTable.insertRow();
-        //     var rankCell = row.insertCell(0);
-        //     var nameCell = row.insertCell(1);
-        //     var scoreCell = row.insertCell(2);
-        //     var ending = "th";
-        //     if (i === 0) {
-        //         ending = "st"; 
-        //     } else if (i === 1) {
-        //         ending = "nd";
-        //     } else if (i === 2) {
-        //         ending = "rd";
-        //     }
-        //     rankCell.textContent = i + 1 + ending;
+        // // Update leaderboard on server
+        // fetch("scores.json", {
+        //     method: 'POST',
+        //     headers: {
+        //         'Content-Type': 'application/json'
+        //     },
+        //     body: JSON.stringify(data)
+        // })
 
-        //     if (sortedScores[index].score < score && !newScoreAdded) {
-        //         var newEntry = {"name": "You!", "score": score};
-        //         data.scores.splice(i, 0, newEntry);
-        //         nameCell.textContent = "NewName"; // Change to user input
-        //         nameCell.style.color = "white";
-        //         rankCell.style.color = "white";
-        //         scoreCell.textContent = score;
-        //         scoreCell.style.color = "white";
-        //         newScoreAdded = true;
-        //         // Make score flash/blink
-        //         if (i === 0) {
-        //             newRecordSFX.play();
-        //             // Confetti fx
-        //         } else {
-        //             newHighScoreSFX.play();
-        //         }
-        //     } else {
-        //         nameCell.textContent = data.scores[index].name;
-        //         scoreCell.textContent = data.scores[index].score;
-        //     }
-        //     index++;
-        // }
-
-        // If score not in top 10, show below leaderboard
-        // if (!newScoreAdded) {
-        //     var row = leaderboardTable.insertRow();
-        //     var rankCell = row.insertCell(0);
-        //     var nameCell = row.insertCell(1);
-        //     var scoreCell = row.insertCell(2);
-        //     rankCell.textContent = ":'(";
-        //     nameCell.textContent = "User";
-        //     scoreCell.textContent = score;
-        // }
     })
     .catch(error => {
         console.error('Fetch error:', error);
@@ -321,7 +290,7 @@ document.getElementById("quizForm").addEventListener("keypress", function(event)
     }
   });
 
-// Block righ-clicks to prevent cheating
+// Block right-clicks to prevent cheating
 document.getElementById("imageElement").addEventListener('contextmenu', function(event) {
     event.preventDefault();
   });

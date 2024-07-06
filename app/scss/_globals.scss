@@ -136,3 +136,11 @@ table {
     background: transparent;
     border: none;
 }
+
+#confettiCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 99;
+    pointer-events: none;
+}
