@@ -233,7 +233,6 @@ function gameEnd() {
                 document.getElementById("gameoverWindow").addEventListener("keypress", function(event) {
                     if (event.key === "Enter") {
                         sortedScores[newEntryIndex].name = input.value.replace(/[^a-zA-Z0-9\s-]/g, "").toLowerCase().trim();
-                        console.log(sortedScores[newEntryIndex]);
                         input.blur();
                         text.style.opacity = "1";
                         clearInterval(blinker);
@@ -267,14 +266,14 @@ function gameEnd() {
         }
         
 
-        // // Update leaderboard on server
-        // fetch("scores.json", {
-        //     method: 'POST',
-        //     headers: {
-        //         'Content-Type': 'application/json'
-        //     },
-        //     body: JSON.stringify(data)
-        // })
+        // Update leaderboard on server
+        fetch("app/updateScores.php", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data),
+        })
 
     })
     .catch(error => {
