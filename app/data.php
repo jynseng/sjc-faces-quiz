@@ -1,7 +1,7 @@
 <?php
-$campersDir = "/public_html/faces/campers";
-$staffDir = "/public_html/faces/staff";
-$facesDir = "/public_html/faces";
+$campersDir = "/faces/campers";
+$staffDir = "/faces/staff";
+$facesDir = "/faces";
 $facesDict = [];
 $directory = "";
 
