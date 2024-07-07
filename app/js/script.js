@@ -254,7 +254,7 @@ function gameEnd() {
                 if (i === 0) {
                     newRecordSFX.play();
                     document.getElementById("confettiCanvas").style.display = "block";
-                    if (!confetti) { animate(); } // Play confetti effect
+                    if (!confetti) { animate(); } // Play confetti visual effect
                 } else {
                     newHighScoreSFX.play();
                 }
