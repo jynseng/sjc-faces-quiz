@@ -1,7 +1,7 @@
 <?php
-$campersDir = "/Users/dank/Documents/SJC/sjc-faces-quiz/faces/campers";
-$staffDir = "/Users/dank/Documents/SJC/sjc-faces-quiz/faces/staff";
-$facesDir = "/Users/dank/Documents/SJC/sjc-faces-quiz/faces";
+$campersDir = "/public_html/faces/campers";
+$staffDir = "/public_html/faces/staff";
+$facesDir = "/public_html/faces";
 $facesDict = [];
 $directory = "";
 
