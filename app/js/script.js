@@ -1,6 +1,7 @@
 var faces_all = [];
 var faces_working = [];
 var nicknames;
+var playerName = "";
 var score = 0; // Current score: +1 for first name, +2 for first & last
 var wrong = 0; // Number of wrong answers
 var skips = 0; // Number of faces skipped
@@ -187,7 +188,15 @@ function gameEnd() {
     document.getElementById("textinput").disabled = true;
     document.getElementById("gameoverWindow").style.display = "block";
 
-    fetch("scores.json")
+    /*
+    Send name-score pair to server, updateScores.php inserts it into rankings and returns the updated
+    leaderboard, which may or may not include the user's score.
+    */
+
+    fetch('updateScores.php'), {
+        method: 'POST',
+        body: JSON.stringify({playerName, score: score })
+    }
     .then(response => {
         return response.json();
     })
@@ -264,16 +273,6 @@ function gameEnd() {
             }
             index++;
         }
-        
-
-        // Update leaderboard on server
-        fetch("app/updateScores.php", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data),
-        })
 
     })
     .catch(error => {

@@ -49,4 +49,5 @@ function scanAllDir($dir,$parent='') {
             echo json_encode(scanAllDir($staffDir));
             break;
     }
+
 ?>
