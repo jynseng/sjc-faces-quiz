@@ -17,8 +17,12 @@ var newRecordSFX = new Audio("/assets/ESM_Casino_Win_Pattern_8_Sound_FX_Arcade_K
 ding1.volume = 0.7;
 ding2.volume = 0.7;
 newHighScoreSFX.volume = 0.8;
-
 document.getElementById("submit").disabled = true;
+
+// Set focus to the input field when the page loads
+window.onload = () => {
+    document.getElementById("playername").focus();
+};
 
 // Get faces from server
 fetch('app/data.php?' + new URLSearchParams({set: 'all'}), {
@@ -50,9 +54,11 @@ fetch("nicknames.json")
     })
 
 // Initialize game with specified time limit, reset score, start with first face 
-function gameInit() {
+function gameInit(form) {
+    playerName = form.inputbox.value.replace(/[^a-zA-Z0-9\s-]/g, "").trim(); // Set player name, remove special characters
+    console.log(playerName);
     clearInterval(gameTimer);
-    startTimer(10);
+    startTimer(15);
     document.getElementById("howToPlay").style.display = "none"; // Hide popup window
     document.getElementById("submit").disabled = false;
     document.getElementById("skip").disabled = false;
@@ -67,10 +73,6 @@ function gameInit() {
     document.getElementById("score").innerText = score;
     loadNewFace();
     document.getElementById("textinput").focus();
-}
-
-// Show popup window on page load to set preferences and start game.
-function setUp() {
 }
 
 // Choose a random person from the working set and load the image into the image container
