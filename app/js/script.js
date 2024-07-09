@@ -56,7 +56,6 @@ fetch("nicknames.json")
 // Initialize game with specified time limit, reset score, start with first face 
 function gameInit(form) {
     playerName = form.inputbox.value.replace(/[^a-zA-Z0-9\s-]/g, "").trim(); // Set player name, remove special characters
-    console.log(playerName);
     clearInterval(gameTimer);
     startTimer(15);
     document.getElementById("howToPlay").style.display = "none"; // Hide popup window
@@ -195,10 +194,10 @@ function gameEnd() {
     leaderboard, which may or may not include the user's score.
     */
 
-    fetch('updateScores.php'), {
+    fetch('updateScores.php', {
         method: 'POST',
         body: JSON.stringify({name: playerName, score: score})
-    }
+    })
     .then(response => {
         return response.json();
     })

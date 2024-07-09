@@ -9,10 +9,17 @@ if (!postedData) {
     http_response_code(400);
     die("Error: No data provided");
 }
-$name = htmlspecialchars($_POST['name']);
-$score = htmlspecialchars($_POST['score']);
+$json = file_get_contents('php://input');
+$data = json_decode($json, true);
 
-echo "Name: " . $name . "<br>";
-echo "Score: " . $score . "<br>";
+if (isset($data['name']) && isset($data['score'])) {
+    $name = htmlspecialchars($data['name']);
+    $score = htmlspecialchars($data['score']);
+    
+    echo "Name: " . $name . "<br>";
+    echo "Score: " . $score . "<br>";
+} else {
+    echo "Invalid input";
+}
 
 ?>
