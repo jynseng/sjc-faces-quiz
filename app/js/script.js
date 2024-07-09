@@ -188,14 +188,13 @@ function gameEnd() {
     document.getElementById("skip").disabled = true;
     document.getElementById("textinput").disabled = true;
     document.getElementById("gameoverWindow").style.display = "block";
-    console.log(JSON.stringify({name: playerName, score: score}));
 
     /*
     Send name-score pair to server, updateScores.php inserts it into rankings and returns the updated
     leaderboard, which may or may not include the user's score.
     */
 
-    fetch('updateScores.php', {
+    fetch('app/updateScores.php', {
         method: 'POST',
         body: JSON.stringify({name: playerName, score: score})
     })
