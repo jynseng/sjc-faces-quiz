@@ -197,7 +197,7 @@ function gameEnd() {
 
     fetch('updateScores.php'), {
         method: 'POST',
-        body: JSON.stringify({playerName, score: score })
+        body: JSON.stringify({name: playerName, score: score})
     }
     .then(response => {
         return response.json();

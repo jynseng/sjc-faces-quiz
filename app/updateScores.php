@@ -9,6 +9,10 @@ if (!postedData) {
     http_response_code(400);
     die("Error: No data provided");
 }
-file_put_contents($leaderboard, $postedData);
+$name = htmlspecialchars($_POST['name']);
+$score = htmlspecialchars($_POST['score']);
+
+echo "Name: " . $name . "<br>";
+echo "Score: " . $score . "<br>";
 
 ?>

@@ -13,8 +13,8 @@
             <div class="Header"> <h1>SJC Faces Game</h1> </div>
             <div class="popup" id="howToPlay"><h3>How to Play</h3><p>Guess the name of each person shown.<br>• 1 point for correct first name<br>• 2 points for first and last<br>(Spelling counts)</p>
                 <form id="enterName">
-                    <input type="text" id="playername" placeholder="Enter Name" maxlength="7" size="7">
-                    <input type="button" onclick="gameInit(this.form)" value="Start"></div>
+                    <input type="text" id="playername" name="inputbox" placeholder="Enter Name" maxlength="7" size="7">
+                    <br><input type="button" onclick="gameInit(this.form)" value="Start"></div>
                 </form>
             <div class="popup" id="gameoverWindow" style="display: none;">
                 <h2>HIGH SCORES</h2>
@@ -97,6 +97,6 @@
         <canvas id="confettiCanvas"></canvas>
     </body>
     <script src="app/js/confetti.js"></script>
-    <script src="app/js/script.js?=ver1.2"></script>
+    <script src="app/js/script.js?=ver1.21"></script>
     <script id="nicknamesjson" src="nicknames.json" type="application/json"></script>
 </html>
