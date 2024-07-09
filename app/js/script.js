@@ -188,6 +188,7 @@ function gameEnd() {
     document.getElementById("skip").disabled = true;
     document.getElementById("textinput").disabled = true;
     document.getElementById("gameoverWindow").style.display = "block";
+    console.log(JSON.stringify({name: playerName, score: score}));
 
     /*
     Send name-score pair to server, updateScores.php inserts it into rankings and returns the updated
