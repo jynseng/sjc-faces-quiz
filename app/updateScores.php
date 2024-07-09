@@ -12,14 +12,10 @@ if (!postedData) {
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
 
-if (isset($data['name']) && isset($data['score'])) {
-    $name = htmlspecialchars($data['name']);
-    $score = htmlspecialchars($data['score']);
-    
-    echo "Name: " . $name . "<br>";
-    echo "Score: " . $score . "<br>";
-} else {
-    echo "Invalid input";
-}
+$name = $data["name"];
+$score = $data["score"];
+
+echo "Name: " . $name . "<br>";
+echo "Score: " . $score . "<br>";
 
 ?>
