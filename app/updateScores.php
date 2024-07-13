@@ -20,7 +20,7 @@ $name = $data["name"];
 $score = $data["score"];
 
 // Read current scores.json file
-$scoresJSON = file_get_contents("public_html/scores.json");
+$scoresJSON = file_get_contents($leaderboard);
 $currentScores = json_decode($scoresJSON, true);
 
 $newEntry = ["name" => $name, "score" => $score];
@@ -33,7 +33,7 @@ usort($currentScores, function ($a, $b) {
 
 // Save updated list back to file
 $newJSONData = json_encode($currentScores, JSON_PRETTY_PRINT);
-if (file_put_contents($jsonFile, $newJSONData) === false) {
+if (file_put_contents($leaderboard, $newJSONData) === false) {
     throw new Exception("Failed to save data.");
 }
 
