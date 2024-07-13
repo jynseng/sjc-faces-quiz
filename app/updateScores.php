@@ -23,13 +23,13 @@ $score = $data["score"];
 $scoresJSON = file_get_contents($leaderboard);
 $currentScores = json_decode($scoresJSON, true);
 
-$newEntry = array("name" => $name, "score" => $score);
-$currentScores[] = $newEntry;
+//$newEntry = array("name" => $name, "score" => $score);
+//$currentScores[] = $newEntry;
 
 // Sort scores in descending order
-usort($currentScores, function ($a, $b) {
-    return $b["score"] - $a["score"];
-});
+// usort($currentScores, function ($a, $b) {
+//     return $b["score"] - $a["score"];
+// });
 
 // Save updated list back to file
 $newJSONData = json_encode($currentScores, JSON_PRETTY_PRINT);
@@ -37,6 +37,7 @@ if (file_put_contents($leaderboard, $newJSONData) === false) {
     throw new Exception("Failed to save data.");
 }
 
+echo $currentScores["Ian"]["score"];
 // Echo top 10 scores
 //echo json_encode(array_slice($currentScores, 0, 10));
 
