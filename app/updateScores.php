@@ -28,7 +28,7 @@ $currentScores["scores"] = $newEntry;
 
 // Sort scores in descending order
 usort($currentScores["scores"], function ($a, $b) {
-    echo ($b["score"].$a["score"]);
+    error_log($b["score"].$a["score"]);
     return $b["score"] - $a["score"];
 });
 
