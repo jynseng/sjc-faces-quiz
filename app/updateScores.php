@@ -23,6 +23,7 @@ $score = $data["score"];
 $scoresJSON = file_get_contents($leaderboard);
 $currentScores = json_decode($scoresJSON, true);
 
+echo $currentScores;
 //$newEntry = array("name" => $name, "score" => $score);
 //$currentScores[] = $newEntry;
 
@@ -37,7 +38,6 @@ if (file_put_contents($leaderboard, $newJSONData) === false) {
     throw new Exception("Failed to save data.");
 }
 
-echo $currentScores["Ian"]["score"];
 // Echo top 10 scores
 //echo json_encode(array_slice($currentScores, 0, 10));
 
