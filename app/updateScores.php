@@ -28,10 +28,9 @@ $currentScores["scores"] = $newEntry;
 
 // Sort scores in descending order
 usort($currentScores["scores"], function ($a, $b) {
-    echo "<script>";
-    echo "console.log('$a');";
-    echo "</script>";    
-    return $b["score"] - $a["score"];
+    if ($a["score"] == $b["score"]) return 0;
+    else if ($a["score"] < $b["score"]) return 1;
+    else return 1;
 });
 
 // Save updated list back to file
