@@ -23,7 +23,7 @@ $score = $data["score"];
 $scoresJSON = file_get_contents($leaderboard);
 $currentScores = json_decode($scoresJSON, true);
 
-echo $currentScores;
+echo json_encode($currentScores);
 //$newEntry = array("name" => $name, "score" => $score);
 //$currentScores[] = $newEntry;
 
