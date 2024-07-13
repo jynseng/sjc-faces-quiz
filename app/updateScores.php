@@ -19,6 +19,25 @@ $data = json_decode($json, true);
 $name = $data["name"];
 $score = $data["score"];
 
-echo json_encode("Name: " . $name . "Score: " . $score);
+// Read current scores.json file
+$scoresJSON = file_get_contents("public_html/scores.json");
+$currentScores = json_decode($scoresJSON, true);
+
+$newEntry = ["name" => $name, "score" => $score];
+$currentScores[] = $newEntry;
+
+// Sort scores in descending order
+usort($currentScores, function ($a, $b) {
+    return $b["score"] - $a["score"];
+});
+
+// Save updated list back to file
+$newJSONData = json_encode($currentScores, JSON_PRETTY_PRINT);
+if (file_put_contents($jsonFile, $newJSONData) === false) {
+    throw new Exception("Failed to save data.");
+}
+
+// Echo top 10 scores
+echo json_encode(array_slice($currentScores), 0, 10);
 
 ?>
