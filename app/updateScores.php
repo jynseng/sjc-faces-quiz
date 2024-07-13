@@ -28,8 +28,8 @@ $currentScores["scores"] = $newEntry;
 
 // Sort scores in descending order
 usort($currentScores["scores"], function ($a, $b) {
-    if ($a["score"] == $b["score"]) return 0;
-    else if ($a["score"] < $b["score"]) return 1;
+    if ($a == $b) return 0;
+    else if ($a < $b) return 1;
     else return 1;
 });
 
