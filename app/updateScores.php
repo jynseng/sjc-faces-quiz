@@ -23,7 +23,7 @@ $score = $data["score"];
 $scoresJSON = file_get_contents($leaderboard);
 $currentScores = json_decode($scoresJSON, true);
 
-$newEntry = ["name" => $name, "score" => $score];
+$newEntry = array("name" => $name, "score" => $score);
 $currentScores[] = $newEntry;
 
 // Sort scores in descending order
@@ -38,6 +38,6 @@ if (file_put_contents($leaderboard, $newJSONData) === false) {
 }
 
 // Echo top 10 scores
-echo json_encode(array_slice($currentScores), 0, 10);
+//echo json_encode(array_slice($currentScores, 0, 10));
 
 ?>
