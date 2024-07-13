@@ -21,15 +21,15 @@ $score = $data["score"];
 
 // Read current scores.json file
 $scoresJSON = file_get_contents($leaderboard);
-$currentScores = json_decode($scoresJSON, true);
+$currentScores[] = json_decode($scoresJSON, true);
 
 $newEntry = array("name" => $name, "score" => $score);
-$currentScores[] = $newEntry;
+$currentScores["scores"] = $newEntry;
 
 // Sort scores in descending order
-// usort($currentScores, function ($a, $b) {
-//     return $b["score"] - $a["score"];
-// });
+usort($currentScores["scores"], function ($a, $b) {
+     return $b["score"] - $a["score"];
+});
 
 // Save updated list back to file
 $newJSONData = json_encode($currentScores, JSON_PRETTY_PRINT);
