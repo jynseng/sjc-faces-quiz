@@ -199,6 +199,7 @@ function gameEnd() {
         body: JSON.stringify({name: playerName, score: score})
     })
     .then(response => {
+        console.log(respons.json());
         return response.json();
     })
     .then(data => {

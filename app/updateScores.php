@@ -15,6 +15,6 @@ $data = json_decode($json, true);
 $name = $data["name"];
 $score = $data["score"];
 
-echo json_encode("Name: " . $name . "Score: ".$score);
+echo json_encode("Name: " . "harold" . "Score: " . "bukayo");
 
 ?>
