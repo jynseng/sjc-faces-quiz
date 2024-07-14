@@ -189,24 +189,19 @@ function gameEnd() {
     document.getElementById("textinput").disabled = true;
     document.getElementById("gameoverWindow").style.display = "block";
 
-    /*
-    Send name-score pair to server, updateScores.php inserts it into rankings and returns the updated
-    leaderboard, which may or may not include the user's score.
-    */
-
+    // Send name-score pair to server, returns updated leaderboard
     fetch('app/updateScores.php', {
         method: 'POST',
         body: JSON.stringify({name: playerName, score: score})
     })
     .then(response => {
-        console.log(respons.json());
         return response.json();
     })
     .then(data => {
         // Display top 10 score leaderboard
         clearInterval(blinker);
         var leaderboardTable = document.getElementById("leaderboard");
-        var sortedScores = data.scores.sort((a,b) => b.score - a.score);
+        var sortedScores = data.scores;
         var index = 0;
         var newScoreAdded = false;
 
@@ -221,35 +216,13 @@ function gameEnd() {
             }
             row.cells[0].textContent = i + 1 + ending.toUpperCase();
 
-            // If new score is top ten, add to leaderboard
-            if (sortedScores[index].score < score && !newScoreAdded) {
-                row.cells[1].innerHTML = "";
+            row.cells[1].textContent = data.scores[i].name.toUpperCase();
+            row.cells[2].textContent = data.scores[i].score;
+
+            // If player score is top ten, highlight & blink
+            if (sortedScores[index].score == score && data.scores[i].name == playerName) {
                 newScoreAdded = true;
-                row.cells[2].textContent = score;
                 row.style.color = "white";
-
-                // User input text field
-                var input = document.createElement("input");
-                input.type = "text";
-                input.maxLength = "7";
-                input.size = "7";
-                input.id = "scoreInput";
-                row.cells[1].appendChild(input);
-                input.focus();
-
-                // Add new score to scores array
-                var newEntry = {"name": "NewPlayer", "score": score};
-                sortedScores.splice(i, 0, newEntry);
-                var newEntryIndex = i;
-                document.getElementById("gameoverWindow").addEventListener("keypress", function(event) {
-                    if (event.key === "Enter") {
-                        sortedScores[newEntryIndex].name = input.value.replace(/[^a-zA-Z0-9\s-]/g, "").toLowerCase().trim();
-                        input.blur();
-                        text.style.opacity = "1";
-                        clearInterval(blinker);
-                        input.disabled = true;
-                    }
-                    });
 
                 // Make score blink for 20 seconds
                 var text = row;
@@ -260,6 +233,7 @@ function gameEnd() {
                     clearInterval(blinker);
                     text.style.opacity = "1";
                   }, 20000);
+
                 // If new top score, play confetti and sfx
                 if (i === 0) {
                     newRecordSFX.play();
@@ -269,8 +243,6 @@ function gameEnd() {
                     newHighScoreSFX.play();
                 }
             } else {
-                row.cells[1].textContent = data.scores[i].name.toUpperCase();
-                row.cells[2].textContent = data.scores[i].score;
                 row.style.color = "black";
             }
             index++;
