@@ -26,6 +26,7 @@ window.onload = () => {
 
 function setName(form) {
     playerName = form.inputbox.value.replace(/[^a-zA-Z0-9\s-]/g, "").trim(); // Set player name, remove special characters
+    gameInit();
 }
 
 // Get faces from server
