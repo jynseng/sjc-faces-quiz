@@ -23,14 +23,14 @@ $score = $data["score"];
 $scoresJSON = file_get_contents($leaderboard);
 $currentScores[] = json_decode($scoresJSON, true);
 
-$newEntry = array("name" => $name, "score" => $score);
-$currentScores["scores"] = $newEntry;
+// $newEntry = array("name" => $name, "score" => $score);
+// $currentScores["scores"] = $newEntry;
 
 // Sort scores in descending order
 usort($currentScores["scores"], function ($a, $b) {
     if ($a == $b) return 0;
     else if ($a < $b) return 1;
-    else return 1;
+    else return -1;
 });
 
 // Save updated list back to file
