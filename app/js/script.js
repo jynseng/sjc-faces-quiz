@@ -8,6 +8,7 @@ var skips = 0; // Number of faces skipped
 var answer = ""; // Name of current person in readable format
 var gameOver = false; // Has player gone through all available faces?
 const timer = document.getElementById("Timer");
+var gameLength = 10; // Time in seconds each round lasts
 var gameTimer;
 var confetti = false; // Has the confetti been animated already?
 var ding1 = new Audio("/assets/ESM_Correct_Answer_Bling_3_Sound_FX_Arcade_Casino_Kids_Mobile_App_Positive_Achievement_Win.wav");
@@ -61,7 +62,8 @@ fetch("nicknames.json")
 // Initialize game with specified time limit, reset score, start with first face 
 function gameInit() {
     clearInterval(gameTimer);
-    startTimer(15);
+    if(blinker){clearInterval(blinker)};
+    startTimer(gameLength);
     document.getElementById("howToPlay").style.display = "none"; // Hide popup window
     document.getElementById("submit").disabled = false;
     document.getElementById("skip").disabled = false;
@@ -76,6 +78,7 @@ function gameInit() {
     document.getElementById("score").innerText = score;
     loadNewFace();
     document.getElementById("textinput").focus();
+    // If playerName !== "Daniel", play Jeopardy music
 }
 
 // Choose a random person from the working set and load the image into the image container
@@ -203,11 +206,10 @@ function gameEnd() {
     })
     .then(data => {
         // Display top 10 score leaderboard
-        clearInterval(blinker);
+        //clearInterval(blinker);
         var leaderboardTable = document.getElementById("leaderboard");
         var sortedScores = data;
         var index = 0;
-        var newScoreAdded = false;
 
         for (var i = 0, row; row = leaderboardTable.rows[i]; i++) {
             var ending = "th";
@@ -225,10 +227,9 @@ function gameEnd() {
 
             // If player score is top ten, highlight & blink
             if (sortedScores[index].score == score && data[i].name == playerName) {
-                newScoreAdded = true;
                 row.style.color = "white";
 
-                // Make score blink for 20 seconds
+                // Make score blink for 15 seconds
                 var text = row;
                 var blinker = setInterval(function() {
                     text.style.opacity = (text.style.opacity == '0' ? '1' : '0');
@@ -236,7 +237,7 @@ function gameEnd() {
                 setTimeout(function() {
                     clearInterval(blinker);
                     text.style.opacity = "1";
-                  }, 20000);
+                  }, 15000);
 
                 // If new top score, play confetti and sfx
                 if (i === 0) {
