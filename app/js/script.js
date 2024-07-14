@@ -22,6 +22,7 @@ document.getElementById("submit").disabled = true;
 // Set focus to the input field when the page loads
 window.onload = () => {
     document.getElementById("playername").focus();
+    playerName = form.inputbox.value.replace(/[^a-zA-Z0-9\s-]/g, "").trim(); // Set player name, remove special characters
 };
 
 // Get faces from server
@@ -55,7 +56,6 @@ fetch("nicknames.json")
 
 // Initialize game with specified time limit, reset score, start with first face 
 function gameInit(form) {
-    playerName = form.inputbox.value.replace(/[^a-zA-Z0-9\s-]/g, "").trim(); // Set player name, remove special characters
     clearInterval(gameTimer);
     startTimer(15);
     document.getElementById("howToPlay").style.display = "none"; // Hide popup window
