@@ -216,11 +216,11 @@ function gameEnd() {
             }
             row.cells[0].textContent = i + 1 + ending.toUpperCase();
 
-            row.cells[1].textContent = data.scores[i].name.toUpperCase();
-            row.cells[2].textContent = data.scores[i].score;
+            row.cells[1].textContent = data[i].name.toUpperCase();
+            row.cells[2].textContent = data[i].score;
 
             // If player score is top ten, highlight & blink
-            if (sortedScores[index].score == score && data.scores[i].name == playerName) {
+            if (sortedScores[index].score == score && data[i].name == playerName) {
                 newScoreAdded = true;
                 row.style.color = "white";
 
