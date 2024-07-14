@@ -25,7 +25,7 @@ $currentScores = json_decode($scoresJSON, true);
 
 // $newEntry = array("name" => $name, "score" => $score);
 // $currentScores["scores"] = $newEntry;
-echo $currentScores['scores'];
+var_dump($currentScores['scores']);
 
 // Sort scores in descending order
 // usort($currentScores["scores"], function ($a, $b) {
