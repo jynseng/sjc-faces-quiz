@@ -40,6 +40,6 @@ if (file_put_contents($leaderboard, $newJSONData) === false) {
 }
 
 // Echo top 10 scores
-echo json_encode(array_slice($currentScores, 0, 9));
+echo json_encode(array_slice($currentScores["scores"], 0, 10));
 
 ?>

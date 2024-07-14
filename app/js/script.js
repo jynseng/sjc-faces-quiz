@@ -201,7 +201,7 @@ function gameEnd() {
         // Display top 10 score leaderboard
         clearInterval(blinker);
         var leaderboardTable = document.getElementById("leaderboard");
-        var sortedScores = data.scores;
+        var sortedScores = data;
         var index = 0;
         var newScoreAdded = false;
 
