@@ -63,7 +63,6 @@ fetch("nicknames.json")
 // Initialize game with specified time limit, reset score, start with first face 
 function gameInit() {
     clearInterval(gameTimer);
-    clearInterval(blinker);
     startTimer(gameLength);
     document.getElementById("howToPlay").style.display = "none"; // Hide popup window
     document.getElementById("submit").disabled = false;
@@ -207,7 +206,7 @@ function gameEnd() {
     })
     .then(data => {
         // Display top 10 score leaderboard
-        //clearInterval(blinker);
+        clearInterval(blinker);
         var leaderboardTable = document.getElementById("leaderboard");
         var sortedScores = data;
         var index = 0;
@@ -259,6 +258,14 @@ function gameEnd() {
         console.error('Fetch error:', error);
     })
 }
+
+// Register enter key as a click on submit button
+document.getElementById("enterName").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+      event.preventDefault(); // Prevent form submission
+      document.getElementById("submitName").click(); // Simulate a click on the submit button
+    }
+  });
 
 // Register enter key as a click on submit button
 document.getElementById("quizForm").addEventListener("keypress", function(event) {
