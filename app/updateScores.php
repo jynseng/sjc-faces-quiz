@@ -22,6 +22,7 @@ $score = $data["score"];
 // Read current scores.json file
 $scoresJSON = file_get_contents($leaderboard);
 $currentScores = json_decode($scoresJSON, true);
+addNewScore();
 
 // If new score doesn't already exist, add it
 function addNewScore() {
