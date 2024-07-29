@@ -1,14 +1,14 @@
 {
     "scores": [
-        {"name": "Leandro", "score": 1},
-        {"name": "Ian", "score": 2},
-        {"name": "Cesc", "score": 2},
-        {"name": "Granit", "score": 4},
-        {"name": "Empty", "score": 0},
-        {"name": "Empty", "score": 0},
-        {"name": "Empty", "score": 0},
-        {"name": "Empty", "score": 0},
-        {"name": "Empty", "score": 0},
-        {"name": "Empty", "score": 0}
+        {"name": "leandro", "score": 1},
+        {"name": "ian", "score": 2},
+        {"name": "cesc", "score": 2},
+        {"name": "granit", "score": 4},
+        {"name": "empty", "score": 0},
+        {"name": "empty", "score": 0},
+        {"name": "empty", "score": 0},
+        {"name": "empty", "score": 0},
+        {"name": "empty", "score": 0},
+        {"name": "empty", "score": 0}
     ]
 }

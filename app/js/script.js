@@ -27,7 +27,7 @@ window.onload = () => {
 };
 
 function setName(form) {
-    playerName = form.inputbox.value.replace(/[^a-zA-Z0-9\s-]/g, "").trim(); // Set player name, remove special characters
+    playerName = form.inputbox.value.replace(/[^a-zA-Z0-9\s-]/g, "").toLowerCase().trim(); // Set player name, remove special characters
     gameInit();
 }
 
@@ -221,7 +221,6 @@ function gameEnd() {
                 ending = "rd";
             }
             row.cells[0].textContent = i + 1 + ending.toUpperCase();
-
             row.cells[1].textContent = data[i].name.toUpperCase();
             row.cells[2].textContent = data[i].score;
 

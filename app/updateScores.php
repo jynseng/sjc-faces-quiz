@@ -23,8 +23,16 @@ $score = $data["score"];
 $scoresJSON = file_get_contents($leaderboard);
 $currentScores = json_decode($scoresJSON, true);
 
-$newEntry = array("name" => $name, "score" => $score);
-$currentScores["scores"][] = $newEntry;
+// If new score doesn't already exist, add it
+function addNewScore() {
+    if (array_key_exists($name, $currentScores["scores"])) {
+        if ($currentScores["scores"][$name]["score"] > $score) {
+            return;
+        }
+    }
+    $newEntry = array("name" => $name, "score" => $score);
+    $currentScores["scores"][] = $newEntry;
+}
 
 // Sort scores in descending order
 usort($currentScores["scores"], function ($a, $b) {
