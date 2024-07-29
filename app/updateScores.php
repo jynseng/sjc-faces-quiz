@@ -25,14 +25,18 @@ $currentScores = json_decode($scoresJSON, true);
 
 // If new score doesn't already exist, add it
 $addNewScore = true;
-if (array_key_exists($name, $currentScores["scores"])) {
+if (array_key_exists("'name:' " . $name, $currentScores["scores"])) {
+    echo("booya");
     if ($currentScores["scores"][$name]["score"] > $score) {
-        $addNewScore = false;
+        $addNewScore = false; // If new score is lower than current, don't add to leaderboard
+    } else {
+        // If new score is higher, replace current score
     }
-}
-if ($addNewScore) {
-    $newEntry = array("name" => $name, "score" => $score);
-    $currentScores["scores"][] = $newEntry;
+} else {
+    if ($addNewScore) {
+        $newEntry = array("name" => $name, "score" => $score);
+        $currentScores["scores"][] = $newEntry;
+    }
 }
 
 // Sort scores in descending order
