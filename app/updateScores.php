@@ -23,9 +23,11 @@ $score = $data["score"];
 $scoresJSON = file_get_contents($leaderboard);
 $currentScores = json_decode($scoresJSON, true);
 
+echo(array_keys($currentScores["scores"]));
+
 // If new score doesn't already exist, add it
 $addNewScore = true;
-if (array_key_exists("'name:' " . $name, $currentScores["scores"])) {
+if (array_key_exists("name: " . $name, $currentScores["scores"])) {
     echo("booya");
     if ($currentScores["scores"][$name]["score"] > $score) {
         $addNewScore = false; // If new score is lower than current, don't add to leaderboard
