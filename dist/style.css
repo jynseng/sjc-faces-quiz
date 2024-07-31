@@ -1,3 +1,11 @@
+@font-face {
+  font-family: 'super_peachregular';
+  src: url('https://srv1144-files.hstgr.io/ceab04c1023440d4/files/public_html/dist/super_peach-webfont.woff') format('woff2'),
+       url('https://srv1144-files.hstgr.io/ceab04c1023440d4/files/public_html/dist/super_peach-webfont.woff2') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
 html {
   font-size: 100%;
   box-sizing: border-box;
@@ -25,6 +33,7 @@ h1 {
   position: static;
   display: block;
   text-align: center;
+  font-family: 'super_peachregular';
 }
 
 .popup {
