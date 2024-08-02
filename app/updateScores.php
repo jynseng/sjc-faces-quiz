@@ -18,6 +18,7 @@ $data = json_decode($json, true);
 
 $name = $data["name"];
 $score = $data["score"];
+$time = $data["timestamp"];
 
 // Read current scores.json file
 $scoresJSON = file_get_contents($leaderboard);
@@ -36,7 +37,7 @@ foreach ($currentScores["scores"] as $key => $value) {
 }
 
 if ($addNewScore) {
-    $newEntry = array("name" => $name, "score" => $score);
+    $newEntry = array("name" => $name, "score" => $score, "timestamp" => $time);
     $currentScores["scores"][] = $newEntry;
 }
 

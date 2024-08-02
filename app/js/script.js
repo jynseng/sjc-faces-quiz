@@ -195,12 +195,11 @@ function gameEnd() {
     document.getElementById("submit").disabled = true;
     document.getElementById("skip").disabled = true;
     document.getElementById("textinput").disabled = true;
-    document.getElementById("gameoverWindow").style.display = "block";
 
     // Send name-score pair to server, returns updated leaderboard
     fetch('app/updateScores.php', {
         method: 'POST',
-        body: JSON.stringify({name: playerName, score: score})
+        body: JSON.stringify({name: playerName, score: score, timestamp: Date.now()})
     })
     .then(response => {
         return response.json();
@@ -211,6 +210,9 @@ function gameEnd() {
         var leaderboardTable = document.getElementById("leaderboard");
         var sortedScores = data;
         var index = 0;
+
+        console.log(Date.now());
+
 
         for (var i = 0, row; row = leaderboardTable.rows[i]; i++) {
             var ending = "th";
@@ -226,7 +228,7 @@ function gameEnd() {
             row.cells[2].textContent = data[i].score;
 
             // If player score is top ten, highlight & blink
-            if (sortedScores[index].score == score && data[i].name == playerName) {
+            if (sortedScores[index].score == score && data[i].name == playerName && data[i].timestamp == Date.now()) {
                 row.style.color = "white";
 
                 // Make score blink for 15 seconds
@@ -257,6 +259,8 @@ function gameEnd() {
     .catch(error => {
         console.error('Fetch error:', error);
     })
+
+    document.getElementById("gameoverWindow").style.display = "block"; // Show popup window
 }
 
 // Register enter key as a click on submit button

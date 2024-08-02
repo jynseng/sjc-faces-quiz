@@ -36,8 +36,8 @@ h1 {
 }
 
 .popup {
-  background-color: rgba(76, 255, 255, 0.96);
-  border-width: 1px;
+  background-color: rgba(150, 255, 255, 0.96);
+  border: 3px solid white;  
   position: fixed;
   min-width: 35%;
   text-align: center;
@@ -49,7 +49,7 @@ h1 {
   z-index: 99;
   border-radius: 6px;
   left: 50%;
-  top: 450px;
+  top: 470px;
   transform: translate(-50%, -50%);
 }
 
