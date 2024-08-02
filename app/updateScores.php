@@ -23,15 +23,12 @@ $score = $data["score"];
 $scoresJSON = file_get_contents($leaderboard);
 $currentScores = json_decode($scoresJSON);
 
-$addNewScore = true;
-
 // Loop through current scores and if new score doesn't already exist, add it
 foreach($currentScores["scores"] as $key => $value) {
     echo $key . " => " . $value . "<br>";
-    if ($value < $score) {
-        $addNewScore = true;
-        echo "add New score";
-    };
+    // if ($value < $score) {
+    //     echo "add New score";
+    // };
 }
 
 if (array_key_exists("name: " . $name, $currentScores["scores"])) {
