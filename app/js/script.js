@@ -195,11 +195,12 @@ function gameEnd() {
     document.getElementById("skip").disabled = true;
     document.getElementById("textinput").disabled = true;
     document.getElementById("finalScore").innerText = score;
+    currentTime = Date.now();
 
     // Send name-score pair to server, returns updated leaderboard
     fetch('app/updateScores.php', {
         method: 'POST',
-        body: JSON.stringify({name: playerName, score: score, timestamp: Date.now()})
+        body: JSON.stringify({name: playerName, score: score, timestamp: currentTime})
     })
     .then(response => {
         return response.json();
@@ -228,7 +229,7 @@ function gameEnd() {
 
             // If player score is top ten and new, highlight & blink 
             //&& Date.now() - data[i].timestamp < 3
-            if (sortedScores[index].score == score && data[i].name == playerName && Date.now() == data[i].timestamp) {
+            if (sortedScores[index].score == score && data[i].name == playerName && currentTime == data[index].timestamp) {
                 row.style.color = "white";
 
                 // Make score blink for 15 seconds
