@@ -201,7 +201,7 @@ function gameEnd() {
     // Send name-score pair to server, returns updated leaderboard
     fetch('app/updateScores.php', {
         method: 'POST',
-        body: JSON.stringify({name: playerName, score: score, timestamp: currentTime}),
+        body: JSON.stringify({name: playerName, score: score}),
     })
     .then(response => {
         return response.json();
