@@ -211,6 +211,8 @@ function gameEnd() {
         var sortedScores = data;
         var index = 0;
 
+        document.getElementById("gameoverWindow").style.display = "block"; // Show popup window
+
         for (var i = 0, row; row = leaderboardTable.rows[i]; i++) {
             var ending = "th";
             if (i === 0) {
@@ -257,7 +259,6 @@ function gameEnd() {
         console.error('Fetch error:', error);
     })
 
-    document.getElementById("gameoverWindow").style.display = "block"; // Show popup window
 
 }
 
