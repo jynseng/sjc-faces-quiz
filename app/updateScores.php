@@ -35,7 +35,7 @@ foreach ($currentScores["scores"] as $key => $value) {
         $addNewScore = true;
     }
 }
-var_dump($currentScores["scores"]);
+//var_dump($currentScores["scores"]);
 
 if ($addNewScore) {
     $newEntry = array("name" => $name, "score" => $score, "timestamp" => $time);
