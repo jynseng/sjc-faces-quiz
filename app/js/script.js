@@ -9,6 +9,7 @@ var answer = ""; // Name of current person in readable format
 var gameOver = false; // Has player gone through all available faces?
 const timer = document.getElementById("Timer");
 var gameLength = 10; // Time in seconds each round lasts
+var currentTime = Date.now();
 var gameTimer;
 var blinker; // Makes high score blink on leaderboard
 var confetti = false; // Has the confetti been animated already?
@@ -195,7 +196,6 @@ function gameEnd() {
     document.getElementById("skip").disabled = true;
     document.getElementById("textinput").disabled = true;
     document.getElementById("finalScore").innerText = score;
-    currentTime = Date.now();
 
     // Send name-score pair to server, returns updated leaderboard
     fetch('app/updateScores.php', {
