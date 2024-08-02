@@ -28,14 +28,18 @@ $currentScores = json_decode($scoresJSON, true);
 // Key is the index, values are arrays
 $addNewScore;
 foreach ($currentScores["scores"] as $key => $value) {
-    if ($value["name"] == $name && $value["score"] > $score) {
-        $addNewScore = false;
+    if ($value["name"] == $name) {
+        if ($value["score"] > $score) {
+            $addNewScore = false;
+        } else {
+            $value["score"] = $score;
+            $addNewScore = false;
+        }
         return;
     } else {
         $addNewScore = true;
     }
 }
-//var_dump($currentScores["scores"]);
 
 if ($addNewScore) {
     $newEntry = array("name" => $name, "score" => $score, "timestamp" => $time);
