@@ -14,7 +14,7 @@ if (!$postedData) {
     die("Error: No data provided");
 }
 $json = file_get_contents('php://input');
-$data = json_decode($json, true);
+$data = json_decode($json);
 
 $name = $data["name"];
 $score = $data["score"];
