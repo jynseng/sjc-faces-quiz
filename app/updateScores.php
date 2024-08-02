@@ -29,17 +29,13 @@ $addNewScore;
 foreach ($currentScores["scores"] as $key => $value) {
     if ($value["name"] == $name && $value["score"] > $score) {
         $addNewScore = false;
-        echo "Score not added";
         return;
     } else {
-        echo "New score added";
-        $newEntry = array("name" => $name, "score" => $score);
-        $currentScores["scores"][] = $newEntry;
         $addNewScore = true;
     }
 }
 
-if (addNewScore) {
+if ($addNewScore) {
     $newEntry = array("name" => $name, "score" => $score);
     $currentScores["scores"][] = $newEntry;
 }
