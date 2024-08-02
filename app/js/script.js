@@ -70,7 +70,6 @@ function gameInit() {
     document.getElementById("textinput").disabled = false;
     document.getElementById("textinput").value = "";
     document.getElementById("gameoverWindow").style.display = "none";
-    document.getElementById("gameoverWindow").innerHTML = "";
     document.getElementById("confettiCanvas").style.display = "none";
     faces_working = faces_all;
     gameOver = false;
@@ -195,7 +194,7 @@ function gameEnd() {
     document.getElementById("submit").disabled = true;
     document.getElementById("skip").disabled = true;
     document.getElementById("textinput").disabled = true;
-    document.getElementById("gameoverWindow").style.display = "block"; // Show popup window
+    document.getElementById("finalScore").innerText = score;
 
     // Send name-score pair to server, returns updated leaderboard
     fetch('app/updateScores.php', {
@@ -257,6 +256,9 @@ function gameEnd() {
     .catch(error => {
         console.error('Fetch error:', error);
     })
+
+    document.getElementById("gameoverWindow").style.display = "block"; // Show popup window
+
 }
 
 // Register enter key as a click on submit button
