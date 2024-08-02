@@ -9,7 +9,7 @@ var answer = ""; // Name of current person in readable format
 var gameOver = false; // Has player gone through all available faces?
 const timer = document.getElementById("Timer");
 var gameLength = 10; // Time in seconds each round lasts
-var currentTime = Date.now();
+var currentTime;
 var gameTimer;
 var blinker; // Makes high score blink on leaderboard
 var confetti = false; // Has the confetti been animated already?
@@ -65,6 +65,7 @@ fetch("nicknames.json")
 function gameInit() {
     clearInterval(gameTimer);
     startTimer(gameLength);
+    currentTime = Date.now();
     document.getElementById("howToPlay").style.display = "none"; // Hide popup window
     document.getElementById("submit").disabled = false;
     document.getElementById("skip").disabled = false;
