@@ -195,7 +195,7 @@ function gameEnd() {
     document.getElementById("skip").disabled = true;
     document.getElementById("textinput").disabled = true;
     document.getElementById("finalScore").innerText = score;
-    currentTime = Date.now();
+    //currentTime = Date.now();
 
     // Send name-score pair to server, returns updated leaderboard
     fetch('app/updateScores.php', {
@@ -228,7 +228,6 @@ function gameEnd() {
             row.cells[2].textContent = data[i].score;
 
             // If player score is top ten and new, highlight & blink 
-            //&& Date.now() - data[i].timestamp < 3
             if (sortedScores[index].score == score && data[i].name == playerName) {
                 row.style.color = "white";
 
