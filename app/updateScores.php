@@ -25,14 +25,23 @@ $currentScores = json_decode($scoresJSON, true);
 
 // Loop through current scores and if new score doesn't already exist, add it
 // Key is the index, values are arrays
+addNewScore;
 foreach ($currentScores["scores"] as $key => $value) {
     if ($value["name"] == $name && $value["score"] > $score) {
+        addNewScore = false;
         echo "Score not added";
+        return;
     } else {
         echo "New score added";
         $newEntry = array("name" => $name, "score" => $score);
         $currentScores["scores"][] = $newEntry;
+        addNewScore = true;
     }
+}
+
+if (addNewScore) {
+    $newEntry = array("name" => $name, "score" => $score);
+    $currentScores["scores"][] = $newEntry;
 }
 
 // Sort scores in descending order
@@ -49,6 +58,6 @@ if (file_put_contents($leaderboard, $newJSONData) === false) {
 }
 
 // Echo top 10 scores
-//echo json_encode(array_slice($currentScores["scores"], 0, 10));
+echo json_encode(array_slice($currentScores["scores"], 0, 10));
 
 ?>
