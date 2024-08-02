@@ -195,7 +195,7 @@ function gameEnd() {
     document.getElementById("skip").disabled = true;
     document.getElementById("textinput").disabled = true;
     document.getElementById("finalScore").innerText = score;
-    //currentTime = Date.now();
+    currentTime = Date.now();
 
     // Send name-score pair to server, returns updated leaderboard
     fetch('app/updateScores.php', {
