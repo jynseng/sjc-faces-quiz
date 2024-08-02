@@ -46,8 +46,6 @@ if ($addNewScore) {
     $currentScores["scores"][] = $newEntry;
 }
 
-var_dump($currentScores);
-
 // Sort scores in descending order
 usort($currentScores["scores"], function ($a, $b) {
     if ($a["score"] == $b["score"]) return 0;
