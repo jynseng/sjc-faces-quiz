@@ -24,28 +24,12 @@ $scoresJSON = file_get_contents($leaderboard);
 $currentScores = json_decode($scoresJSON, true);
 
 // Loop through current scores and if new score doesn't already exist, add it
+// Key is the index, values are arrays
 foreach ($currentScores["scores"] as $key => $value) {
-    echo $key;
-    var_dump($value);
-    if ($value < $score) {
-        echo "add New score";
-    };
-}
-
-for ($x = 0; $x <= $currentScores["scores"].length; $x++) {
-    echo $x . $currentScores["scores"][$x];
-  }
-  
-
-if (array_key_exists("name: " . $name, $currentScores["scores"])) {
-    echo("booya");
-    if ($currentScores["scores"][$name]["score"] > $score) {
-        $addNewScore = false; // If new score is lower than current, don't add to leaderboard
+    if ($value["name"] == $name && $value["score"] > $score) {
+        echo "Score not added";
     } else {
-        // If new score is higher, replace current score
-    }
-} else {
-    if ($addNewScore) {
+        echo "New score added";
         $newEntry = array("name" => $name, "score" => $score);
         $currentScores["scores"][] = $newEntry;
     }
