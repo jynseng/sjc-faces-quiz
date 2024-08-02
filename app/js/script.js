@@ -211,9 +211,6 @@ function gameEnd() {
         var sortedScores = data;
         var index = 0;
 
-        console.log(Date.now());
-
-
         for (var i = 0, row; row = leaderboardTable.rows[i]; i++) {
             var ending = "th";
             if (i === 0) {
