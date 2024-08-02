@@ -8,7 +8,7 @@ var skips = 0; // Number of faces skipped
 var answer = ""; // Name of current person in readable format
 var gameOver = false; // Has player gone through all available faces?
 const timer = document.getElementById("Timer");
-var gameLength = 10; // Time in seconds each round lasts
+var gameLength = 60; // Time in seconds each round lasts
 var gameTimer;
 var blinker; // Makes high score blink on leaderboard
 var confetti = false; // Has the confetti been animated already?
