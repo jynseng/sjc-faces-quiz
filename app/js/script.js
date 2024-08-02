@@ -229,7 +229,7 @@ function gameEnd() {
 
             // If player score is top ten and new, highlight & blink 
             //&& Date.now() - data[i].timestamp < 3
-            if (sortedScores[index].score == score && data[i].name == playerName && currentTime == data[index].timestamp) {
+            if (sortedScores[index].score == score && data[i].name == playerName) {
                 row.style.color = "white";
 
                 // Make score blink for 15 seconds
