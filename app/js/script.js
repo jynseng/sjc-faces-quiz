@@ -70,6 +70,7 @@ function gameInit() {
     document.getElementById("textinput").disabled = false;
     document.getElementById("textinput").value = "";
     document.getElementById("gameoverWindow").style.display = "none";
+    document.getElementById("gameoverWindow").innerHTML = "";
     document.getElementById("confettiCanvas").style.display = "none";
     faces_working = faces_all;
     gameOver = false;
