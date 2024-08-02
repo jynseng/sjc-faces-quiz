@@ -227,8 +227,8 @@ function gameEnd() {
             row.cells[1].textContent = data[i].name.toUpperCase();
             row.cells[2].textContent = data[i].score;
 
-            // If player score is top ten, highlight & blink
-            if (sortedScores[index].score == score && data[i].name == playerName && data[i].timestamp == Date.now()) {
+            // If player score is top ten and new, highlight & blink
+            if (sortedScores[index].score == score && data[i].name == playerName && (Date.now() - data[i].timestamp < 3)) {
                 row.style.color = "white";
 
                 // Make score blink for 15 seconds
