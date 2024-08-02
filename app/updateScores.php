@@ -29,12 +29,10 @@ $currentScores = json_decode($scoresJSON, true);
 $addNewScore;
 foreach ($currentScores["scores"] as $key => $value) {
     if ($value["name"] == $name) {
-        if ($value["score"] > $score) {
-            $addNewScore = false;
-        } else {
+        if ($value["score"] < $score) {
             $value["score"] = $score;
-            $addNewScore = false;
         }
+        $addNewScore = false;
         return;
     } else {
         $addNewScore = true;
