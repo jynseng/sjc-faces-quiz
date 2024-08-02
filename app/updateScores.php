@@ -21,16 +21,21 @@ $score = $data["score"];
 
 // Read current scores.json file
 $scoresJSON = file_get_contents($leaderboard);
-$currentScores = json_decode($scoresJSON);
+$currentScores = json_decode($scoresJSON, true);
 
 // Loop through current scores and if new score doesn't already exist, add it
-foreach($currentScores["scores"] as $key => $value) {
-    echo "you made it!";
-    // echo $key . " => " . $value . "<br>";
-    // if ($value < $score) {
-    //     echo "add New score";
-    // };
-}
+// foreach ($currentScores["scores"] as $key => $value) {
+//     echo "you made it!";
+//     // echo $key . " => " . $value . "<br>";
+//     // if ($value < $score) {
+//     //     echo "add New score";
+//     // };
+// }
+
+for ($x = 0; $x <= $currentScores["scores"].length; $x++) {
+    echo $x . $currentScores["scores"][$x];
+  }
+  
 
 if (array_key_exists("name: " . $name, $currentScores["scores"])) {
     echo("booya");
@@ -60,6 +65,6 @@ if (file_put_contents($leaderboard, $newJSONData) === false) {
 }
 
 // Echo top 10 scores
-echo json_encode(array_slice($currentScores["scores"], 0, 10));
+//echo json_encode(array_slice($currentScores["scores"], 0, 10));
 
 ?>
