@@ -38,7 +38,7 @@ foreach ($currentScores["scores"] as $key => $value) {
     // } else {
     //     $addNewScore = true;
     // }
-    echo $value[name];
+    echo $value['name'];
 }
 
 if ($addNewScore) {
