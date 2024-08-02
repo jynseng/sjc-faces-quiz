@@ -25,8 +25,8 @@ $currentScores = json_decode($scoresJSON, true);
 
 // Loop through current scores and if new score doesn't already exist, add it
 foreach ($currentScores["scores"] as $key => $value) {
-    echo "you made it!";
-    echo $key . " => " . $value . "<br>";
+    echo $key["name"];
+    echo $value["score"];
     if ($value < $score) {
         echo "add New score";
     };

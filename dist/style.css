@@ -152,3 +152,7 @@ table {
   z-index: 99;
   pointer-events: none;
 }
+
+#submitName {
+  margin-top: 10px;
+}
