@@ -260,8 +260,6 @@ function gameEnd() {
     .catch(error => {
         console.error('Fetch error:', error);
     })
-
-
 }
 
 // Register enter key as a click on submit button
