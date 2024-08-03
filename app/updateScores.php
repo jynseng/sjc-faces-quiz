@@ -58,7 +58,7 @@ usort($currentScores["scores"], function ($a, $b) {
 });
 
 // Save updated list back to file
-$newJSONData = json_encode($currentScores["scores"], JSON_PRETTY_PRINT);
+$newJSONData = json_encode($currentScores, JSON_PRETTY_PRINT);
 if (file_put_contents($leaderboard, $newJSONData) === false) {
     throw new Exception("Failed to save data.");
 }
