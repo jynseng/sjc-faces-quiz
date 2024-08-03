@@ -51,19 +51,19 @@ if ($addNewScore) {
 }
 
 // Sort scores in descending order
-usort($newScores, function ($a, $b) {
+usort($currentScores["scores"], function ($a, $b) {
     if ($a["score"] == $b["score"]) return 0;
     else if ($a["score"] < $b["score"]) return 1;
     else return -1;
 });
 
 // Save updated list back to file
-$newJSONData = json_encode($newScores, JSON_PRETTY_PRINT);
+$newJSONData = json_encode($currentScores["scores"], JSON_PRETTY_PRINT);
 if (file_put_contents($leaderboard, $newJSONData) === false) {
     throw new Exception("Failed to save data.");
 }
 
 // Echo top 10 scores
-echo json_encode(array_slice($newScores, 0, 10));
+echo json_encode(array_slice($currentScores["scores"], 0, 10));
 
 ?>
