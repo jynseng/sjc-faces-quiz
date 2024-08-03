@@ -1,9 +1,9 @@
 {
     "scores": [
         {"name": "Pedro", "score": 36, "timestamp": 0},
-        {"name": "empty", "score": 0, "timestamp": 0},
-        {"name": "empty", "score": 0, "timestamp": 0},
-        {"name": "empty", "score": 0, "timestamp": 0},
+        {"name": "Nat", "score": 15, "timestamp": 0},
+        {"name": "TallDan", "score": 42, "timestamp": 0},
+        {"name": "Andrew", "score": 11, "timestamp": 0},
         {"name": "empty", "score": 0, "timestamp": 0},
         {"name": "empty", "score": 0, "timestamp": 0},
         {"name": "empty", "score": 0, "timestamp": 0},
