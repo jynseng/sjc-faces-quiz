@@ -24,7 +24,7 @@ $time = $data["timestamp"];
 $scoresJSON = file_get_contents($leaderboard);
 $currentScores = json_decode($scoresJSON, true);
 
-var_dump($currentScores);
+//var_dump($currentScores);
 // Loop through current scores and if new score doesn't already exist, add it
 // Key is the index, values are arrays
 $addNewScore = true;
