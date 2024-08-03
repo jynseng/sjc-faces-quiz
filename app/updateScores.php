@@ -26,40 +26,44 @@ $currentScores = json_decode($scoresJSON, true);
 
 // Loop through current scores and if new score doesn't already exist, add it
 // Key is the index, values are arrays
+$newScores = [];
+
 $addNewScore = true;
 foreach ($currentScores["scores"] as $key => $value) {
     if ($value["name"] == $name) {
-         if ($value["score"] < $score) {
-            unset($currentScores["scores"][$value]);
-            $addNewScore = true;
+        if ($value["score"] < $score) {
+        // do nothing
         } else {
-            $addNewScore = false;
+            $newEntry = array("name" => $value["name"], "score" => $value["score"], "timestamp" => $value["timestamp"]);
+            $newScores[] = $newEntry;
         }
-        return;
     } else {
-        $addNewScore = true;
+        if ($addNewScore) {
+            $newEntry = array("name" => $name, "score" => $score, "timestamp" => $time);
+            $newScores[] = $newEntry;
+        }
     }
 }
 
-if ($addNewScore) {
-    $newEntry = array("name" => $name, "score" => $score, "timestamp" => $time);
-    $currentScores["scores"][] = $newEntry;
-}
+// if ($addNewScore) {
+//     $newEntry = array("name" => $name, "score" => $score, "timestamp" => $time);
+//     $currentScores["scores"][] = $newEntry;
+// }
 
 // Sort scores in descending order
-usort($currentScores["scores"], function ($a, $b) {
+usort($newScores, function ($a, $b) {
     if ($a["score"] == $b["score"]) return 0;
     else if ($a["score"] < $b["score"]) return 1;
     else return -1;
 });
 
 // Save updated list back to file
-$newJSONData = json_encode($currentScores, JSON_PRETTY_PRINT);
+$newJSONData = json_encode($newScores, JSON_PRETTY_PRINT);
 if (file_put_contents($leaderboard, $newJSONData) === false) {
     throw new Exception("Failed to save data.");
 }
 
 // Echo top 10 scores
-echo json_encode(array_slice($currentScores["scores"], 0, 10));
+echo json_encode(array_slice($newScores, 0, 10));
 
 ?>
