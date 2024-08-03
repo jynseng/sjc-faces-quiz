@@ -24,21 +24,20 @@ $time = $data["timestamp"];
 $scoresJSON = file_get_contents($leaderboard);
 $currentScores = json_decode($scoresJSON, true);
 
-//var_dump($currentScores);
 // Loop through current scores and if new score doesn't already exist, add it
 // Key is the index, values are arrays
 $addNewScore = true;
 foreach ($currentScores["scores"] as $key => $value) {
-    if ($value["name"] == $name) {
-        if ($value["score"] < $score) {
-            //$value["score"] = $score;
-            //$value["timestamp"] = $time;
-        }
-        //$addNewScore = false;
-        return;
-    } else {
-        $addNewScore = true;
-    }
+    // if ($value["name"] == $name) {
+    //     if ($value["score"] < $score) {
+    //         //$value["score"] = $score;
+    //         //$value["timestamp"] = $time;
+    //     }
+    //     //$addNewScore = false;
+    //     return;
+    // } else {
+    //     $addNewScore = true;
+    // }
 }
 
 if ($addNewScore) {
