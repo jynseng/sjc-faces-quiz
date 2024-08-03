@@ -29,26 +29,26 @@ $currentScores = json_decode($scoresJSON, true);
 $newScores = [];
 
 $addNewScore = true;
-foreach ($currentScores["scores"] as $key => $value) {
-    if ($value["name"] == $name) {
-        if ($value["score"] < $score) {
-        // do nothing
-        } else {
-            $newEntry = array("name" => $value["name"], "score" => $value["score"], "timestamp" => $value["timestamp"]);
-            $newScores[] = $newEntry;
-        }
-    } else {
-        if ($addNewScore) {
-            $newEntry = array("name" => $name, "score" => $score, "timestamp" => $time);
-            $newScores[] = $newEntry;
-        }
-    }
-}
-
-// if ($addNewScore) {
-//     $newEntry = array("name" => $name, "score" => $score, "timestamp" => $time);
-//     $currentScores["scores"][] = $newEntry;
+// foreach ($currentScores["scores"] as $key => $value) {
+//     if ($value["name"] == $name) {
+//         if ($value["score"] < $score) {
+//         // do nothing
+//         } else {
+//             $newEntry = array("name" => $value["name"], "score" => $value["score"], "timestamp" => $value["timestamp"]);
+//             $newScores[] = $newEntry;
+//         }
+//     } else {
+//         if ($addNewScore) {
+//             $newEntry = array("name" => $name, "score" => $score, "timestamp" => $time);
+//             $newScores[] = $newEntry;
+//         }
+//     }
 // }
+
+if ($addNewScore) {
+    $newEntry = array("name" => $name, "score" => $score, "timestamp" => $time);
+    $currentScores["scores"][] = $newEntry;
+}
 
 // Sort scores in descending order
 usort($newScores, function ($a, $b) {
