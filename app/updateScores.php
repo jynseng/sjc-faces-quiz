@@ -30,10 +30,11 @@ $addNewScore = true;
 foreach ($currentScores["scores"] as $key => $value) {
     if ($value["name"] == $name) {
          if ($value["score"] < $score) {
-            unset($currentScores["scores"][$key]);
+            unset($currentScores["scores"][$value]);
             $addNewScore = true;
-         }
-        //$addNewScore = false;
+        } else {
+            $addNewScore = false;
+        }
         return;
     } else {
         $addNewScore = true;
