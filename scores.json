@@ -1,8 +1,8 @@
 {
     "scores": [
         {"name": "daniel", "score": 2, "timestamp": 0},
-        {"name": "ian", "score": 2, "timestamp": 0},
-        {"name": "cesc", "score": 2, "timestamp": 0},
+        {"name": "empty", "score": 0, "timestamp": 0},
+        {"name": "empty", "score": 0, "timestamp": 0},
         {"name": "empty", "score": 0, "timestamp": 0},
         {"name": "empty", "score": 0, "timestamp": 0},
         {"name": "empty", "score": 0, "timestamp": 0},
