@@ -8,15 +8,15 @@ var skips = 0; // Number of faces skipped
 var answer = ""; // Name of current person in readable format
 var gameOver = false; // Has player gone through all available faces?
 const timer = document.getElementById("Timer");
-var gameLength = 60; // Time in seconds each round lasts
+var gameLength = 10; // Time in seconds each round lasts
 var currentTime;
 var gameTimer;
 var blinker; // Makes high score blink on leaderboard
 var confetti = false; // Has the confetti been animated already?
-var ding1 = new Audio("/assets/ESM_Correct_Answer_Bling_3_Sound_FX_Arcade_Casino_Kids_Mobile_App_Positive_Achievement_Win.wav");
-var ding2 = new Audio("/assets/ESM_Correct_Answer_Bling_3_Sound_FX_Arcade_Casino_Kids_Mobile_App_Positive_Achievement_Win.wav");
-var newHighScoreSFX = new Audio("/assets/ESM_Positive_Correct_Bling_v3_Sound_FX_Arcade_Casino_Kids_Mobile_App.wav");
-var newRecordSFX = new Audio("/assets/ESM_Casino_Win_Pattern_8_Sound_FX_Arcade_Kids_Mobile_App.wav");
+var ding1 = new Audio("assets/ESM_Correct_Answer_Bling_3_Sound_FX_Arcade_Casino_Kids_Mobile_App_Positive_Achievement_Win.wav");
+var ding2 = new Audio("assets/ESM_Correct_Answer_Bling_3_Sound_FX_Arcade_Casino_Kids_Mobile_App_Positive_Achievement_Win.wav");
+var newHighScoreSFX = new Audio("assets/ESM_Positive_Correct_Bling_v3_Sound_FX_Arcade_Casino_Kids_Mobile_App.wav");
+var newRecordSFX = new Audio("assets/ESM_Casino_Win_Pattern_8_Sound_FX_Arcade_Kids_Mobile_App.wav");
 ding1.volume = 0.7;
 ding2.volume = 0.7;
 newHighScoreSFX.volume = 0.8;
@@ -33,7 +33,7 @@ function setName(form) {
 }
 
 // Get faces from server
-fetch('app/data.php?' + new URLSearchParams({set: 'all'}), {
+fetch('server/data.php?' + new URLSearchParams({set: 'all'}), {
     method: 'GET',
 })
     .then(response => {
@@ -50,7 +50,7 @@ fetch('app/data.php?' + new URLSearchParams({set: 'all'}), {
     });
 
 // Get list of nicknames
-fetch("nicknames.json")
+fetch("server/nicknames.json")
     .then(response => {
         return response.text();
     })
@@ -145,6 +145,8 @@ function checkAnswer(form) {
     var input = form.inputbox.value.replace(/[^a-zA-Z0-9\s-]/g, "").toLowerCase().trim().split(" "); // Remove special characters, converter to lower
     var correct = answer.toLowerCase().replace(/'/g, "").split(" ");
     var nicknameKeys = Object.keys(nicknames);
+    console.log("Entered: " + input);
+    console.log("Answer: " + correct);
 
     // Check if first name matches, if yes then check last name in input if there is one
     if (input[0] === correct[0] || (nicknameKeys.includes(answer) && nicknames[answer] === input[0])) {
@@ -198,7 +200,7 @@ function gameEnd() {
     document.getElementById("finalScore").innerText = score;
 
     // Send name-score pair to server, returns updated leaderboard
-    fetch('app/updateScores.php', {
+    fetch('server/updateScores.php', {
         method: 'POST',
         body: JSON.stringify({name: playerName, score: score, timestamp: currentTime}),
     })
