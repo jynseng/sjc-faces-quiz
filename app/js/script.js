@@ -144,7 +144,6 @@ function updateTimer(timeRemaining) {
 function checkAnswer(form) {
     var input = form.inputbox.value.replace(/[^a-zA-Z0-9\s-]/g, "").toLowerCase().trim().split(" "); // Remove special characters, converter to lower
     var correct = answer.toLowerCase().replace(/'/g, "").split(" ");
-
     var nicknameKeys = Object.keys(nicknames);
 
     // Check if first name matches, if yes then check last name in input if there is one

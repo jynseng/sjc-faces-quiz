@@ -24,26 +24,23 @@ $time = $data["timestamp"];
 $scoresJSON = file_get_contents($leaderboard);
 $currentScores = json_decode($scoresJSON, true);
 
-// Loop through current scores and if new score doesn't already exist, add it
-// Key is the index, values are arrays
-//$newScores = [];
-
+// Loop through current scores. If player exists, check if new score is higher. 
+// If player isn't on leaderboard, add score.
 $addNewScore = true;
-// foreach ($currentScores["scores"] as $key => $value) {
-//     if ($value["name"] == $name) {
-//         if ($value["score"] < $score) {
-//         // do nothing
-//         } else {
-//             $newEntry = array("name" => $value["name"], "score" => $value["score"], "timestamp" => $value["timestamp"]);
-//             $newScores[] = $newEntry;
-//         }
-//     } else {
-//         if ($addNewScore) {
-//             $newEntry = array("name" => $name, "score" => $score, "timestamp" => $time);
-//             $newScores[] = $newEntry;
-//         }
-//     }
-// }
+if ($score > 0) { // If player score is 0, don't bother checking or adding
+    foreach ($currentScores["scores"] as $entry) {
+        if ($entry["name"] === $name) {
+            if ($entry["score"] < $score) {
+                unset($currentScores["scores"][$entry]);
+            } else {
+                $addNewScore = false; // If new score isn't higher, don't add it to leaderboard
+            }
+            return;
+        }
+    }
+} else {
+    $addNewScore = false;
+}
 
 if ($addNewScore) {
     $newEntry = array("name" => $name, "score" => $score, "timestamp" => $time);
