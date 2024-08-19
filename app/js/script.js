@@ -156,9 +156,13 @@ function checkAnswer(form) {
         ding1.play();
         flashGreen();
 
-        // Show "correct" text
+        // Check last name
         if (input.length > 1 && input[1] === correct[1]) {
             score++;
+            // Extra point for long last names
+            if (correct[1].includes("-")) {
+                score++;
+            }
             setTimeout(function() {
                 ding2.play();}, 130);
         } 
