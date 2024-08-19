@@ -159,8 +159,8 @@ function checkAnswer(form) {
         // Check last name
         if (input.length > 1 && input[1] === correct[1]) {
             score++;
-            // Extra point for long last names
-            if (correct[1].includes("-")) {
+            // Extra point for last names with hyphen
+            if (correct[1].includes('-')) {
                 score++;
             }
             setTimeout(function() {
