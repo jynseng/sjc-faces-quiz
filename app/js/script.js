@@ -158,7 +158,7 @@ function checkAnswer(form) {
         flashGreen();
 
         // Check last name
-        if (input.length > 1 && input[1].includes(input[1])) {
+        if (input.length > 1 && input[1].includes(correct[1])) {
             score++;
             // Extra point for last names with hyphen
             if (correct[1].includes('-')) {
