@@ -243,6 +243,10 @@ function gameEnd() {
             row.cells[1].textContent = data[i].name.toUpperCase();
             row.cells[2].textContent = data[i].score;
 
+            if (playerName === "talldan") {
+                alert("Congrats on setting the new high score! You have reached peak human performance. YOU ARE BRAT");
+            }
+
             // If player score is top ten and new, highlight & blink 
             // && data[i].timestamp == currentTime
             if (sortedScores[index].score == score && data[i].name == playerName && data[i].timestamp == currentTime) {
@@ -263,6 +267,7 @@ function gameEnd() {
                     newRecordSFX.play();
                     document.getElementById("confettiCanvas").style.display = "block";
                     if (!confetti) { animate(); } // Play confetti visual effect
+                    alert("Congrats on setting the new high score! You have reached peak human performance. YOU ARE BRAT");
                 } else {
                     newHighScoreSFX.play();
                 }
