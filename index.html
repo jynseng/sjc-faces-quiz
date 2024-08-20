@@ -89,7 +89,7 @@
                 <p id="nameOverlay">First Last</p>
                 <div id="ImageContainer"><div class="image" id="imageElement" unselectable="on"></div></div>
                 <form id="quizForm">
-                    <input type="text" id="textinput" name="inputbox" placeholder="Who is this?" autocomplete="off">
+                    <input type="text" id="textinput" name="inputbox" pattern="[A-Za-z\s]+" placeholder="Who is this?" autocomplete="off">
                     <input type="button" id="submit" onclick="checkAnswer(this.form)" value=">">
                 </form>
                 <button onclick="loadNewFace()" id="skip">Skip</button>
