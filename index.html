@@ -89,7 +89,7 @@
                 <p id="nameOverlay">First Last</p>
                 <div id="ImageContainer"><div class="image" id="imageElement" unselectable="on"></div></div>
                 <form id="quizForm">
-                    <input type="text" id="textinput" name="inputbox" pattern="[A-Za-z\s]+" placeholder="Who is this?" autocomplete="off">
+                    <input type="text" id="textinput" name="inputbox" onkeypress="preventInvalidInput(event)" placeholder="Who is this?" autocomplete="off">
                     <input type="button" id="submit" onclick="checkAnswer(this.form)" value=">">
                 </form>
                 <button onclick="loadNewFace()" id="skip">Skip</button>
@@ -99,6 +99,6 @@
         <canvas id="confettiCanvas"></canvas>
     </body>
     <script src="app/js/confetti.js"></script>
-    <script src="app/js/script.js?=ver1.48"></script>
+    <script src="app/js/script.js?=ver1.49"></script>
     <script id="nicknamesjson" src="nicknames.json" type="application/json"></script>
 </html>

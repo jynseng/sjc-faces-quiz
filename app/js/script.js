@@ -288,3 +288,14 @@ document.getElementById("quizForm").addEventListener("keypress", function(event)
 document.getElementById("imageElement").addEventListener('contextmenu', function(event) {
     event.preventDefault();
   });
+
+function preventInvalidInput(event) {
+    const charCode = event.which || event.keyCode;
+    const charStr = String.fromCharCode(charCode);
+    const regex = /^[a-zA-Z\s]*$/; // Only letters and space allowed
+
+    // If the character doesn't match the allowed pattern, prevent its input
+    if (!regex.test(charStr)) {
+        event.preventDefault();
+    }
+}
