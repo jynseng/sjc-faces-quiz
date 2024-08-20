@@ -146,8 +146,10 @@ function checkAnswer(form) {
     var input = form.inputbox.value.replace(/[^a-zA-Z0-9\s-]/g, "").toLowerCase().trim().split(" "); // Remove special characters, converter to lower
     var correct = answer.toLowerCase().replace(/'/g, "").split(" ");
     var nicknameKeys = Object.keys(nicknames);
-    console.log("Entered: " + input);
-    console.log("Answer: " + correct);
+
+    if (input.length == 0) {
+        skips++;
+    }
 
     // Check if first name matches, if yes then check last name in input if there is one
     if (input[0].includes(correct[0]) || (nicknameKeys.includes(answer) && nicknames[answer] === input[0])) {
@@ -170,6 +172,9 @@ function checkAnswer(form) {
     } else {
         wrong++;
     }
+
+    console.log("Entered: " + input);
+    console.log("Answer: " + correct + " (Running score: " + score + ")");
 
     // Update the score
     var scoreCard = document.getElementById("score");
@@ -203,6 +208,8 @@ function gameEnd() {
     document.getElementById("skip").disabled = true;
     document.getElementById("textinput").disabled = true;
     document.getElementById("finalScore").innerText = score;
+    console.log("Skips: " + skips);
+    console.log("Errors: " + wrong);
 
     // Send name-score pair to server, returns updated leaderboard
     fetch('server/updateScores.php', {
