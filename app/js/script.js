@@ -292,7 +292,7 @@ document.getElementById("imageElement").addEventListener('contextmenu', function
 function preventInvalidInput(event) {
     const charCode = event.which || event.keyCode;
     const charStr = String.fromCharCode(charCode);
-    const regex = /^[a-zA-Z\s]*$/; // Only letters and space allowed
+    const regex = /^[a-zA-Z\s\-]*$/; // Only letters and space allowed
 
     // If the character doesn't match the allowed pattern, prevent its input
     if (!regex.test(charStr)) {
