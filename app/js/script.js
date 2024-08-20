@@ -25,6 +25,7 @@ document.getElementById("submit").disabled = true;
 // Set focus to the input field when the page loads
 window.onload = () => {
     document.getElementById("playername").focus();
+    document.getElementById('submitName').disabled = true;
 };
 
 function setName(form) {
