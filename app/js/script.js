@@ -154,7 +154,7 @@ function checkAnswer(form) {
     }
 
     // Check if first name matches, if yes then check last name in input if there is one
-    if (input[0].includes(correct[0]) || (nicknameKeys.includes(answer) && nicknames[answer] === input[0])) {
+    if (input[0] === correct[0] || (nicknameKeys.includes(answer) && nicknames[answer] === input[0])) {
         score++;
 
         // Play correct "ding" sfx
@@ -162,7 +162,7 @@ function checkAnswer(form) {
         flashGreen();
 
         // Check last name
-        if (input.length > 1 && input[1].includes(correct[1])) {
+        if (input.length > 1 && input[1] === correct[1]) {
             score++;
             // Extra point for last names with hyphen
             if (correct[1].includes('-')) {
