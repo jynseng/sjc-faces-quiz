@@ -50,10 +50,16 @@ const scoreManager = (function() {
         return score;
     }
 
+    function resetScore() {
+        score = 0;
+        return score;
+    }
+
     // Expose the functions that interact with score
     return {
         getScore: getScore,
-        incrementScore: incrementScore
+        incrementScore: incrementScore,
+        resetScore: resetScore
     };
 })();
 
@@ -244,6 +250,8 @@ function gameEnd() {
         return response.json();
     })
     .then(data => {
+        scoreManager.resetScore();
+
         // Display top 10 score leaderboard
         clearInterval(blinker);
         var leaderboardTable = document.getElementById("leaderboard");
