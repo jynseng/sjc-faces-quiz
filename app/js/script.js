@@ -3,7 +3,6 @@
     var faces_working = [];
     var nicknames;
     var playerName = "";
-    // var score = 0; // Current score: +1 for first name, +2 for first & last
     var wrong = 0; // Number of wrong answers
     var skips = 0; // Number of faces skipped
     var answer = ""; // Name of current person in readable format
@@ -105,7 +104,7 @@
         document.getElementById("textinput").value = "";
         document.getElementById("gameoverWindow").style.display = "none";
         document.getElementById("confettiCanvas").style.display = "none";
-        faces_working = faces_all;
+        faces_working = JSON.parse(JSON.stringify(faces_all));
         gameOver = false;
         score = 0;
         wrong = 0;
@@ -149,7 +148,7 @@
 
         gameTimer = setInterval(function() {
             if (timeRemaining <= 0 || gameOver) {
-                clearInterval(gameTimer);
+                //clearInterval(gameTimer);
                 gameEnd();
                 timer.innerHTML = "00:00";
                 return;
@@ -170,6 +169,8 @@
             formattedMinutes + ":" + formattedSeconds;
             
             timer.innerHTML = formattedMinutes + ":" + formattedSeconds;
+
+            console.log("Time Remaining: " + timeRemaining);
     }
 
     // Check if user's input is correct or not
