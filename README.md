@@ -2,6 +2,7 @@ Welcome to the SJC Faces Game! This game is live at www.sjcfacesgame.com.
 
 Changelog:
 
+08/22/24 Closed copy-paste loophole and prevented inspector console cheating. New photos added. Fixed game ending early bug.
 08/20/24 Text input only accepts letters and hyphens.
 
 
@@ -21,4 +22,4 @@ Planned Features:
 
 
 
-Made with ❤️ by Daniel Kim
+Dank & Pedro
