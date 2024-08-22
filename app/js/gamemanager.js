@@ -8,7 +8,7 @@
     var answer = ""; // Name of current person in readable format
     var gameOver = false; // Has player gone through all available faces?
     const timer = document.getElementById("Timer");
-    const gameLength = 60; // Time in seconds each round lasts
+    const gameLength = 10; // Time in seconds each round lasts
     var currentTime;
     var gameTimer;
     var blinker; // Makes high score blink on leaderboard
@@ -107,21 +107,18 @@
         document.getElementById("confettiCanvas").style.display = "none";
         faces_working = JSON.parse(JSON.stringify(faces_all));
         gameOver = false;
-        score = 0;
         wrong = 0;
+        skips = 0;
         document.getElementById("score").innerText = scoreManager.getScore();
         loadNewFace();
         document.getElementById("textinput").focus();
-        // If playerName !== "Daniel", play Jeopardy music
     }
 
     // Choose a random person from the working set and load the image into the image container
     function loadNewFace() {
-        // If working faces array is empty, end the game.
+        // If working faces array is empty, recycle the set.
         if (Object.keys(faces_working).length === 0) {
-            gameOver = true;
-            gameEnd();
-            return;
+            faces_working = JSON.parse(JSON.stringify(faces_all));
         }
 
         // Randomly choose face from working faces array
@@ -170,8 +167,6 @@
             formattedMinutes + ":" + formattedSeconds;
             
             timer.innerHTML = formattedMinutes + ":" + formattedSeconds;
-
-            console.log("Time Remaining: " + timeRemaining);
     }
 
     // Check if user's input is correct or not
@@ -180,12 +175,9 @@
         var correct = answer.toLowerCase().replace(/'/g, "").split(" ");
         var nicknameKeys = Object.keys(nicknames);
 
-        if (input.length == 0) {
+        if (input[0].length == 0) {
             skips++;
-        }
-
-        // Check if first name matches, if yes then check last name in input if there is one
-        if (input[0] === correct[0] || (nicknameKeys.includes(answer) && nicknames[answer] === input[0])) {
+        } else if (input[0] === correct[0] || (nicknameKeys.includes(answer) && nicknames[answer] === input[0])) {
             scoreManager.incrementScore(); 
             
             // Play correct "ding" sfx
@@ -195,6 +187,7 @@
             // Check last name
             if (input.length > 1 && input[1] === correct[1]) {
                 scoreManager.incrementScore(); 
+
                 // Extra point for last names with hyphen
                 if (correct[1].includes('-')) {
                     scoreManager.incrementScore(); 
@@ -206,8 +199,8 @@
             wrong++;
         }
 
-        console.log("Entered: " + input);
-        console.log("Answer: " + correct + " (Running score: " + scoreManager.getScore() + ")");
+        console.log("Answer: " + correct);
+        console.log("Entered: " + input  + " (Running score: " + scoreManager.getScore() + ")");
 
         // Update the score
         var scoreCard = document.getElementById("score");
@@ -233,6 +226,12 @@
         setTimeout(function() {
             scoreCard.classList.remove("green");
         }, 300);
+    }
+
+    // Called when "skip" button is clicked
+    function skipFace() {
+        skips++;
+        loadNewFace();
     }
 
     // Handle end of game, lock input, show leaderboard
@@ -358,6 +357,7 @@
         gameInit: gameInit,
         preventInvalidInput: preventInvalidInput,
         loadNewFace: loadNewFace,
-        checkAnswer: checkAnswer
+        checkAnswer: checkAnswer,
+        skipFace: skipFace
     }
 })();

@@ -92,13 +92,13 @@
                     <input type="text" id="textinput" name="inputbox" onkeypress="interface.preventInvalidInput(event)" placeholder="Who is this?" autocomplete="off">
                     <input type="button" id="submit" onclick="interface.checkAnswer(this.form)" value=">">
                 </form>
-                <button onclick="interface.loadNewFace()" id="skip">Skip</button>
+                <button onclick="interface.skipFace()" id="skip">Skip</button>
                 <button onclick="interface.gameInit()" id="restart">Restart</button>
             </div>
         </section>
         <canvas id="confettiCanvas"></canvas>
     </body>
     <script src="app/js/confetti.js"></script>
-    <script src="app/js/gamemanager.js?=ver1.0"></script>
+    <script src="app/js/gamemanager.js?=ver1.11"></script>
     <script id="nicknamesjson" src="nicknames.json" type="application/json"></script>
 </html>
