@@ -96,6 +96,7 @@
     function gameInit() {
         clearInterval(gameTimer);
         startTimer(gameLength);
+        scoreManager.resetScore();
         currentTime = Date.now();
         document.getElementById("howToPlay").style.display = "none"; // Hide popup window
         document.getElementById("submit").disabled = false;
@@ -252,8 +253,6 @@
             return response.json();
         })
         .then(data => {
-            scoreManager.resetScore();
-
             // Display top 10 score leaderboard
             clearInterval(blinker);
             var leaderboardTable = document.getElementById("leaderboard");
@@ -304,7 +303,7 @@
                 }
                 index++;
             }
-
+            scoreManager.resetScore();
         })
         .catch(error => {
             console.error('Fetch error:', error);
