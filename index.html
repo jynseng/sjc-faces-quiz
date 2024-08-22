@@ -15,7 +15,7 @@
             <div class="popup" id="howToPlay"><h3>How to Play</h3><p>Guess the name of each person<br>• 1pt for first name<br>• 2pt for first and last<br>• Spelling counts</p>
                 <form id="enterName">
                     <input type="text" id="playername" name="inputbox" placeholder="Enter Name" maxlength="7" size="7">
-                    <br><input type="button" id="submitName" onclick="setName(this.form)" value="Start"></div>
+                    <br><input type="button" id="submitName" onclick="interface.setName(this.form)" value="Start"></div>
                 </form>
             <div class="popup" id="gameoverWindow" style="display: none;">
                 <h2>HIGH SCORES</h2>
@@ -81,7 +81,7 @@
                         </tr>
                     </tbody>
                 </table>
-                <button onclick="gameInit()">Play Again</button>
+                <button onclick="interface.gameInit()">Play Again</button>
             </div>
             <div class="QuizContainer">
                 <div id="Timer">00:00</div>
@@ -89,16 +89,16 @@
                 <p id="nameOverlay">First Last</p>
                 <div id="ImageContainer"><div class="image" id="imageElement" unselectable="on"></div></div>
                 <form id="quizForm">
-                    <input type="text" id="textinput" name="inputbox" onkeypress="preventInvalidInput(event)" placeholder="Who is this?" autocomplete="off">
-                    <input type="button" id="submit" onclick="checkAnswer(this.form)" value=">">
+                    <input type="text" id="textinput" name="inputbox" onkeypress="interface.preventInvalidInput(event)" placeholder="Who is this?" autocomplete="off">
+                    <input type="button" id="submit" onclick="interface.checkAnswer(this.form)" value=">">
                 </form>
-                <button onclick="loadNewFace()" id="skip">Skip</button>
-                <button onclick="gameInit()" id="restart">Restart</button>
+                <button onclick="interface.loadNewFace()" id="skip">Skip</button>
+                <button onclick="interface.gameInit()" id="restart">Restart</button>
             </div>
         </section>
         <canvas id="confettiCanvas"></canvas>
     </body>
     <script src="app/js/confetti.js"></script>
-    <script src="app/js/script.js?=ver1.592"></script>
+    <script src="app/js/script.js?=ver1.60"></script>
     <script id="nicknamesjson" src="nicknames.json" type="application/json"></script>
 </html>
