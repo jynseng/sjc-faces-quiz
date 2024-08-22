@@ -2,7 +2,7 @@ var faces_all = [];
 var faces_working = [];
 var nicknames;
 var playerName = "";
-var score = 0; // Current score: +1 for first name, +2 for first & last
+// var score = 0; // Current score: +1 for first name, +2 for first & last
 var wrong = 0; // Number of wrong answers
 var skips = 0; // Number of faces skipped
 var answer = ""; // Name of current person in readable format
@@ -34,6 +34,28 @@ function setName(form) {
     playerName = form.inputbox.value.replace(/[^a-zA-Z0-9\s-]/g, "").toLowerCase().trim(); // Set player name, remove special characters
     gameInit();
 }
+
+// Set, increment, and track player score. Encapsulated to prevent tampering.
+const scoreManager = (function() {
+    let score = 0; // Private variable
+
+    // Function to get the current score
+    function getScore() {
+        return score;
+    }
+
+    // Function to increment the score
+    function incrementScore() {
+        score += 1;
+        return score;
+    }
+
+    // Expose the functions that interact with score
+    return {
+        getScore: getScore,
+        incrementScore: incrementScore
+    };
+})();
 
 // Get faces from server
 fetch('server/data.php?' + new URLSearchParams({set: 'all'}), {
@@ -80,7 +102,7 @@ function gameInit() {
     gameOver = false;
     score = 0;
     wrong = 0;
-    document.getElementById("score").innerText = score;
+    document.getElementById("score").innerText = scoreManager.getScore();
     loadNewFace();
     document.getElementById("textinput").focus();
     // If playerName !== "Daniel", play Jeopardy music
@@ -155,18 +177,18 @@ function checkAnswer(form) {
 
     // Check if first name matches, if yes then check last name in input if there is one
     if (input[0] === correct[0] || (nicknameKeys.includes(answer) && nicknames[answer] === input[0])) {
-        score++;
-
+        scoreManager.incrementScore(); 
+        
         // Play correct "ding" sfx
         ding1.play();
         flashGreen();
 
         // Check last name
         if (input.length > 1 && input[1] === correct[1]) {
-            score++;
+            scoreManager.incrementScore(); 
             // Extra point for last names with hyphen
             if (correct[1].includes('-')) {
-                score++;
+                scoreManager.incrementScore(); 
             }
             setTimeout(function() {
                 ding2.play();}, 130);
@@ -176,11 +198,11 @@ function checkAnswer(form) {
     }
 
     console.log("Entered: " + input);
-    console.log("Answer: " + correct + " (Running score: " + score + ")");
+    console.log("Answer: " + correct + " (Running score: " + scoreManager.getScore() + ")");
 
     // Update the score
     var scoreCard = document.getElementById("score");
-    scoreCard.innerText = score;
+    scoreCard.innerText = scoreManager.getScore();
 
     // Flash the correct answer over the image
     var overlay = document.getElementById("nameOverlay");
@@ -196,11 +218,11 @@ function checkAnswer(form) {
 
 // Flash the score text green for .3 seconds
 function flashGreen() {
-    var score = document.getElementById("score");
-    score.classList.add("green");
+    var scoreCard = document.getElementById("score");
+    scoreCard.classList.add("green");
 
     setTimeout(function() {
-        score.classList.remove("green");
+        scoreCard.classList.remove("green");
     }, 300);
 }
 
@@ -209,14 +231,14 @@ function gameEnd() {
     document.getElementById("submit").disabled = true;
     document.getElementById("skip").disabled = true;
     document.getElementById("textinput").disabled = true;
-    document.getElementById("finalScore").innerText = score;
+    document.getElementById("finalScore").innerText = scoreManager.getScore();
     console.log("Skips: " + skips);
     console.log("Errors: " + wrong);
 
     // Send name-score pair to server, returns updated leaderboard
     fetch('server/updateScores.php', {
         method: 'POST',
-        body: JSON.stringify({name: playerName, score: score, timestamp: currentTime}),
+        body: JSON.stringify({name: playerName, score: scoreManager.getScore(), timestamp: currentTime}),
     })
     .then(response => {
         return response.json();
@@ -245,7 +267,7 @@ function gameEnd() {
 
             // If player score is top ten and new, highlight & blink 
             // && data[i].timestamp == currentTime
-            if (sortedScores[index].score == score && data[i].name == playerName && data[i].timestamp == currentTime) {
+            if (sortedScores[index].score == scoreManager.getScore() && data[i].name == playerName && data[i].timestamp == currentTime) {
                 row.style.color = "white";
 
                 // Make score blink for 15 seconds
