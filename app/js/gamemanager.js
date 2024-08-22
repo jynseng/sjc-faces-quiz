@@ -8,7 +8,7 @@
     var answer = ""; // Name of current person in readable format
     var gameOver = false; // Has player gone through all available faces?
     const timer = document.getElementById("Timer");
-    const gameLength = 10; // Time in seconds each round lasts
+    const gameLength = 60; // Time in seconds each round lasts
     var currentTime;
     var gameTimer;
     var blinker; // Makes high score blink on leaderboard
