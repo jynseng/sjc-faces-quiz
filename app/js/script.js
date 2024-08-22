@@ -148,7 +148,7 @@
 
         gameTimer = setInterval(function() {
             if (timeRemaining <= 0 || gameOver) {
-                //clearInterval(gameTimer);
+                clearInterval(gameTimer);
                 gameEnd();
                 timer.innerHTML = "00:00";
                 return;
