@@ -21,5 +21,25 @@ $db->exec('
     );
 ');
 
+$db->exec('
+    CREATE TABLE IF NOT EXISTS mode (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        display_name TEXT NOT NULL,
+        year INTEGER,
+        tags TEXT
+    );
+');
+
+$db->exec('
+    CREATE TABLE IF NOT EXISTS score (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        player_name TEXT NOT NULL,
+        mode_id INTEGER NOT NULL,
+        score INTEGER NOT NULL,
+        timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(mode_id) REFERENCES mode(id)
+    );
+');
+
 echo "Database initialized successfully.";
 ?>
