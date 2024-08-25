@@ -17,6 +17,7 @@ $db->exec('
         file_path TEXT NOT NULL,
         person_id INTEGER,
         tags TEXT,
+        year INTEGER,
         FOREIGN KEY(person_id) REFERENCES person(id)
     );
 ');
