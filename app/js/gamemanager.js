@@ -63,8 +63,8 @@
         };
     })();
 
-    // Get faces from server
-    fetch('server/data.php?' + new URLSearchParams({set: 'all'}), {
+    // Retrieve set of faces dictionary from server, faces mapped to array of img filepaths.
+    fetch('server/data.php?' + new URLSearchParams({year:'all',set:'all'}), {
         method: 'GET',
     })
         .then(response => {
@@ -81,7 +81,7 @@
         });
 
     // Get list of nicknames
-    fetch("server/nicknames.json")
+    fetch('server/nicknames.json')
         .then(response => {
             return response.text();
         })
@@ -261,6 +261,10 @@
             document.getElementById("gameoverWindow").style.display = "block"; // Show popup window
 
             for (var i = 0, row; row = leaderboardTable.rows[i]; i++) {
+                if (!data[i]) {
+                   return; 
+                }
+
                 var ending = "th";
                 if (i === 0) {
                     ending = "st"; 
