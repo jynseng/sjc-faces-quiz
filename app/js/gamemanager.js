@@ -105,6 +105,7 @@
         document.getElementById("textinput").value = "";
         document.getElementById("gameoverWindow").style.display = "none";
         document.getElementById("confettiCanvas").style.display = "none";
+        document.getElementById("leaderboard").innerHTML = "";
         faces_working = JSON.parse(JSON.stringify(faces_all));
         gameOver = false;
         wrong = 0;
@@ -242,7 +243,10 @@
         document.getElementById("finalScore").innerText = scoreManager.getScore();
         console.log("Skips: " + skips);
         console.log("Errors: " + wrong);
+        fetchScores();
+    }
 
+    function fetchScores() {
         // Send name-score pair to server, returns updated leaderboard
         fetch('server/updateScores.php', {
             method: 'POST',
@@ -260,22 +264,36 @@
 
             document.getElementById("gameoverWindow").style.display = "block"; // Show popup window
 
-            for (var i = 0, row; row = leaderboardTable.rows[i]; i++) {
+            for (var i = 0; i<25; i++) {
                 if (!data[i]) {
-                   return; 
+                return; 
                 }
 
                 var ending = "th";
-                if (i === 0) {
+                if (i === 0 || i === 20) {
                     ending = "st"; 
-                } else if (i === 1) {
+                } else if (i === 1 || i === 21) {
                     ending = "nd";
-                } else if (i === 2) {
+                } else if (i === 2 || i === 22) {
                     ending = "rd";
                 }
-                row.cells[0].textContent = i + 1 + ending.toUpperCase();
-                row.cells[1].textContent = data[i].name.toUpperCase();
-                row.cells[2].textContent = data[i].score;
+
+                // Create new row with three cells and append to table
+                const row = document.createElement('tr');
+                
+                const cell1 = document.createElement('td');
+                cell1.textContent = i + 1 + ending.toUpperCase();
+                row.appendChild(cell1);
+
+                const cell2 = document.createElement('td');
+                cell2.textContent = data[i].name.toUpperCase();
+                row.appendChild(cell2);
+
+                const cell3 = document.createElement('td');
+                cell3.textContent = data[i].score;
+                row.appendChild(cell3);
+                
+                leaderboardTable.appendChild(row);
 
                 // If player score is top ten and new, highlight & blink 
                 // && data[i].timestamp == currentTime
@@ -312,49 +330,6 @@
             console.error('Fetch error:', error);
         })
     }
-
-    // Register enter key as a click on submit button
-    document.getElementById("enterName").addEventListener("keypress", function(event) {
-        if (event.key === "Enter") {
-        event.preventDefault(); // Prevent form submission
-        document.getElementById("submitName").click(); // Simulate a click on the submit button
-        }
-    });
-
-    // Register enter key as a click on submit button
-    document.getElementById("quizForm").addEventListener("keypress", function(event) {
-        if (event.key === "Enter") {
-        event.preventDefault(); // Prevent form submission
-        document.getElementById("submit").click(); // Simulate a click on the submit button
-        }
-    });
-
-    // Block right-clicks to prevent cheating
-    document.getElementById("imageElement").addEventListener('contextmenu', function(event) {
-        event.preventDefault();
-    });
-
-    function preventInvalidInput(event) {
-        const charCode = event.which || event.keyCode;
-        const charStr = String.fromCharCode(charCode);
-        const regex = /^[a-zA-Z\s\-]*$/; // Only letters and space allowed
-
-        // If the character doesn't match the allowed pattern, prevent its input
-        if (!regex.test(charStr)) {
-            event.preventDefault();
-        }
-    }
-
-    document.getElementById('playername').addEventListener('input', function() {
-        var textBoxValue = this.value.trim();  // Trim whitespace to check for actual input
-        var submitButton = document.getElementById('submitName');
-        
-        if (textBoxValue) {
-            submitButton.disabled = false;  // Enable the button if there's input
-        } else {
-            submitButton.disabled = true;   // Disable the button if the input is empty
-        }
-    });
 
     window.interface =  {
         setName: setName,

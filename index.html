@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>SJC Faces Game</title>
-        <link rel="stylesheet" href="dist/style.css?=ver1.221">
+        <link rel="stylesheet" href="dist/style.css?=ver1.23">
         <link rel="icon" type="image/png" href="assets/newfavicon.png">
     </head>
     <body>
@@ -20,67 +20,18 @@
             <div class="popup" id="gameoverWindow" style="display: none;">
                 <h2>HIGH SCORES</h2>
                 <h3>Final Score: <strong id="finalScore"></strong></h3>
-                <table>
-                    <head>
-                        <tr>
-                            <th>RANK</th>
-                            <th>NAME</th>
-                            <th>SCORE</th>
-                        </tr>
-                    </head>
-                    <tbody id="leaderboard">
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="table-container">
+                    <table>
+                        <head>
+                            <tr>
+                                <th>RANK</th>
+                                <th>NAME</th>
+                                <th>SCORE</th>
+                            </tr>
+                        </head>
+                        <tbody id="leaderboard"></tbody>
+                    </table>
+                </div>
                 <button onclick="interface.gameInit()">Play Again</button>
             </div>
             <div class="QuizContainer">
@@ -99,6 +50,7 @@
         <canvas id="confettiCanvas"></canvas>
     </body>
     <script src="app/js/confetti.js"></script>
-    <script src="app/js/gamemanager.js?=ver1.13"></script>
+    <script src="app/js/handlers.js"></script>
+    <script src="app/js/gamemanager.js?=ver1.151"></script>
     <script id="nicknamesjson" src="nicknames.json" type="application/json"></script>
 </html>

@@ -53,6 +53,28 @@ h1 {
   transform: translate(-50%, -50%);
 }
 
+.table-container {
+  overflow: auto;
+  max-height: 535px;
+  scrollbar-width: thin; /* For Firefox, make the scrollbar thinner */
+  scrollbar-color: #888 transparent; /* For Firefox, set thumb color and track color */
+  padding-left: 24px; /* Offset the width of the scrollbar */
+}
+
+::-webkit-scrollbar {
+  width: 8px;  /* Set the width of the scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: transparent; /* Make the track background transparent */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #888; /* Set the scrollbar thumb color */
+  border-radius: 10px;    /* Optional: round the corners of the thumb */
+  border: 2px solid transparent; /* Optional: add space around the thumb */
+}
+
 #Timer {
   text-align: center;
   font-size: 24pt;
