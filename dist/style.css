@@ -35,6 +35,22 @@ h1 {
   text-align: center;
 }
 
+#menu-bar{
+  position: fixed;
+  text-align: right;
+  top: 58px;
+  right: 7%;
+}
+
+#menu-bar button {
+  border: none;
+  background: transparent;
+}
+
+button img {
+  width: 32px;
+}
+
 .popup {
   background-color: rgba(150, 255, 255, 0.96);
   border: 3px solid white;  

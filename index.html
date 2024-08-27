@@ -5,12 +5,17 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>SJC Faces Game</title>
-        <link rel="stylesheet" href="dist/style.css?=ver1.23">
+        <link rel="stylesheet" href="dist/style.css?=ver1.237">
         <link rel="icon" type="image/png" href="assets/newfavicon.png">
     </head>
     <body>
         <section class="Main">
-            <div class="Header"> <h1>SJC Faces Game</h1> </div>
+            <div class="Header"> 
+                <h1>SJC Faces Game</h1>
+                <div id="menu-bar">
+                    <button id="lb-button" onclick="interface.toggleLeaderboard()"><img src="assets/leaderboard.png" alt="leaderboardicon"></button>
+                </div>
+            </div>
             <div id="currentlyOnline"></div>
             <div class="popup" id="howToPlay"><h3>How to Play</h3><p>Guess the name of each person<br>• 1pt for first name<br>• 2pt for first and last<br>• Spelling counts</p>
                 <form id="enterName">
@@ -50,7 +55,7 @@
         <canvas id="confettiCanvas"></canvas>
     </body>
     <script src="app/js/confetti.js"></script>
-    <script src="app/js/handlers.js"></script>
-    <script src="app/js/gamemanager.js?=ver1.151"></script>
+    <script src="app/js/handlers.js?=ver1.0"></script>
+    <script src="app/js/gamemanager.js?=ver1.156"></script>
     <script id="nicknamesjson" src="nicknames.json" type="application/json"></script>
 </html>

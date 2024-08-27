@@ -97,7 +97,6 @@
         clearInterval(gameTimer);
         startTimer(gameLength);
         scoreManager.resetScore();
-        currentTime = Date.now();
         document.getElementById("howToPlay").style.display = "none"; // Hide popup window
         document.getElementById("submit").disabled = false;
         document.getElementById("skip").disabled = false;
@@ -105,7 +104,6 @@
         document.getElementById("textinput").value = "";
         document.getElementById("gameoverWindow").style.display = "none";
         document.getElementById("confettiCanvas").style.display = "none";
-        document.getElementById("leaderboard").innerHTML = "";
         faces_working = JSON.parse(JSON.stringify(faces_all));
         gameOver = false;
         wrong = 0;
@@ -246,11 +244,20 @@
         fetchScores();
     }
 
+    function toggleLeaderboard() {
+        if (document.getElementById("gameoverWindow").checkVisibility()) {
+            document.getElementById("gameoverWindow").style.display = "none";
+        } else {
+            fetchScores();
+        }
+    }
+
     function fetchScores() {
+        currentTime = Date.now();
         // Send name-score pair to server, returns updated leaderboard
         fetch('server/updateScores.php', {
             method: 'POST',
-            body: JSON.stringify({name: playerName, score: scoreManager.getScore(), timestamp: currentTime}),
+            body: JSON.stringify({status: gameOver, name: playerName, score: scoreManager.getScore(), timestamp: currentTime}),
         })
         .then(response => {
             return response.json();
@@ -259,6 +266,7 @@
             // Display top 10 score leaderboard
             clearInterval(blinker);
             var leaderboardTable = document.getElementById("leaderboard");
+            leaderboardTable.innerHTML = "";
             var sortedScores = data;
             var index = 0;
 
@@ -296,7 +304,6 @@
                 leaderboardTable.appendChild(row);
 
                 // If player score is top ten and new, highlight & blink 
-                // && data[i].timestamp == currentTime
                 if (sortedScores[index].score == scoreManager.getScore() && data[i].name == playerName && data[i].timestamp == currentTime) {
                     row.style.color = "white";
 
@@ -335,6 +342,7 @@
         setName: setName,
         gameInit: gameInit,
         preventInvalidInput: preventInvalidInput,
+        toggleLeaderboard: toggleLeaderboard,
         loadNewFace: loadNewFace,
         checkAnswer: checkAnswer,
         skipFace: skipFace

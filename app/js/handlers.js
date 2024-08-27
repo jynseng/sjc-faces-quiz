@@ -1,16 +1,16 @@
 // Register enter key as a click on submit button
 document.getElementById("enterName").addEventListener("keypress", function(event) {
     if (event.key === "Enter") {
-    event.preventDefault(); // Prevent form submission
-    document.getElementById("submitName").click(); // Simulate a click on the submit button
+        event.preventDefault(); // Prevent form submission
+        document.getElementById("submitName").click(); // Simulate a click on the submit button
     }
 });
 
 // Register enter key as a click on submit button
 document.getElementById("quizForm").addEventListener("keypress", function(event) {
     if (event.key === "Enter") {
-    event.preventDefault(); // Prevent form submission
-    document.getElementById("submit").click(); // Simulate a click on the submit button
+        event.preventDefault(); // Prevent form submission
+        document.getElementById("submit").click(); // Simulate a click on the submit button
     }
 });
 

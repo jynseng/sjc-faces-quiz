@@ -16,6 +16,7 @@ if (!$postedData) {
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
 
+$status = $data["status"];
 $name = $data["name"];
 $score = $data["score"];
 $time = $data["timestamp"];
@@ -26,7 +27,7 @@ $currentScores = json_decode($scoresJSON, true);
 
 // Loop through current scores. If player exists, check if new score is higher. 
 $addNewScore = true;
-if ($score > 0) { // If player score is 0, don't bother checking or adding
+if ($score > 0 && $status == true) { // If player score is 0, or if the game isn't over, don't bother checking or adding.
     foreach ($currentScores as $index => $arrayEntry) {
         if ($arrayEntry["name"] === $name) {
             if ($arrayEntry["score"] < $score) {
