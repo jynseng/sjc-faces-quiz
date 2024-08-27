@@ -239,6 +239,7 @@
         document.getElementById("skip").disabled = true;
         document.getElementById("textinput").disabled = true;
         document.getElementById("finalScore").innerText = scoreManager.getScore();
+        gameOver = true;
         console.log("Skips: " + skips);
         console.log("Errors: " + wrong);
         fetchScores();
