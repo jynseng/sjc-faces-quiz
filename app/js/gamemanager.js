@@ -12,8 +12,6 @@
     var currentTime;
     var gameTimer;
     var gameModeId;
-    var gameModeYear;
-    var gameModeTag;
     var blinker; // Makes high score blink on leaderboard
     var confetti = false; // Has the confetti been animated already?
     var ding1 = new Audio("assets/ESM_Correct_Answer_Bling_3_Sound_FX_Arcade_Casino_Kids_Mobile_App_Positive_Achievement_Win.wav");
@@ -78,10 +76,8 @@
                     return function() {
                         // Set the game mode
                         gameModeId = selectedMode;
-                        gameModeYear = data[gameMode]['year'];
-                        gameModeTag = data[gameMode]['tags'];
-                        console.log('Selected Game Mode: ' + data[gameMode]['display_name']);
-                        getFaceData();
+                        console.log('Selected Game Mode: ' + data[selectedMode]['display_name']);
+                        getFaceData(data[selectedMode]['year'], data[selectedMode]['tags']);
 
                         // Hide the window, unhide how to play window
                         document.getElementById('gameModes').style.display = 'none';
@@ -93,8 +89,8 @@
         })
 
     // Retrieve set of faces dictionary from server, faces mapped to array of img filepaths.
-    function getFaceData() {
-        fetch('server/data.php?' + new URLSearchParams({year:gameModeYear ?? 'all', set:gameModeTag ?? 'all'}), {
+    function getFaceData(gameModeYear='all', gameModeTag='all') {
+        fetch('server/data.php?' + new URLSearchParams({year:gameModeYear, set:gameModeTag}), {
             method: 'GET',
         })
             .then(response => {

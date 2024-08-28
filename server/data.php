@@ -4,8 +4,18 @@ header("Content-Type: application/json");
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
+function convertNullString($str) {
+    if ($str == 'null') {
+        return null;
+    }
+    return $str;
+}
+
 // Query faces db to get dictionary of names mapped to image filepaths.
 function getImageDict($year=null, $tag=null, $db=new SQLite3("faces.db")) {
+    $year = convertNullString($year);
+    $tag = convertNullString($tag);
+    
     $sql = "SELECT first_name, last_name, file_path FROM person p JOIN image i ON p.id = i.person_id";
     if (!is_null($year) && !is_null($tag)) {
         $sql = $sql . " WHERE year = " . $year . " AND i.tags LIKE '%" . $tag . "%'";
