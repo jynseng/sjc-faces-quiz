@@ -12,6 +12,7 @@
     var currentTime;
     var gameTimer;
     var gameModeId;
+    var gameModeTitle;
     var blinker; // Makes high score blink on leaderboard
     var confetti = false; // Has the confetti been animated already?
     var ding1 = new Audio("assets/ESM_Correct_Answer_Bling_3_Sound_FX_Arcade_Casino_Kids_Mobile_App_Positive_Achievement_Win.wav");
@@ -76,6 +77,7 @@
                     return function() {
                         // Set the game mode
                         gameModeId = selectedMode;
+                        gameModeTitle = data[selectedMode]['display_name'];
                         console.log('Selected Game Mode: ' + data[selectedMode]['display_name']);
                         getFaceData(data[selectedMode]['year'], data[selectedMode]['tags']);
 
@@ -285,14 +287,15 @@
         // Send name-score pair to server, returns updated leaderboard
         fetch('server/updateScores.php', {
             method: 'POST',
-            body: JSON.stringify({status: gameOver, name: playerName, score: scoreManager.getScore(), timestamp: currentTime}),
+            body: JSON.stringify({status: gameOver, name: playerName, score: scoreManager.getScore(), gameModeId: gameModeId}),
         })
         .then(response => {
             return response.json();
         })
         .then(data => {
-            // Display top 10 score leaderboard
+            // Display top score leaderboard
             clearInterval(blinker);
+            document.getElementById("leaderboardHeader").innerText = "HIGH SCORES FOR " + gameModeTitle.toUpperCase() + " MODE";
             var leaderboardTable = document.getElementById("leaderboard");
             leaderboardTable.innerHTML = "";
             var sortedScores = data;
@@ -322,17 +325,17 @@
                 row.appendChild(cell1);
 
                 const cell2 = document.createElement('td');
-                cell2.textContent = data[i].name.toUpperCase();
+                cell2.textContent = data[i].player_name.toUpperCase();
                 row.appendChild(cell2);
 
                 const cell3 = document.createElement('td');
-                cell3.textContent = data[i].score;
+                cell3.textContent = data[i].high_score;
                 row.appendChild(cell3);
                 
                 leaderboardTable.appendChild(row);
 
                 // If player score is top ten and new, highlight & blink 
-                if (sortedScores[index].score == scoreManager.getScore() && data[i].name == playerName && data[i].timestamp == currentTime) {
+                if (sortedScores[index].high_score == scoreManager.getScore() && data[i].player_name == playerName) {
                     row.style.color = "white";
 
                     // Make score blink for 15 seconds
