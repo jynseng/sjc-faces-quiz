@@ -11,6 +11,9 @@
     const gameLength = 60; // Time in seconds each round lasts
     var currentTime;
     var gameTimer;
+    var gameModeId;
+    var gameModeYear;
+    var gameModeTag;
     var blinker; // Makes high score blink on leaderboard
     var confetti = false; // Has the confetti been animated already?
     var ding1 = new Audio("assets/ESM_Correct_Answer_Bling_3_Sound_FX_Arcade_Casino_Kids_Mobile_App_Positive_Achievement_Win.wav");
@@ -63,22 +66,50 @@
         };
     })();
 
-    // Retrieve set of faces dictionary from server, faces mapped to array of img filepaths.
-    fetch('server/data.php?' + new URLSearchParams({year:'all',set:'all'}), {
-        method: 'GET',
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response not ok');
-            }
-            return response.json();
-        })
+    // Get gamemode info
+    fetch('server/modes.php')
+        .then(response => response.json())
         .then(data => {
-            faces_all = data;
+            const modeList = document.getElementById('gameModeButtons');
+            for (var gameMode in data) {
+                const listItem = document.createElement('button');
+                listItem.textContent = data[gameMode]['display_name'];
+                listItem.addEventListener('click', (function(selectedMode) {
+                    return function() {
+                        // Set the game mode
+                        gameModeId = selectedMode;
+                        gameModeYear = data[gameMode]['year'];
+                        gameModeTag = data[gameMode]['tags'];
+                        console.log('Selected Game Mode: ' + data[gameMode]['display_name']);
+                        getFaceData();
+
+                        // Hide the window, unhide how to play window
+                        document.getElementById('gameModes').style.display = 'none';
+                        document.getElementById('howToPlay').style.display = 'block';
+                    };
+                })(gameMode));
+                modeList.appendChild(listItem);
+            }
         })
-        .catch(error => {
-            console.error('Fetch error:', error);
-        });
+
+    // Retrieve set of faces dictionary from server, faces mapped to array of img filepaths.
+    function getFaceData() {
+        fetch('server/data.php?' + new URLSearchParams({year:gameModeYear ?? 'all', set:gameModeTag ?? 'all'}), {
+            method: 'GET',
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                faces_all = data;
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+            });
+    }
 
     // Get list of nicknames
     fetch('server/nicknames.json')
@@ -339,6 +370,10 @@
         })
     }
 
+    function setGameMode(modeId) {
+        gameModeId = modeId;
+    }
+
     window.interface =  {
         setName: setName,
         gameInit: gameInit,
@@ -346,6 +381,7 @@
         toggleLeaderboard: toggleLeaderboard,
         loadNewFace: loadNewFace,
         checkAnswer: checkAnswer,
-        skipFace: skipFace
+        skipFace: skipFace,
+        setGamemode: setGameMode
     }
 })();
