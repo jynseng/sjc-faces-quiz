@@ -18,6 +18,7 @@ $db->exec('
         person_id INTEGER,
         tags TEXT,
         year INTEGER,
+        date_added DATE DEFAULT CURRENT_DATE,
         FOREIGN KEY(person_id) REFERENCES person(id)
     );
 ');
