@@ -11,19 +11,19 @@ function convertNullString($str) {
     return $str;
 }
 
-// Query faces db to get dictionary of names mapped to image filepaths.
+// Query faces.db to get dictionary of names mapped to image filepaths for given set.
 function getImageDict($year=null, $tag=null, $db=new SQLite3("faces.db")) {
     $year = convertNullString($year);
     $tag = convertNullString($tag);
     
     $sql = "SELECT first_name, last_name, file_path FROM person p JOIN image i ON p.id = i.person_id";
-    if (!is_null($year) && !is_null($tag)) {
-        $sql = $sql . " WHERE year = " . $year . " AND i.tags LIKE '%" . $tag . "%'";
+    if (!is_null($year) && !is_null($tag)) { // i.e. 2024 camper
+        $sql = $sql . " WHERE year IN " . "($year)" . " AND i.tags LIKE '%" . $tag . "%'";
     }
-    elseif (!is_null($year) && is_null($tag)) {
-        $sql = $sql . " WHERE year = " . $year;
+    elseif (!is_null($year) && is_null($tag)) { // i.e. "2024"
+        $sql = $sql . " WHERE year IN " . "($year)";
     }
-    elseif (is_null($year) && !is_null($tag)) {
+    elseif (is_null($year) && !is_null($tag)) { // i.e. "stamp"
         $sql = $sql . " WHERE i.tags LIKE '%" . $tag . "%'";
     }
     $sql = $sql . ";";

@@ -91,7 +91,7 @@
         })
 
     // Retrieve set of faces dictionary from server, faces mapped to array of img filepaths.
-    function getFaceData(gameModeYear='all', gameModeTag='all') {
+    function getFaceData(gameModeYear, gameModeTag) {
         fetch('server/data.php?' + new URLSearchParams({year:gameModeYear, set:gameModeTag}), {
             method: 'GET',
         })

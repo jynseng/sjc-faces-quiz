@@ -28,7 +28,8 @@ $db->exec('
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         display_name TEXT NOT NULL,
         year INTEGER,
-        tags TEXT
+        tags TEXT,
+        enabled INTEGER
     );
 ');
 
