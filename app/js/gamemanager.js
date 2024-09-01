@@ -1,22 +1,22 @@
 (function () {
     var faces_all = [];
     var faces_working = [];
-    var nicknames;
+    var nicknames; // all nicknames
+//    var nickname = []; // All accepted nicknames for current face
     var playerName = "";
     var wrong = 0; // Number of wrong answers
     var skips = 0; // Number of faces skipped
     var answer = ""; // Name of current person in readable format
-    var gameOver = false; // Has player gone through all available faces?
+    var gameOver = false;
     const timer = document.getElementById("Timer");
     const gameLength = 60; // Time in seconds each round lasts
-    var currentTime;
     var gameTimer;
     var gameModeId;
     var gameModeTitle;
     var blinker; // Makes high score blink on leaderboard
     var confetti = false; // Has the confetti been animated already?
-    var ding1 = new Audio("assets/ESM_Correct_Answer_Bling_3_Sound_FX_Arcade_Casino_Kids_Mobile_App_Positive_Achievement_Win.wav");
-    var ding2 = new Audio("assets/ESM_Correct_Answer_Bling_3_Sound_FX_Arcade_Casino_Kids_Mobile_App_Positive_Achievement_Win.wav");
+    var ding1 = new Audio("assets/ESM_Correct_Answer_Bling_3_Sound_FX_Arcade_Casino_Kids_Mobile_App_Positive_Achievement_Win.wav"); // Correct first name
+    var ding2 = new Audio("assets/ESM_Correct_Answer_Bling_3_Sound_FX_Arcade_Casino_Kids_Mobile_App_Positive_Achievement_Win.wav"); // Correct last name
     var newHighScoreSFX = new Audio("assets/ESM_Positive_Correct_Bling_v3_Sound_FX_Arcade_Casino_Kids_Mobile_App.wav");
     var newRecordSFX = new Audio("assets/ESM_Casino_Win_Pattern_8_Sound_FX_Arcade_Kids_Mobile_App.wav");
     ding1.volume = 0.7;
@@ -103,10 +103,22 @@
             })
             .then(data => {
                 faces_all = data;
+                preLoadImages();
             })
             .catch(error => {
                 console.error('Fetch error:', error);
             });
+    }
+
+    // Start caching images as soon as game mode selected
+    function preLoadImages() {
+        Object.values(faces_all).forEach((face) => {
+            face.forEach((image) => {
+                const img = new Image();
+                img.src = image;
+                console.log(image + " cached\n");
+            });
+        });
     }
 
     // Get list of nicknames
@@ -155,6 +167,7 @@
         var randomFace = keys[randomIndex];
 
         answer = randomFace.replace(/_/g, " ");
+//        nickname = faces_working["accepted_first_names"];
 
         // Choose a random img in folder (if more than one) and set img src
         var randomImg = Math.floor(Math.random() * faces_working[randomFace].length);
@@ -283,7 +296,6 @@
     }
 
     function fetchScores() {
-        currentTime = Date.now();
         // Send name-score pair to server, returns updated leaderboard
         fetch('server/updateScores.php', {
             method: 'POST',

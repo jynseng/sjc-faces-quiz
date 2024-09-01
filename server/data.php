@@ -16,7 +16,7 @@ function getImageDict($year=null, $tag=null, $db=new SQLite3("faces.db")) {
     $year = convertNullString($year);
     $tag = convertNullString($tag);
     
-    $sql = "SELECT first_name, last_name, file_path FROM person p JOIN image i ON p.id = i.person_id";
+    $sql = "SELECT first_name, last_name, file_path, accepted_first_names FROM person p JOIN image i ON p.id = i.person_id";
     if (!is_null($year) && !is_null($tag)) { // i.e. 2024 camper
         $sql = $sql . " WHERE year IN " . "($year)" . " AND i.tags LIKE '%" . $tag . "%'";
     }
