@@ -39,6 +39,8 @@ $db->exec('
         player_name TEXT NOT NULL,
         mode_id INTEGER NOT NULL,
         score INTEGER NOT NULL,
+        errors INTEGER NOT NULL,
+        skips INTEGERT NOT NULL,
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY(mode_id) REFERENCES mode(id)
     );

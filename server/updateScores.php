@@ -21,9 +21,11 @@ $status = $data["status"];
 $name = $data["name"];
 $score = $data["score"];
 $gameModeId = $data["gameModeId"];
+$errors = $data["errors"];
+$skips = $data["skips"];
 
 // Insert new score into score table
-$insertScoreSql = "INSERT INTO score (player_name, mode_id, score) values ('{$name}', {$gameModeId}, {$score})";
+$insertScoreSql = "INSERT INTO score (player_name, mode_id, score, errors, skips) values ('{$name}', {$gameModeId}, {$score}, {$errors}, {$skips})";
 $db->exec($insertScoreSql);
 
 // Get leaderboard for current game mode

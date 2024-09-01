@@ -29,11 +29,18 @@ function getImageDict($year=null, $tag=null, $db=new SQLite3("faces.db")) {
     $sql = $sql . ";";
 
     $result = $db->query($sql);
-    $imageDict = [];
+    $personDict = [];
+
+    // Create dictionary of array of dictionaries.
     while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
-        $imageDict[$row["first_name"]."_".$row["last_name"]][] = "server/faces/".$row["file_path"];
+        //$imageDict[$row["first_name"]."_".$row["last_name"]][] = "server/faces/".$row["file_path"];
+
+        if (!array_key_exists($row["first_name"]."_".$row["last_name"], $personDict)) {
+            $personDict[$row["first_name"]."_".$row["last_name"]] = array("images" => ["server/faces/".$row["file_path"]], "nicknames" => $row["accepted_first_names"] ? explode(",", $row["accepted_first_names"]) : []);
+        }
+        $personDict[($row["first_name"]."_".$row["last_name"])]["images"][] = "server/faces/".$row["file_path"];
     }
-    return $imageDict;
+    return $personDict;
 }
 
 // Fetch specific set of faces (defaults to all).

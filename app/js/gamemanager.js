@@ -2,11 +2,10 @@
     var faces_all = [];
     var faces_working = [];
     var nicknames; // all nicknames
-//    var nickname = []; // All accepted nicknames for current face
     var playerName = "";
     var wrong = 0; // Number of wrong answers
     var skips = 0; // Number of faces skipped
-    var answer = ""; // Name of current person in readable format
+    var currentFace = ""; // Name of current person
     var gameOver = false;
     const timer = document.getElementById("Timer");
     const gameLength = 60; // Time in seconds each round lasts
@@ -112,26 +111,14 @@
 
     // Start caching images as soon as game mode selected
     function preLoadImages() {
-        Object.values(faces_all).forEach((face) => {
-            face.forEach((image) => {
+        Object.entries(faces_all).forEach(([name, data]) => {
+            data.images.forEach((image) => {
                 const img = new Image();
                 img.src = image;
                 console.log(image + " cached\n");
             });
         });
     }
-
-    // Get list of nicknames
-    fetch('server/nicknames.json')
-        .then(response => {
-            return response.text();
-        })
-        .then(text => {
-            nicknames = JSON.parse(text);
-        })
-        .catch(error => {
-            console.error('Fetch error:', error);
-        })
 
     // Initialize game with specified time limit, reset score, start with first face 
     function gameInit() {
@@ -164,17 +151,13 @@
         // Randomly choose face from working faces array
         var keys = Object.keys(faces_working);
         var randomIndex = Math.floor(Math.random() * keys.length); 
-        var randomFace = keys[randomIndex];
-
-        answer = randomFace.replace(/_/g, " ");
-//        nickname = faces_working["accepted_first_names"];
+        currentFace = keys[randomIndex];
 
         // Choose a random img in folder (if more than one) and set img src
-        var randomImg = Math.floor(Math.random() * faces_working[randomFace].length);
-        var path = faces_working[randomFace][randomImg];
-        //document.getElementById("image").src = path;
+        var randomImg = Math.floor(Math.random() * faces_working[currentFace].images.length);
+        var path = faces_working[currentFace].images[randomImg];
         document.getElementById("imageElement").style.backgroundImage = 'url("'+path+'")';
-        delete faces_working[randomFace]; // Remove face so it's not repeated
+        delete faces_working[currentFace]; // Remove face from working array so it's not repeated
     }
 
     // Start a countdown timer for game
@@ -213,12 +196,11 @@
     // Check if user's input is correct or not
     function checkAnswer(form) {
         var input = form.inputbox.value.replace(/[^a-zA-Z0-9\s-]/g, "").toLowerCase().trim().split(" "); // Remove special characters, converter to lower
-        var correct = answer.toLowerCase().replace(/'/g, "").split(" ");
-        var nicknameKeys = Object.keys(nicknames);
+        var correctAnswer = currentFace.toLowerCase().replace(/'/g, "").split("_");
 
         if (input[0].length == 0) {
             skips++;
-        } else if (input[0] === correct[0] || (nicknameKeys.includes(answer) && nicknames[answer] === input[0])) {
+        } else if (input[0] === correctAnswer[0] || (faces_all[currentFace].nicknames.includes(input[0]))) { // Check if input matches name or nickname
             scoreManager.incrementScore(); 
             
             // Play correct "ding" sfx
@@ -226,11 +208,11 @@
             flashGreen();
 
             // Check last name
-            if (input.length > 1 && input[1] === correct[1]) {
+            if (input.length > 1 && input[1] === correctAnswer[1]) {
                 scoreManager.incrementScore(); 
 
                 // Extra point for last names with hyphen
-                if (correct[1].includes('-')) {
+                if (correctAnswer[1].includes('-')) {
                     scoreManager.incrementScore(); 
                 }
                 setTimeout(function() {
@@ -240,7 +222,7 @@
             wrong++;
         }
 
-        console.log("Answer: " + correct);
+        console.log("Answer: " + correctAnswer);
         console.log("Entered: " + input  + " (Running score: " + scoreManager.getScore() + ")");
 
         // Update the score
@@ -249,7 +231,8 @@
 
         // Flash the correct answer over the image
         var overlay = document.getElementById("nameOverlay");
-        overlay.innerHTML = answer;
+        var displayAnswer = currentFace.split("_");
+        overlay.innerHTML = displayAnswer[0] + " " + displayAnswer[1];
         overlay.style.opacity = "1";
         setTimeout(function() {
             overlay.style.opacity = "0";
@@ -299,7 +282,7 @@
         // Send name-score pair to server, returns updated leaderboard
         fetch('server/updateScores.php', {
             method: 'POST',
-            body: JSON.stringify({status: gameOver, name: playerName, score: scoreManager.getScore(), gameModeId: gameModeId}),
+            body: JSON.stringify({status: gameOver, name: playerName, score: scoreManager.getScore(), gameModeId: gameModeId, errors: wrong, skips: skips}),
         })
         .then(response => {
             return response.json();
