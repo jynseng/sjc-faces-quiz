@@ -8,7 +8,7 @@
     var currentFace = ""; // Name of current person
     var gameOver = false;
     const timer = document.getElementById("Timer");
-    const gameLength = 60; // Time in seconds each round lasts
+    const gameLength = 10; // Time in seconds each round lasts
     var gameTimer;
     var gameModeId;
     var gameModeTitle;
@@ -34,6 +34,11 @@
     function setName(form) {
         playerName = form.inputbox.value.replace(/[^a-zA-Z0-9\s-]/g, "").toLowerCase().trim(); // Set player name, remove special characters
         gameInit();
+    }
+
+    function resetGameMode() {
+        document.getElementById('gameModes').style.display = 'block';
+        document.getElementById('gameoverWindow').style.display = 'none';
     }
 
     // Set, increment, and track player score. Encapsulated to prevent tampering.
@@ -376,6 +381,7 @@
         loadNewFace: loadNewFace,
         checkAnswer: checkAnswer,
         skipFace: skipFace,
-        setGamemode: setGameMode
+        setGamemode: setGameMode,
+        resetGameMode: resetGameMode
     }
 })();
