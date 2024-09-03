@@ -361,7 +361,7 @@
                     leaderboardTable.appendChild(row);
 
                     // If player score is top ten and new, highlight & blink 
-                    if ((sortedScores[index].high_score == scoreManager.getScore() || combined) && data[i].player_name == playerName) {
+                    if (!combined && sortedScores[index].high_score == scoreManager.getScore() && data[i].player_name == playerName) {
                         row.style.color = "white";
 
                         // Make score blink for 15 seconds
