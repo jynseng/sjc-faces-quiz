@@ -275,7 +275,17 @@
         fetchScores();
     }
 
+    function toggleCombinedLeaderboard() {
+        document.getElementById("gameoverWindow").style.display = "none";
+        if (document.getElementById("combinedLeaderboardWindow").checkVisibility()) {
+            document.getElementById("combinedLeaderboardWindow").style.display = "none";
+        } else {
+            fetchScores(true);
+        }
+    }
+
     function toggleLeaderboard() {
+        document.getElementById("combinedLeaderboardWindow").style.display = "none";
         if (document.getElementById("gameoverWindow").checkVisibility()) {
             document.getElementById("gameoverWindow").style.display = "none";
         } else {
@@ -283,90 +293,106 @@
         }
     }
 
-    function fetchScores() {
-        // Send name-score pair to server, returns updated leaderboard
-        fetch('server/updateScores.php', {
-            method: 'POST',
-            body: JSON.stringify({status: gameOver, name: playerName, score: scoreManager.getScore(), gameModeId: gameModeId, errors: wrong, skips: skips}),
-        })
-        .then(response => {
-            return response.json();
-        })
-        .then(data => {
-            // Display top score leaderboard
-            clearInterval(blinker);
-            document.getElementById("leaderboardHeader").innerText = "HIGH SCORES FOR " + gameModeTitle.toUpperCase() + " MODE";
-            var leaderboardTable = document.getElementById("leaderboard");
-            leaderboardTable.innerHTML = "";
-            var sortedScores = data;
-            var index = 0;
-
-            document.getElementById("gameoverWindow").style.display = "block"; // Show popup window
-
-            for (var i = 0; i<25; i++) {
-                if (!data[i]) {
-                return; 
-                }
-
-                var ending = "th";
-                if (i === 0 || i === 20) {
-                    ending = "st"; 
-                } else if (i === 1 || i === 21) {
-                    ending = "nd";
-                } else if (i === 2 || i === 22) {
-                    ending = "rd";
-                }
-
-                // Create new row with three cells and append to table
-                const row = document.createElement('tr');
-                
-                const cell1 = document.createElement('td');
-                cell1.textContent = i + 1 + ending.toUpperCase();
-                row.appendChild(cell1);
-
-                const cell2 = document.createElement('td');
-                cell2.textContent = data[i].player_name.toUpperCase();
-                row.appendChild(cell2);
-
-                const cell3 = document.createElement('td');
-                cell3.textContent = data[i].high_score;
-                row.appendChild(cell3);
-                
-                leaderboardTable.appendChild(row);
-
-                // If player score is top ten and new, highlight & blink 
-                if (sortedScores[index].high_score == scoreManager.getScore() && data[i].player_name == playerName) {
-                    row.style.color = "white";
-
-                    // Make score blink for 15 seconds
-                    var text = row;
-                    blinker = setInterval(function() {
-                        text.style.opacity = (text.style.opacity == '0' ? '1' : '0');
-                    }, 400);
-                    setTimeout(function() {
-                        clearInterval(blinker);
-                        text.style.opacity = "1";
-                    }, 15000);
-
-                    // If new top score, play confetti and sfx
-                    if (i === 0) {
-                        newRecordSFX.play();
-                        document.getElementById("confettiCanvas").style.display = "block";
-                        if (!confetti) { animate(); } // Play confetti visual effect
-                        alert("Congrats on setting the new high score!\nYou are SO SMART and SO CAPABLE.\nYOU ARE BRAT");
-                    } else {
-                        newHighScoreSFX.play();
-                    }
-                } else {
-                    row.style.color = "black";
-                }
-                index++;
+    function fetchScores(combined=false) {
+        var fetchURL;
+        var fetchOptions;
+        if (combined) {
+            fetchURL = 'server/combinedLeaderboard.php';
+            fetchOptions = {method: 'GET'}
+        }
+        else {
+            // Send name-score pair to server, returns updated leaderboard
+            fetchURL = 'server/updateScores.php';
+            fetchOptions = {
+                method: 'POST',
+                body: JSON.stringify({status: gameOver, name: playerName, score: scoreManager.getScore(), gameModeId: gameModeId, errors: wrong, skips: skips})
             }
-            scoreManager.resetScore();
-        })
-        .catch(error => {
-            console.error('Fetch error:', error);
-        })
+        }
+        fetch(fetchURL, fetchOptions)
+            .then(response => response.json())
+            .then(data => {
+                // Display top score leaderboard
+                var leaderboardTable;
+                var leaderboardWindow;
+                if (combined) {
+                    leaderboardTable = document.getElementById("combinedLeaderboard");
+                    leaderboardWindow = document.getElementById("combinedLeaderboardWindow");
+                }
+                else {
+                    leaderboardTable = document.getElementById("leaderboard");
+                    leaderboardWindow = document.getElementById("gameoverWindow");
+                    document.getElementById("leaderboardHeader").innerText = "HIGH SCORES FOR " + gameModeTitle.toUpperCase() + " MODE";
+                }
+                clearInterval(blinker);
+                leaderboardTable.innerHTML = "";
+                var sortedScores = data;
+                var index = 0;
+                leaderboardWindow.style.display = "block"; // Show popup window
+
+                for (var i = 0; i<25; i++) {
+                    if (!data[i]) {
+                        return; 
+                    }
+
+                    var ending = "th";
+                    if (i === 0 || i === 20) {
+                        ending = "st"; 
+                    } else if (i === 1 || i === 21) {
+                        ending = "nd";
+                    } else if (i === 2 || i === 22) {
+                        ending = "rd";
+                    }
+
+                    // Create new row with three cells and append to table
+                    const row = document.createElement('tr');
+                    
+                    const cell1 = document.createElement('td');
+                    cell1.textContent = i + 1 + ending.toUpperCase();
+                    row.appendChild(cell1);
+
+                    const cell2 = document.createElement('td');
+                    cell2.textContent = data[i].player_name.toUpperCase();
+                    row.appendChild(cell2);
+
+                    const cell3 = document.createElement('td');
+                    cell3.textContent = data[i].high_score;
+                    row.appendChild(cell3);
+                    
+                    leaderboardTable.appendChild(row);
+
+                    // If player score is top ten and new, highlight & blink 
+                    if ((sortedScores[index].high_score == scoreManager.getScore() || combined) && data[i].player_name == playerName) {
+                        row.style.color = "white";
+
+                        // Make score blink for 15 seconds
+                        var text = row;
+                        blinker = setInterval(function() {
+                            text.style.opacity = (text.style.opacity == '0' ? '1' : '0');
+                        }, 400);
+                        setTimeout(function() {
+                            clearInterval(blinker);
+                            text.style.opacity = "1";
+                        }, 15000);
+
+                        // If new top score, play confetti and sfx
+                        if (i === 0) {
+                            newRecordSFX.play();
+                            document.getElementById("confettiCanvas").style.display = "block";
+                            if (!confetti) { animate(); } // Play confetti visual effect
+                            alert("Congrats on setting the new high score!\nYou are SO SMART and SO CAPABLE.\nYOU ARE BRAT");
+                        } else {
+                            newHighScoreSFX.play();
+                        }
+                    } else {
+                        row.style.color = "black";
+                    }
+                    index++;
+                }
+                scoreManager.resetScore();
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+            })
     }
 
     function setGameMode(modeId) {
@@ -378,6 +404,7 @@
         gameInit: gameInit,
         preventInvalidInput: preventInvalidInput,
         toggleLeaderboard: toggleLeaderboard,
+        toggleCombinedLeaderboard: toggleCombinedLeaderboard,
         loadNewFace: loadNewFace,
         checkAnswer: checkAnswer,
         skipFace: skipFace,
