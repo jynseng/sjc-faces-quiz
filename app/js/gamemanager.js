@@ -8,7 +8,7 @@
     var currentFace = ""; // Name of current person
     var gameOver = false;
     const timer = document.getElementById("Timer");
-    const gameLength = 10; // Time in seconds each round lasts
+    const gameLength = 60; // Time in seconds each round lasts
     var gameTimer;
     var gameModeId;
     var gameModeTitle;
