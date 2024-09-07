@@ -1,3 +1,11 @@
+@font-face {
+    font-family: super_peachregular;
+    src: url('/dist/super_peach-webfont.woff') format('woff2'),
+         url('/dist/super_peach-webfont.woff2') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}  
+
 html {
     font-size: 100%;
     box-sizing: border-box;
@@ -17,8 +25,8 @@ body {
 }
 
 h1 {
-   font-family: Helvetica;
-   font-size: 34pt;
+    font-family: super_peachregular, Helvetica;
+    font-size: 44pt;
 }
 
 .Header {
@@ -27,9 +35,25 @@ h1 {
     text-align: center;
 }
 
+#menu-bar {
+    position: fixed;
+    text-align: right;
+    top: 58px;
+    right: 7%;
+}
+  
+#menu-bar button {
+    border: none;
+    background: transparent;
+}
+  
+button img {
+    width: 32px;
+}
+  
 .popup {
-    background-color: rgba(150, 150, 150, .9);
-    border-width: 1px;
+    background-color: rgba(150, 255, 255, 0.96);
+    border: 3px solid white;  
     position: fixed;
     min-width: 35%;
     text-align: center;
@@ -41,10 +65,45 @@ h1 {
     z-index: 99;
     border-radius: 6px;
     left: 50%;
-    top: 450px;
+    top: 470px;
     transform: translate(-50%, -50%);
 }
 
+#usersOverlay {
+    position: fixed;
+    top: 44px;
+    left: 5%;
+}
+
+.li {
+    list-style: none;
+    text-align: left;
+    padding-left: 14px;
+    margin: 5px;
+}
+
+.table-container {
+    overflow: auto;
+    max-height: 535px;
+    scrollbar-width: thin; /* For Firefox, make the scrollbar thinner */
+    scrollbar-color: #888 transparent; /* For Firefox, set thumb color and track color */
+    padding-left: 24px; /* Offset the width of the scrollbar */
+  }
+  
+  ::-webkit-scrollbar {
+    width: 8px;  /* Set the width of the scrollbar */
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: transparent; /* Make the track background transparent */
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background-color: #888; /* Set the scrollbar thumb color */
+    border-radius: 10px;    /* Optional: round the corners of the thumb */
+    border: 2px solid transparent; /* Optional: add space around the thumb */
+  }
+  
 #Timer {
     text-align: center;
     font-size: 24pt;
@@ -143,4 +202,8 @@ table {
     left: 0;
     z-index: 99;
     pointer-events: none;
+}
+
+#submitName {
+    margin-top: 10px;
 }

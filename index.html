@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>SJC Faces Game</title>
-        <link rel="stylesheet" href="dist/style.css?=ver1.237">
+        <link rel="stylesheet" href="dist/style.css?=ver1.25">
         <link rel="icon" type="image/png" href="assets/newfavicon.png">
     </head>
     <body>
@@ -70,11 +70,16 @@
                 <button onclick="interface.skipFace()" id="skip">Skip</button>
                 <button onclick="interface.gameInit()" id="restart">Restart</button>
             </div>
+            <div id="usersOverlay">
+                <h3>Online Now</h3>
+                <ul id="userList"></ul>
+            </div>
         </section>
         <canvas id="confettiCanvas"></canvas>
     </body>
     <script src="app/js/confetti.js"></script>
-    <script src="app/js/handlers.js?=ver1.0"></script>
-    <script src="app/js/gamemanager.js?=ver1.165"></script>
+    <script src="app/js/user_activity.js?=ver1.41"></script>
+    <script src="app/js/handlers.js?=ver1.12"></script>
+    <script src="app/js/gamemanager.js?=ver1.17"></script>
     <script id="nicknamesjson" src="nicknames.json" type="application/json"></script>
 </html>

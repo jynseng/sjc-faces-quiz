@@ -13,4 +13,3 @@ function getGameModeDict($db=new SQLite3("faces.db")) {
 }
 
 echo json_encode(getGameModeDict());
-?>

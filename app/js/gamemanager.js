@@ -1,7 +1,6 @@
 (function () {
     var faces_all = [];
     var faces_working = [];
-    var nicknames; // all nicknames
     var playerName = "";
     var wrong = 0; // Number of wrong answers
     var skips = 0; // Number of faces skipped
@@ -33,6 +32,8 @@
 
     function setName(form) {
         playerName = form.inputbox.value.replace(/[^a-zA-Z0-9\s-]/g, "").toLowerCase().trim(); // Set player name, remove special characters
+        fetchActiveUsers(playerName,'true');
+        startActivity();
         gameInit();
     }
 

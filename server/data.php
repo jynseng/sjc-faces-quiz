@@ -63,5 +63,3 @@ if (isset($_GET["year"])) {
 }
 
 echo json_encode(getImageDict($year,$set));
-
-?>

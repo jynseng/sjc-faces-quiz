@@ -30,6 +30,7 @@ function preventInvalidInput(event) {
     }
 }
 
+// Don't allow game start until user enters a name
 document.getElementById('playername').addEventListener('input', function() {
     var textBoxValue = this.value.trim();  // Trim whitespace to check for actual input
     var submitButton = document.getElementById('submitName');

@@ -1,11 +1,9 @@
 @font-face {
   font-family: super_peachregular;
-  src: url('/dist/super_peach-webfont.woff') format('woff2'),
-       url('/dist/super_peach-webfont.woff2') format('woff');
+  src: url("/dist/super_peach-webfont.woff") format("woff2"), url("/dist/super_peach-webfont.woff2") format("woff");
   font-weight: normal;
   font-style: normal;
 }
-
 html {
   font-size: 100%;
   box-sizing: border-box;
@@ -35,7 +33,7 @@ h1 {
   text-align: center;
 }
 
-#menu-bar{
+#menu-bar {
   position: fixed;
   text-align: right;
   top: 58px;
@@ -53,7 +51,7 @@ button img {
 
 .popup {
   background-color: rgba(150, 255, 255, 0.96);
-  border: 3px solid white;  
+  border: 3px solid white;
   position: fixed;
   min-width: 35%;
   text-align: center;
@@ -69,6 +67,19 @@ button img {
   transform: translate(-50%, -50%);
 }
 
+#usersOverlay {
+  position: fixed;
+  top: 44px;
+  left: 5%;
+}
+
+.li {
+  list-style: none;
+  text-align: left;
+  padding-left: 14px;
+  margin: 5px;
+}
+
 .table-container {
   overflow: auto;
   max-height: 535px;
@@ -78,7 +89,7 @@ button img {
 }
 
 ::-webkit-scrollbar {
-  width: 8px;  /* Set the width of the scrollbar */
+  width: 8px; /* Set the width of the scrollbar */
 }
 
 ::-webkit-scrollbar-track {
@@ -87,7 +98,7 @@ button img {
 
 ::-webkit-scrollbar-thumb {
   background-color: #888; /* Set the scrollbar thumb color */
-  border-radius: 10px;    /* Optional: round the corners of the thumb */
+  border-radius: 10px; /* Optional: round the corners of the thumb */
   border: 2px solid transparent; /* Optional: add space around the thumb */
 }
 

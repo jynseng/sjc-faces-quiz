@@ -43,5 +43,3 @@ while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
 
 // Echo top scores
 echo json_encode($scoreDict);
-
-?>

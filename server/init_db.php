@@ -47,4 +47,3 @@ $db->exec('
 ');
 
 echo "Database initialized successfully.";
-?>

@@ -121,4 +121,3 @@ addToDB($facesDir, $db);
 removeFromDB($db);
 
 echo "\r\n".'Database refresh complete. '.$imageCount.' images added to db, '.$removeCount.' images removed.';
-?>
