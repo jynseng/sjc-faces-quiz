@@ -13,8 +13,8 @@ function fetchActiveUsers(username, init='false') {
         .then(data => {
             if (data) {
                 activeUsers = data.activeUsers;
-                console.log("activeUsers: ");
-                console.log(activeUsers);
+                // console.log("activeUsers: ");
+                // console.log(activeUsers);
                 userList.innerHTML = '';
                 if (activeUsers[0] != 'empty') {
                     activeUsers.forEach(user => {
@@ -58,6 +58,5 @@ document.addEventListener('mousemove', function () {
     lastActivityTime = Date.now(); // Update the time on mouse movement
 });
 document.addEventListener('keydown', function () {
-    console.log("keypress!");
     lastActivityTime = Date.now(); // Update the time on mouse movement
 });

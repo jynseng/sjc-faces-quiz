@@ -6,6 +6,10 @@
     font-style: normal;
 }  
 
+@mixin stamp-cursor {
+    cursor: url("../assets/stamp_cursor_24.png") 12 1, auto !important;
+}
+
 html {
     font-size: 100%;
     box-sizing: border-box;
@@ -22,11 +26,17 @@ body {
     padding: 0px;
     background-color: pink;
     text-align: center;
+    height: 100vh;
+    @include stamp-cursor;
 }
 
 h1 {
     font-family: super_peachregular, Helvetica;
     font-size: 44pt;
+}
+
+h3 {
+    margin: 20px 0 8px 0; // top left bottom right
 }
 
 .Header {
@@ -40,22 +50,18 @@ h1 {
     text-align: right;
     top: 58px;
     right: 7%;
-}
-  
-#menu-bar button {
-    border: none;
-    background: transparent;
-}
-  
-button img {
-    width: 32px;
+
+    button {
+        border: none;
+        background: transparent;
+    }
 }
   
 .popup {
     background-color: rgba(150, 255, 255, 0.96);
     border: 3px solid white;  
     position: fixed;
-    min-width: 35%;
+    width: 400px;
     text-align: center;
     margin: 2px auto 2px auto;
     padding-top: 10px;
@@ -67,19 +73,27 @@ button img {
     left: 50%;
     top: 470px;
     transform: translate(-50%, -50%);
+
+    h3 {
+        margin: 20px 0 20px 0; 
+    }
 }
 
 #usersOverlay {
     position: fixed;
     top: 44px;
     left: 5%;
+    opacity: .6;
 }
 
-.li {
+li {
     list-style: none;
     text-align: left;
-    padding-left: 14px;
-    margin: 5px;
+    padding-left: 0px;
+}
+
+ul {
+    padding: 0 0 0 0;
 }
 
 .table-container {
@@ -88,21 +102,21 @@ button img {
     scrollbar-width: thin; /* For Firefox, make the scrollbar thinner */
     scrollbar-color: #888 transparent; /* For Firefox, set thumb color and track color */
     padding-left: 24px; /* Offset the width of the scrollbar */
-  }
-  
-  ::-webkit-scrollbar {
-    width: 8px;  /* Set the width of the scrollbar */
-  }
-  
-  ::-webkit-scrollbar-track {
-    background: transparent; /* Make the track background transparent */
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    background-color: #888; /* Set the scrollbar thumb color */
-    border-radius: 10px;    /* Optional: round the corners of the thumb */
-    border: 2px solid transparent; /* Optional: add space around the thumb */
-  }
+}
+
+::-webkit-scrollbar {
+width: 8px;  /* Set the width of the scrollbar */
+}
+
+::-webkit-scrollbar-track {
+background: transparent; /* Make the track background transparent */
+}
+
+::-webkit-scrollbar-thumb {
+background-color: #888; /* Set the scrollbar thumb color */
+border-radius: 10px;    /* Optional: round the corners of the thumb */
+border: 2px solid transparent; /* Optional: add space around the thumb */
+}
   
 #Timer {
     text-align: center;
@@ -119,10 +133,15 @@ input {
     border-radius: 4px;
     font-size: 12pt;
     padding: 4px;
+    @include stamp-cursor;
 }
 
 input[type=text] {
     color: black;
+}
+
+#textinput {
+    width: 220px;
 }
 
 button {
@@ -130,6 +149,11 @@ button {
     text-align: center;
     margin: 6px auto 6px auto;
     padding: 4px;
+    @include stamp-cursor;
+
+    img {
+        width: 32px;
+    }
 }
 
 #scorecard {

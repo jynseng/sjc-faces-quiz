@@ -14,8 +14,9 @@ if (!isset($_SESSION['username'])) {
 }
 if (isset($_GET['init'])) { 
     $init = $_GET['init'];
-    if ($init == 'true') {
+    if ($init == 'true') { // Initial request
         $_SESSION['last_activity'] = time();
+        $_SESSION['SameSite'] = 'Lax';
     }
 } else {
     $init = 'false';
@@ -82,14 +83,14 @@ while (true) {
         exit;
     }
 }
-// $db = new PDO('sqlite:faces.db');
-// $sessionId = session_id();
-// $userId = 1;
-// // Update user's last activity timestamp in sqlite db
-// $updateStmt = $db->prepare("INSERT INTO user_sessions (session_id, user_id, last_activity) VALUES (:session_id, :user_id, :last_activity)
-//                             ON CONFLICT(session_id) DO UPDATE SET last_activity = :last_activity");
-// $updateStmt->execute([
-//     ':session_id' => $sessionId,
-//     ':user_id' => $userId,
-//     ':last_activity' => time()
-// ]);
+$db = new PDO('sqlite:faces.db');
+$sessionId = session_id();
+$userId = 1;
+// Update user's last login timestamp in sqlite db
+$updateStmt = $db->prepare("INSERT INTO user (session_id, user_id, last_activity) VALUES (:session_id, :user_id, :last_activity)
+                            ON CONFLICT(session_id) DO UPDATE SET last_activity = :last_activity");
+$updateStmt->execute([
+    ':session_id' => $sessionId,
+    ':user_id' => $userId,
+    ':last_activity' => time()
+]);

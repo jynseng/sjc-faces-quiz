@@ -20,11 +20,17 @@ body {
   padding: 0px;
   background-color: pink;
   text-align: center;
+  height: 100vh;
+  cursor: url("../assets/stamp_cursor_24.png") 12 1, auto !important;
 }
 
 h1 {
   font-family: super_peachregular, Helvetica;
   font-size: 44pt;
+}
+
+h3 {
+  margin: 20px 0 8px 0;
 }
 
 .Header {
@@ -39,21 +45,16 @@ h1 {
   top: 58px;
   right: 7%;
 }
-
 #menu-bar button {
   border: none;
   background: transparent;
-}
-
-button img {
-  width: 32px;
 }
 
 .popup {
   background-color: rgba(150, 255, 255, 0.96);
   border: 3px solid white;
   position: fixed;
-  min-width: 35%;
+  width: 400px;
   text-align: center;
   margin: 2px auto 2px auto;
   padding-top: 10px;
@@ -66,18 +67,25 @@ button img {
   top: 470px;
   transform: translate(-50%, -50%);
 }
+.popup h3 {
+  margin: 20px 0 20px 0;
+}
 
 #usersOverlay {
   position: fixed;
   top: 44px;
   left: 5%;
+  opacity: 0.6;
 }
 
-.li {
+li {
   list-style: none;
   text-align: left;
-  padding-left: 14px;
-  margin: 5px;
+  padding-left: 0px;
+}
+
+ul {
+  padding: 0 0 0 0;
 }
 
 .table-container {
@@ -117,10 +125,15 @@ input {
   border-radius: 4px;
   font-size: 12pt;
   padding: 4px;
+  cursor: url("../assets/stamp_cursor_24.png") 12 1, auto !important;
 }
 
 input[type=text] {
   color: black;
+}
+
+#textinput {
+  width: 220px;
 }
 
 button {
@@ -128,6 +141,10 @@ button {
   text-align: center;
   margin: 6px auto 6px auto;
   padding: 4px;
+  cursor: url("../assets/stamp_cursor_24.png") 12 1, auto !important;
+}
+button img {
+  width: 32px;
 }
 
 #scorecard {

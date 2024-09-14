@@ -22,24 +22,21 @@
     newHighScoreSFX.volume = 0.8;
     document.getElementById("submit").disabled = true;
 
-    // Set focus to the input field when the page loads
-    window.onload = () => {
-        document.getElementById("playername").focus();
-        if (!document.getElementById('playername').value.trim()) {
-            document.getElementById('submitName').disabled = true;
-        }
-    };
-
+    // Set the player's name, start showing online activity status
     function setName(form) {
         playerName = form.inputbox.value.replace(/[^a-zA-Z0-9\s-]/g, "").toLowerCase().trim(); // Set player name, remove special characters
         fetchActiveUsers(playerName,'true');
         startActivity();
-        gameInit();
+        loadModes();
+        document.getElementById('howToPlay').style.display = 'none';
+        document.getElementById('mainMenu').style.display = 'block';
     }
 
     function resetGameMode() {
-        document.getElementById('gameModes').style.display = 'block';
+        document.getElementById('mainMenu').style.display = 'block';
         document.getElementById('gameoverWindow').style.display = 'none';
+        document.getElementById("confettiCanvas").style.display = 'none';
+        confetti = false;
     }
 
     // Set, increment, and track player score. Encapsulated to prevent tampering.
@@ -71,29 +68,28 @@
     })();
 
     // Get gamemode info
-    fetch('server/modes.php')
-        .then(response => response.json())
-        .then(data => {
-            const modeList = document.getElementById('gameModeButtons');
-            for (var gameMode in data) {
-                const listItem = document.createElement('button');
-                listItem.textContent = data[gameMode]['display_name'];
-                listItem.addEventListener('click', (function(selectedMode) {
-                    return function() {
-                        // Set the game mode
-                        gameModeId = selectedMode;
-                        gameModeTitle = data[selectedMode]['display_name'];
-                        console.log('Selected Game Mode: ' + data[selectedMode]['display_name']);
-                        getFaceData(data[selectedMode]['year'], data[selectedMode]['tags']);
-
-                        // Hide the window, unhide how to play window
-                        document.getElementById('gameModes').style.display = 'none';
-                        document.getElementById('howToPlay').style.display = 'block';
-                    };
-                })(gameMode));
-                modeList.appendChild(listItem);
-            }
-        })
+    function loadModes() {
+        fetch('server/modes.php')
+            .then(response => response.json())
+            .then(data => {
+                const modeList = document.getElementById('gameModeButtons');
+                for (var gameMode in data) {
+                    const listItem = document.createElement('button');
+                    listItem.textContent = data[gameMode]['display_name'];
+                    listItem.addEventListener('click', (function(selectedMode) {
+                        return function() {
+                            // Set the game mode
+                            gameModeId = selectedMode;
+                            gameModeTitle = data[selectedMode]['display_name'];
+                            console.log('Selected Game Mode: ' + data[selectedMode]['display_name']);
+                            getFaceData(data[selectedMode]['year'], data[selectedMode]['tags']);
+                            document.getElementById('mainMenu').style.display = 'none';
+                        };
+                    })(gameMode));
+                    modeList.appendChild(listItem);
+                }
+            })
+    }
 
     // Retrieve set of faces dictionary from server, faces mapped to array of img filepaths.
     function getFaceData(gameModeYear, gameModeTag) {
@@ -109,6 +105,7 @@
             .then(data => {
                 faces_all = data;
                 preLoadImages();
+                gameInit();
             })
             .catch(error => {
                 console.error('Fetch error:', error);
@@ -380,7 +377,7 @@
                             newRecordSFX.play();
                             document.getElementById("confettiCanvas").style.display = "block";
                             if (!confetti) { animate(); } // Play confetti visual effect
-                            alert("Congrats on setting the new high score!\nYou are SO SMART and SO CAPABLE.\nYOU ARE BRAT");
+                            alert("Congrats on setting the new high score!\nYou are SO SMART and SO CAPABLE.");
                         } else {
                             newHighScoreSFX.play();
                         }

@@ -1,3 +1,11 @@
+// Set focus to the input field when the page loads
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById("playername").focus();
+    if (!document.getElementById('playername').value.trim()) {
+        document.getElementById('submitName').disabled = true;
+    }
+}, false);
+
 // Register enter key as a click on submit button
 document.getElementById("enterName").addEventListener("keypress", function(event) {
     if (event.key === "Enter") {
