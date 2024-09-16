@@ -35,7 +35,7 @@
                 if (data) { // Existing user, login normally
                     userId = data;
                     loadModes();
-                    fetchActiveUsers(playerName, userId, 'true');
+                    fetchActiveUsers(playerName, 'true');
                     startActivity();
                     document.getElementById('mainMenu').style.display = 'block';    
                 } else { // New user, need to get first and last name

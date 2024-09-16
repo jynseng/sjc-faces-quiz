@@ -1,11 +1,13 @@
-const checkInterval = 30* 1000; // Frequency of local activity check (30s)
-const sendInterval = 30 * 1000 // Frequency of activity refreshing (30s)
-const inactiveThreshold = 1 * 60 * 1000; // Local activity timeout threshold (1 min)
+const checkIntervalActive = 5 * 1000; // Frequency of local activity check while user is active (5s)
+const checkIntervalInactive = .5 * 1000; // Frequency of local activity check while waiting for user to return (.5s)
+const sendInterval = 2 * 1000 // Frequency of activity refreshing to server (2s)
+const inactiveThreshold = .2 * 60 * 1000; // Local activity timeout threshold (12 sec)
 var lastActivityTime = Date.now();
 activeUsers = [];
 userList = document.getElementById('userList');
 var refreshInterval;
 var loggedIn = false;
+var checkInterval = checkIntervalActive;
 
 // Long-polling for active user list updates
 function fetchActiveUsers(username, init='false') {
@@ -14,8 +16,6 @@ function fetchActiveUsers(username, init='false') {
         .then(data => {
             if (data) {
                 activeUsers = data.activeUsers;
-                // console.log("activeUsers: ");
-                // console.log(activeUsers);
                 userList.innerHTML = '';
                 if (activeUsers[0] != 'empty') {
                     activeUsers.forEach(user => {
@@ -35,23 +35,30 @@ function fetchActiveUsers(username, init='false') {
 // Poll server every x seconds to keep session active
 function startActivity() {
     loggedIn = true;
-    refreshInterval = setInterval(function() {
-        fetch('server/activity.php', { method: 'GET' })
-            .then(data=> { 
-                //console.log(data); 
-            })
-    }, sendInterval);
+    if (!refreshInterval) {
+        refreshInterval = setInterval(function() {
+            fetch('server/activity.php', { method: 'GET' })
+                .then(data=> { 
+                    //console.log(data); 
+                })
+        }, sendInterval);
+    }
 }
 
-// Check if user is still active locally every 30 seconds
+// Check if user is still active locally every 15 seconds
 setInterval(function () {
     const currentTime = Date.now();
     const timeSinceLastActivity = currentTime - lastActivityTime;
 
-    if (timeSinceLastActivity > inactiveThreshold) { // User is inactive
+    if (timeSinceLastActivity > inactiveThreshold && refreshInterval) { // User is inactive
         clearInterval(refreshInterval);
-    } else if (loggedIn) {
+        refreshInterval = null;
+        // console.log("Stopping activity");
+        checkInterval = checkIntervalInactive;
+    } else if (loggedIn && timeSinceLastActivity < inactiveThreshold && !refreshInterval) {
         startActivity(); // User is active
+        // console.log("starting activity");
+        checkInterval = checkIntervalActive;
     }
 }, checkInterval);
 

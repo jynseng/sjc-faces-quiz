@@ -23,9 +23,9 @@ if (!isset($_SESSION['active_users'])) {
 
 session_write_close();
 
-$timeout = 30; // Seconds after last request before user is taken off active user list
+$timeout = 20; // Seconds after last request before user is taken off active user list
 $sessionTimeout = 60 * 60; // Seconds after last request before session is destroyed (1hr)
-$sleepTime = 1; // Seconds delay between loops
+$sleepTime = 100000; // Microsecond delay between loops (.1 seconds)
 //$sessionSavePath = '/opt/alt/php81/var/lib/php/session';
 $sessionSavePath = '/Applications/MAMP/tmp/php';
 if (isset($_SESSION['active_users'])) { $storedActiveUsers = $_SESSION['active_users']; }
@@ -71,7 +71,7 @@ while (true) {
     }  
 
     // Sleep for x seconds
-    sleep($sleepTime);
+    usleep($sleepTime);
 
     // Break the loop if it exceeds the 20s long-polling timeout
     if ((time() - $_SERVER['REQUEST_TIME']) > 20) {
