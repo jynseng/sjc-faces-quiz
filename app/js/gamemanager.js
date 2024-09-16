@@ -65,8 +65,10 @@
         submitButton.textContent = 'Create profile';
 
         submitButton.addEventListener('click', function() {
-            const firstName = document.getElementById('first-name').value;
-            const lastName = document.getElementById('last-name').value;
+            let firstName = document.getElementById('first-name').value;
+            firstName = firstName.charAt(0).toUpperCase() + lastName.slice(1);
+            let lastName = document.getElementById('last-name').value;
+            lastName = lastName.charAt(0).toUpperCase() + lastName.slice(1);
             document.body.removeChild(popupDiv); // Remove the popup after submission
             fetch('server/newUser.php?', { // Add new user to db
                 method: 'POST',
