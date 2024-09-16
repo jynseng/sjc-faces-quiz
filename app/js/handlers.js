@@ -39,13 +39,15 @@ function preventInvalidInput(event) {
 }
 
 // Don't allow game start until user enters a name
-document.getElementById('playername').addEventListener('input', function() {
-    var textBoxValue = this.value.trim();  // Trim whitespace to check for actual input
-    var submitButton = document.getElementById('submitName');
+document.getElementById('playername').addEventListener('input', preventBlankInput('submitName'));
+
+function preventBlankInput(submitButton) {
+    let textBoxValue = this.value.trim();  // Trim whitespace to check for actual input
+    let button = document.getElementById(submitButton);
     
     if (textBoxValue) {
-        submitButton.disabled = false;  // Enable the button if there's input
+        button.disabled = false;  // Enable the button if there's input
     } else {
-        submitButton.disabled = true;   // Disable the button if the input is empty
+        button.disabled = true;   // Disable the button if the input is empty
     }
-});
+}

@@ -47,10 +47,14 @@
     // Prompt user for first and last name, write to db
     function addNewUser() {
         const popupDiv = document.createElement('div');
+        popupDiv.className = 'popup';
+
         const header = document.createElement('h3');
         header.innerHTML = 'Enter name';
 
-        popupDiv.className = 'popup';
+        const newForm = document.createElement('form');
+        newForm.setAttribute('id', 'userFirstLast');
+
         const firstNameInput = document.createElement('input');
         firstNameInput.setAttribute('type', 'text');
         firstNameInput.setAttribute('placeholder', 'First Name');
@@ -62,7 +66,9 @@
         lastNameInput.setAttribute('id', 'last-name');
 
         const submitButton = document.createElement('button');
+        submitButton.setAttribute('id', 'submitFirstLast');
         submitButton.textContent = 'Create profile';
+        newForm.addEventListener('input', preventBlankInput('submitFirstLast'));
 
         submitButton.addEventListener('click', function() {
             let firstName = document.getElementById('first-name').value;
@@ -84,9 +90,10 @@
 
         // Append the form elements to the popup
         popupDiv.appendChild(header);
-        popupDiv.appendChild(firstNameInput);
-        popupDiv.appendChild(lastNameInput);
-        popupDiv.appendChild(submitButton);
+        newForm.appendChild(firstNameInput);
+        newForm.appendChild(lastNameInput);
+        newForm.appendChild(submitButton);
+        popupDiv.appendChild(newForm);
 
         // Append the popup to the body
         document.body.appendChild(popupDiv);
@@ -186,12 +193,8 @@
     // Initialize game with specified time limit, reset score, start with first face 
     function gameInit() {
         clearInterval(gameTimer);
-        startTimer(gameLength);
         scoreManager.resetScore();
         document.getElementById("howToPlay").style.display = "none"; // Hide popup window
-        document.getElementById("submit").disabled = false;
-        document.getElementById("skip").disabled = false;
-        document.getElementById("textinput").disabled = false;
         document.getElementById("textinput").value = "";
         document.getElementById("gameoverWindow").style.display = "none";
         document.getElementById("confettiCanvas").style.display = "none";
@@ -200,8 +203,32 @@
         wrong = 0;
         skips = 0;
         document.getElementById("score").innerText = scoreManager.getScore();
-        loadNewFace();
         document.getElementById("textinput").focus();
+
+        // Blur first image during countdown
+        const imgDiv = document.getElementById("imageElement");
+        imgDiv.setAttribute("filter", "blur(8px)");
+        loadNewFace();
+
+        // Start countdown to game start
+        let tMinus = 3;
+        const countdownText = document.createElement("h2");
+        countdownText.setAttribute("font-size", "6rem");
+        const imgContainer = document.getElementById("ImageContainer");
+        imgContainer.appendChild(countdownText);
+        const countDown = setInterval(function(){
+            imgContainer.lastChild.innerHTML = tMinus;
+            tMinus--;
+            if (tMinus <= 0) {
+                imgContainer.lastChild.remove();
+                imgDiv.setAttribute("filter", "none"); // Unblur first image when game start
+                document.getElementById("submit").disabled = false;
+                document.getElementById("skip").disabled = false;
+                document.getElementById("textinput").disabled = false;
+                startTimer(gameLength); // Start timer
+                clearInterval(countDown);
+            }
+        }, 700);
     }
 
     // Choose a random person from the working set and load the image into the image container
