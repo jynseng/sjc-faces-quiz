@@ -66,6 +66,7 @@ h3 {
   left: 50%;
   top: 470px;
   transform: translate(-50%, -50%);
+  overflow-x: hidden;
 }
 .popup h3 {
   margin: 20px 0 20px 0;
@@ -75,7 +76,6 @@ h3 {
   position: fixed;
   top: 44px;
   left: 5%;
-  opacity: 0.6;
 }
 
 li {
@@ -86,11 +86,13 @@ li {
 
 ul {
   padding: 0 0 0 0;
+  opacity: 0.6;
 }
 
 .table-container {
-  overflow: auto;
-  max-height: 535px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 545px;
   scrollbar-width: thin; /* For Firefox, make the scrollbar thinner */
   scrollbar-color: #888 transparent; /* For Firefox, set thumb color and track color */
   padding-left: 24px; /* Offset the width of the scrollbar */

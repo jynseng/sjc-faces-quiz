@@ -1,22 +1,18 @@
 <?php
 session_start();
+$_SESSION['SameSite'] = 'Lax';
 
 if (isset($_GET['username'])) { 
     $username = $_GET['username'];
-}
-if (!isset($_SESSION['username'])) {
-    $_SESSION['username'] = $username;
-} else if ($_SESSION['username'] != $username) { // If username doesn't match (i.e. wrong session accessed)
-    session_write_close();
-    session_id('');
-    session_start();
     $_SESSION['username'] = $username;
 }
+// if (isset($_GET['userId'])) {
+//     $_SESSION['user_id'] = $_GET['userId'];
+// }
 if (isset($_GET['init'])) { 
     $init = $_GET['init'];
-    if ($init == 'true') { // Initial request
+    if ($init == 'true') { // Initial request case
         $_SESSION['last_activity'] = time();
-        $_SESSION['SameSite'] = 'Lax';
     }
 } else {
     $init = 'false';
@@ -83,14 +79,3 @@ while (true) {
         exit;
     }
 }
-$db = new PDO('sqlite:faces.db');
-$sessionId = session_id();
-$userId = 1;
-// Update user's last login timestamp in sqlite db
-$updateStmt = $db->prepare("INSERT INTO user (session_id, user_id, last_activity) VALUES (:session_id, :user_id, :last_activity)
-                            ON CONFLICT(session_id) DO UPDATE SET last_activity = :last_activity");
-$updateStmt->execute([
-    ':session_id' => $sessionId,
-    ':user_id' => $userId,
-    ':last_activity' => time()
-]);

@@ -1,10 +1,11 @@
-const checkInterval = 1000 * 10; // Frequency of local activity check (10s)
+const checkInterval = 30* 1000; // Frequency of local activity check (30s)
 const sendInterval = 30 * 1000 // Frequency of activity refreshing (30s)
-const inactiveThreshold = 4 * 60 * 1000; // Local activity timeout threshold (4 min)
+const inactiveThreshold = 1 * 60 * 1000; // Local activity timeout threshold (1 min)
 var lastActivityTime = Date.now();
 activeUsers = [];
 userList = document.getElementById('userList');
 var refreshInterval;
+var loggedIn = false;
 
 // Long-polling for active user list updates
 function fetchActiveUsers(username, init='false') {
@@ -33,23 +34,24 @@ function fetchActiveUsers(username, init='false') {
 
 // Poll server every x seconds to keep session active
 function startActivity() {
+    loggedIn = true;
     refreshInterval = setInterval(function() {
         fetch('server/activity.php', { method: 'GET' })
-            .then(data=> { console.log(data); })
+            .then(data=> { 
+                //console.log(data); 
+            })
     }, sendInterval);
 }
 
-// Check if user is still active locally every 5 mins
+// Check if user is still active locally every 30 seconds
 setInterval(function () {
     const currentTime = Date.now();
     const timeSinceLastActivity = currentTime - lastActivityTime;
 
-    if (timeSinceLastActivity > inactiveThreshold) {
+    if (timeSinceLastActivity > inactiveThreshold) { // User is inactive
         clearInterval(refreshInterval);
-        // Stop long-polling
-    } else {
-        startActivity();
-        // Start long-polling
+    } else if (loggedIn) {
+        startActivity(); // User is active
     }
 }, checkInterval);
 

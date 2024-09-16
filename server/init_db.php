@@ -29,20 +29,35 @@ $db->exec('
         display_name TEXT NOT NULL,
         year INTEGER,
         tags TEXT,
-        enabled INTEGER
+        enabled INTEGER,
+        description TEXT
     );
 ');
 
 $db->exec('
     CREATE TABLE IF NOT EXISTS score (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        player_name TEXT NOT NULL,
+        username TEXT NOT NULL,
+        user_id INTEGER NOT NULL,
         mode_id INTEGER NOT NULL,
         score INTEGER NOT NULL,
         errors INTEGER NOT NULL,
         skips INTEGERT NOT NULL,
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY(mode_id) REFERENCES mode(id)
+        FOREIGN KEY(mode_id) REFERENCES mode(id),
+        FOREIGN KEY(user_id) REFERENCES user(id)
+    );
+');
+
+$db->exec('
+    CREATE TABLE IF NOT EXISTS user (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT NOT NULL,
+        first_name TEXT NOT NULL,
+        last_name TEXT NOT NULL,
+        permission_level TEXT DEFAULT user,
+        created DATETIME DEFAULT CURRENT_TIMESTAMP,
+        last_login DATETIME DEFAULT CURRENT_TIMESTAMP
     );
 ');
 

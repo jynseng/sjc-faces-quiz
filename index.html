@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>SJC Faces Game</title>
-        <link rel="stylesheet" href="dist/style.css?=ver1.35">
+        <link rel="stylesheet" href="dist/style.css?=ver1.38">
         <link rel="icon" type="image/png" href="assets/newfavicon.png">
     </head>
     <body>
@@ -19,9 +19,9 @@
             <div class="popup" id="mainMenu" style="display: none;"><h3>Main Menu</h3>
                 <div id="gameModeButtons"></div>
             </div>
-            <div class="popup" id="howToPlay"><h3>How to Play</h3><p>Guess the name of each person<br>• 1pt for first name<br>• 2pt for first and last<br>• Spelling counts</p>
+            <div class="popup" id="howToPlay"><h3>Welcome to SJC Faces Game</h3><p>Good Luck!<br>-Daniel and Peter</p>
                 <form id="enterName">
-                    <input type="text" id="playername" name="inputbox" placeholder="Enter Name" maxlength="7" size="7">
+                    <input type="text" id="playername" name="inputbox" placeholder="username" maxlength="7" size="7">
                     <br><input type="button" id="submitName" onclick="interface.setName(this.form)" value="Start"></div>
                 </form>
             <div class="popup" id="gameoverWindow" style="display: none;">
@@ -76,9 +76,8 @@
         </section>
         <canvas id="confettiCanvas"></canvas>
     </body>
+    <script src="app/js/handlers.js?=ver1.16"></script>
+    <script src="app/js/gamemanager.js?=ver1.40"></script>
+    <script src="app/js/user_activity.js?=ver1.50"></script>
     <script src="app/js/confetti.js"></script>
-    <script src="app/js/user_activity.js?=ver1.43"></script>
-    <script src="app/js/handlers.js?=ver1.13"></script>
-    <script src="app/js/gamemanager.js?=ver1.24"></script>
-    <script id="nicknamesjson" src="nicknames.json" type="application/json"></script>
 </html>

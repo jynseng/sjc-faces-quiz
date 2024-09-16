@@ -2,6 +2,7 @@
     var faces_all = [];
     var faces_working = [];
     var playerName = "";
+    var userId = "";
     var wrong = 0; // Number of wrong answers
     var skips = 0; // Number of faces skipped
     var currentFace = ""; // Name of current person
@@ -24,12 +25,69 @@
 
     // Set the player's name, start showing online activity status
     function setName(form) {
-        playerName = form.inputbox.value.replace(/[^a-zA-Z0-9\s-]/g, "").toLowerCase().trim(); // Set player name, remove special characters
-        fetchActiveUsers(playerName,'true');
-        startActivity();
-        loadModes();
         document.getElementById('howToPlay').style.display = 'none';
-        document.getElementById('mainMenu').style.display = 'block';
+        playerName = form.inputbox.value.replace(/[^a-zA-Z0-9\s-]/g, "").toLowerCase().trim(); // Set player name, remove special characters
+        fetch('server/login.php?' + new URLSearchParams({username:playerName,init:'true'}), {
+            method: 'GET',
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data) { // Existing user, login normally
+                    userId = data;
+                    loadModes();
+                    fetchActiveUsers(playerName, userId, 'true');
+                    startActivity();
+                    document.getElementById('mainMenu').style.display = 'block';    
+                } else { // New user, need to get first and last name
+                    addNewUser();
+                }             
+            })
+    }
+
+    // Prompt user for first and last name, write to db
+    function addNewUser() {
+        const popupDiv = document.createElement('div');
+        const header = document.createElement('h3');
+        header.innerHTML = 'Enter name';
+
+        popupDiv.className = 'popup';
+        const firstNameInput = document.createElement('input');
+        firstNameInput.setAttribute('type', 'text');
+        firstNameInput.setAttribute('placeholder', 'First Name');
+        firstNameInput.setAttribute('id', 'first-name');
+
+        const lastNameInput = document.createElement('input');
+        lastNameInput.setAttribute('type', 'text');
+        lastNameInput.setAttribute('placeholder', 'Last Name');
+        lastNameInput.setAttribute('id', 'last-name');
+
+        const submitButton = document.createElement('button');
+        submitButton.textContent = 'Create profile';
+
+        submitButton.addEventListener('click', function() {
+            const firstName = document.getElementById('first-name').value;
+            const lastName = document.getElementById('last-name').value;
+            document.body.removeChild(popupDiv); // Remove the popup after submission
+            fetch('server/newUser.php?', { // Add new user to db
+                method: 'POST',
+                body: JSON.stringify({username:playerName, firstName:firstName, lastName:lastName})
+            }) 
+                .then(response => response.json())
+                .then(data => {userId = data;})
+                loadModes();
+                fetchActiveUsers(playerName, userId, 'true');
+                startActivity();
+                document.getElementById('mainMenu').style.display = 'block';    
+        });
+
+        // Append the form elements to the popup
+        popupDiv.appendChild(header);
+        popupDiv.appendChild(firstNameInput);
+        popupDiv.appendChild(lastNameInput);
+        popupDiv.appendChild(submitButton);
+
+        // Append the popup to the body
+        document.body.appendChild(popupDiv);
     }
 
     function resetGameMode() {
@@ -303,7 +361,7 @@
             fetchURL = 'server/updateScores.php';
             fetchOptions = {
                 method: 'POST',
-                body: JSON.stringify({status: gameOver, name: playerName, score: scoreManager.getScore(), gameModeId: gameModeId, errors: wrong, skips: skips})
+                body: JSON.stringify({status: gameOver, name: playerName, userId: userId, score: scoreManager.getScore(), gameModeId: gameModeId, errors: wrong, skips: skips})
             }
         }
         fetch(fetchURL, fetchOptions)
@@ -328,7 +386,7 @@
                 leaderboardWindow.style.display = "block"; // Show popup window
 
                 for (var i = 0; i<25; i++) {
-                    if (!data[i]) {
+                    if (!data[i] && i == 10) { // If less than 10 scores to show, exit early
                         return; 
                     }
 
@@ -349,40 +407,46 @@
                     row.appendChild(cell1);
 
                     const cell2 = document.createElement('td');
-                    cell2.textContent = data[i].player_name.toUpperCase();
+                    var username = 'EMPTY';
+                    var highScore = 0;
+                    if (data[i]) {
+                        username = data[i].username.toUpperCase();
+                        highScore = data[i].high_score;
+                    }
+                    cell2.textContent = username;
                     row.appendChild(cell2);
 
                     const cell3 = document.createElement('td');
-                    cell3.textContent = data[i].high_score;
+                    cell3.textContent = highScore;
                     row.appendChild(cell3);
-                    
+                    row.style.color = "black";
                     leaderboardTable.appendChild(row);
 
                     // If player score is top ten and new, highlight & blink 
-                    if (!combined && sortedScores[index].high_score == scoreManager.getScore() && data[i].player_name == playerName) {
-                        row.style.color = "white";
+                    if (data[i]) {
+                        if (!combined && sortedScores[index].high_score == scoreManager.getScore() && data[i].username == playerName) {
+                            row.style.color = "white";
 
-                        // Make score blink for 15 seconds
-                        var text = row;
-                        blinker = setInterval(function() {
-                            text.style.opacity = (text.style.opacity == '0' ? '1' : '0');
-                        }, 400);
-                        setTimeout(function() {
-                            clearInterval(blinker);
-                            text.style.opacity = "1";
-                        }, 15000);
+                            // Make score blink for 15 seconds
+                            var text = row;
+                            blinker = setInterval(function() {
+                                text.style.opacity = (text.style.opacity == '0' ? '1' : '0');
+                            }, 400);
+                            setTimeout(function() {
+                                clearInterval(blinker);
+                                text.style.opacity = "1";
+                            }, 15000);
 
-                        // If new top score, play confetti and sfx
-                        if (i === 0) {
-                            newRecordSFX.play();
-                            document.getElementById("confettiCanvas").style.display = "block";
-                            if (!confetti) { animate(); } // Play confetti visual effect
-                            alert("Congrats on setting the new high score!\nYou are SO SMART and SO CAPABLE.");
-                        } else {
-                            newHighScoreSFX.play();
+                            // If new top score, play confetti and sfx
+                            if (i === 0) {
+                                newRecordSFX.play();
+                                document.getElementById("confettiCanvas").style.display = "block";
+                                if (!confetti) { animate(); } // Play confetti visual effect
+                                alert("Congrats on setting the new high score!\nYou are SO SMART and SO CAPABLE.");
+                            } else {
+                                newHighScoreSFX.play();
+                            }
                         }
-                    } else {
-                        row.style.color = "black";
                     }
                     index++;
                 }

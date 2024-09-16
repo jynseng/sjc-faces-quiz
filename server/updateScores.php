@@ -23,16 +23,17 @@ $score = $data["score"];
 $gameModeId = $data["gameModeId"];
 $errors = $data["errors"];
 $skips = $data["skips"];
+$userId = $data["userId"];
 
 // Insert new score into score table
-$insertScoreSql = "INSERT INTO score (player_name, mode_id, score, errors, skips) values ('{$name}', {$gameModeId}, {$score}, {$errors}, {$skips})";
+$insertScoreSql = "INSERT INTO score (username, user_id, mode_id, score, errors, skips) values ('{$name}', {$userId}, {$gameModeId}, {$score}, {$errors}, {$skips})";
 $db->exec($insertScoreSql);
 
 // Get leaderboard for current game mode
-$getScoreSql = "SELECT player_name, max(score) AS high_score FROM score
+$getScoreSql = "SELECT username, max(score) AS high_score FROM score
                 WHERE mode_id = {$gameModeId}
                     AND score > 0
-                GROUP BY player_name
+                GROUP BY username
                 ORDER BY high_score DESC
                 LIMIT {$leaderboardSlots}";
 $result = $db->query($getScoreSql);
@@ -40,6 +41,5 @@ $scoreDict = [];
 while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
     $scoreDict[] = $row;
 }
-
-// Echo top scores
+$db = null;
 echo json_encode($scoreDict);
