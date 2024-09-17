@@ -23,6 +23,19 @@ body {
   height: 100vh;
   overflow: hidden;
   cursor: url("../assets/stamp_cursor_24.png") 12 1, auto !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  position: relative;
+}
+
+#QuizContainer {
+  background-color: #90b4c6;
+  border-radius: 70px;
+  width: 600px;
+  padding: 55px;
 }
 
 h1 {
@@ -35,9 +48,9 @@ h3 {
 }
 
 .Header {
-  position: static;
   display: block;
   text-align: center;
+  width: 100%;
 }
 
 #menu-bar {
@@ -67,7 +80,7 @@ h3 {
   padding-left: 40px;
   padding-right: 40px;
   z-index: 99;
-  border-radius: 6px;
+  border-radius: 10px;
   left: 50%;
   top: 470px;
   transform: translate(-50%, -50%);
@@ -195,7 +208,7 @@ button img {
   margin: auto;
   opacity: 0;
   border-radius: 3px;
-  max-width: 25%;
+  max-width: 80%;
 }
 
 .image {

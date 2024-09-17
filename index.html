@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>SJC Faces Game</title>
-        <link rel="stylesheet" href="dist/style.css?=ver1.49">
+        <link rel="stylesheet" href="dist/style.css?=ver1.51">
         <link rel="icon" type="image/png" href="assets/newfavicon.png">
     </head>
     <body>
@@ -13,6 +13,10 @@
             <div class="Header"> 
                 <h1 onclick="interface.resetGameMode()">SJC Faces Game</h1>
                 <div id="menu-bar">
+                    <div id="usersOverlay">
+                        <h3>Online Now</h3>
+                        <ul id="userList"></ul>
+                    </div>
                     <button id="muteButton" onclick="toggleMute()">🔊</button>
                     <button id="lb-button" onclick="interface.toggleCombinedLeaderboard()">📊</button>
                 </div>
@@ -70,10 +74,6 @@
                 </form>
                 <button onclick="interface.skipFace()" id="skip">Skip</button>
                 <button onclick="interface.gameInit()" id="restart">Restart</button>
-            </div>
-            <div id="usersOverlay">
-                <h3>Online Now</h3>
-                <ul id="userList"></ul>
             </div>
         </section>
         <canvas id="confettiCanvas"></canvas>
