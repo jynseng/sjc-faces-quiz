@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>SJC Faces Game</title>
-        <link rel="stylesheet" href="dist/style.css?=ver1.47">
+        <link rel="stylesheet" href="dist/style.css?=ver1.49">
         <link rel="icon" type="image/png" href="assets/newfavicon.png">
     </head>
     <body>
@@ -13,7 +13,8 @@
             <div class="Header"> 
                 <h1 onclick="interface.resetGameMode()">SJC Faces Game</h1>
                 <div id="menu-bar">
-                    <button id="lb-button" onclick="interface.toggleCombinedLeaderboard()"><img src="assets/leaderboard.png" alt="leaderboardicon"></button>
+                    <button id="muteButton" onclick="toggleMute()">🔊</button>
+                    <button id="lb-button" onclick="interface.toggleCombinedLeaderboard()">📊</button>
                 </div>
             </div>
             <div class="popup" id="mainMenu" style="display: none;"><h3>Select Mode</h3>
@@ -77,8 +78,8 @@
         </section>
         <canvas id="confettiCanvas"></canvas>
     </body>
-    <script src="app/js/handlers.js?=ver1.25"></script>
-    <script src="app/js/gamemanager.js?=ver1.68"></script>
+    <script src="app/js/handlers.js?=ver1.29"></script>
+    <script src="app/js/gamemanager.js?=ver1.69"></script>
     <script src="app/js/user_activity.js?=ver1.61"></script>
     <script src="app/js/confetti.js"></script>
 </html>

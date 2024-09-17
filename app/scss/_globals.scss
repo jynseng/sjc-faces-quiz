@@ -55,6 +55,10 @@ h3 {
     button {
         border: none;
         background: transparent;
+        font-size: 1.6rem;
+        display: inline-flex;
+        width: 40px;
+        height: 40px;
     }
 }
   
@@ -151,7 +155,7 @@ input[type=text] {
 
 #gameModeButtons {
     button {
-        font-size:16pt;
+        font-size:14pt;
         padding: 6px;
         margin: 8px auto 8px auto;
     }

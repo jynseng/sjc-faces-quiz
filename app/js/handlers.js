@@ -1,3 +1,15 @@
+let muted = false;
+const ding1 = new Audio("assets/ESM_Correct_Answer_Bling_3_Sound_FX_Arcade_Casino_Kids_Mobile_App_Positive_Achievement_Win.wav"); // Correct first name
+const ding2 = new Audio("assets/ESM_Correct_Answer_Bling_3_Sound_FX_Arcade_Casino_Kids_Mobile_App_Positive_Achievement_Win.wav"); // Correct last name
+const newHighScoreSFX = new Audio("assets/ESM_Positive_Correct_Bling_v3_Sound_FX_Arcade_Casino_Kids_Mobile_App.wav");
+const newRecordSFX = new Audio("assets/ESM_Casino_Win_Pattern_8_Sound_FX_Arcade_Kids_Mobile_App.wav");
+const countDownSFX = new Audio("assets/CountDownSFX.m4a");
+const newOverallHighSFX = new Audio("assets/WowSFX.mp3");
+countDownSFX.volume = 0.5;
+ding1.volume = 0.7;
+ding2.volume = 0.7;
+newHighScoreSFX.volume = 0.8;
+
 // Set focus to the input field when the page loads
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById("playername").focus();
@@ -60,5 +72,24 @@ function preventBlankInput(text, submitButton) {
         button.disabled = false;  // Enable the button if there's input
     } else {
         button.disabled = true;   // Disable the button if the input is empty
+    }
+}
+
+// Toggle the volume on or off
+function toggleMute() {
+    if (muted) {
+        document.getElementById("muteButton").innerHTML = "🔊";
+        countDownSFX.volume = 0.5;
+        ding1.volume = 0.7;
+        ding2.volume = 0.7;
+        newHighScoreSFX.volume = 0.8;
+        muted = false;
+    } else {
+        document.getElementById("muteButton").innerHTML = "🔇";
+        countDownSFX.volume = 0;
+        ding1.volume = 0;
+        ding2.volume = 0;
+        newHighScoreSFX.volume = 0;
+        muted = true;
     }
 }

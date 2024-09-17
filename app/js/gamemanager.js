@@ -16,17 +16,6 @@
     const timer = document.getElementById("Timer");
     const gameLength = 60; // Time in seconds each round lasts
 
-    const ding1 = new Audio("assets/ESM_Correct_Answer_Bling_3_Sound_FX_Arcade_Casino_Kids_Mobile_App_Positive_Achievement_Win.wav"); // Correct first name
-    const ding2 = new Audio("assets/ESM_Correct_Answer_Bling_3_Sound_FX_Arcade_Casino_Kids_Mobile_App_Positive_Achievement_Win.wav"); // Correct last name
-    const newHighScoreSFX = new Audio("assets/ESM_Positive_Correct_Bling_v3_Sound_FX_Arcade_Casino_Kids_Mobile_App.wav");
-    const newRecordSFX = new Audio("assets/ESM_Casino_Win_Pattern_8_Sound_FX_Arcade_Kids_Mobile_App.wav");
-    const countDownSFX = new Audio("assets/CountDownSFX.m4a");
-    const newOverallHighSFX = new Audio("assets/WowSFX.mp3");
-    countDownSFX.volume = 0.5;
-    ding1.volume = 0.7;
-    ding2.volume = 0.7;
-    newHighScoreSFX.volume = 0.8;
-
     // Set the player's name, start showing online activity status
     function setName(form) {
         document.getElementById('howToPlay').style.display = 'none';
