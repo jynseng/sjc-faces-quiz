@@ -21,8 +21,8 @@
             </div>
             <div class="popup" id="howToPlay"><h3>Welcome to SJC Faces Game</h3><p>Good Luck!<br>-Daniel and Peter</p>
                 <form id="enterName" onsubmit="interface.setName(this); return false;">
-                    <input type="text" id="playername" name="inputbox" placeholder="username" maxlength="7" size="7" required>
-                    <br><button type="submit" id="submitName" >Log in</button>
+                    <input type="text" id="playername" name="inputbox" placeholder="username" maxlength="7" size="12" required>
+                    <br><button type="submit" id="submitName" disabled="true">Log in</button>
                 </form>
             </div>    
             <div class="popup" id="gameoverWindow" style="display: none;">
@@ -77,8 +77,8 @@
         </section>
         <canvas id="confettiCanvas"></canvas>
     </body>
-    <script src="app/js/handlers.js?=ver1.22"></script>
-    <script src="app/js/gamemanager.js?=ver1.58"></script>
+    <script src="app/js/handlers.js?=ver1.25"></script>
+    <script src="app/js/gamemanager.js?=ver1.66"></script>
     <script src="app/js/user_activity.js?=ver1.61"></script>
     <script src="app/js/confetti.js"></script>
 </html>

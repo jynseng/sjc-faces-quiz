@@ -6,6 +6,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 }, false);
 
+// Esc key closes popup window
+document.addEventListener("keydown", function(event) {
+    if (event.key === "Escape") {
+        console.log("escape");
+        document.getElementById("gameoverWindow").style.display = "none";
+        document.getElementById("combinedLeaderboardWindow").style.display = "none";
+    }
+});
+
 // Register enter key as a click on submit button
 document.getElementById("enterName").addEventListener("keypress", function(event) {
     if (event.key === "Enter") {

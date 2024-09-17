@@ -1,27 +1,31 @@
 (function () {
-    var faces_all = [];
-    var faces_working = [];
-    var playerName = "";
-    var userId = "";
-    var wrong = 0; // Number of wrong answers
-    var skips = 0; // Number of faces skipped
-    var currentFace = ""; // Name of current person
-    var gameOver = false;
+    let faces_all = [];
+    let faces_working = [];
+    let playerName;
+    let userId;
+    let wrong = 0; // Number of wrong answers
+    let skips = 0; // Number of faces skipped
+    let currentFace = ""; // Name of current person
+    let gameOver = false;
+    let gameTimer;
+    let gameModeId;
+    let gameModeTitle;
+    let blinker; // Makes high score blink on leaderboard
+    let confetti = false; // Has the confetti been animated already?
+
     const timer = document.getElementById("Timer");
     const gameLength = 60; // Time in seconds each round lasts
-    var gameTimer;
-    var gameModeId;
-    var gameModeTitle;
-    var blinker; // Makes high score blink on leaderboard
-    var confetti = false; // Has the confetti been animated already?
-    var ding1 = new Audio("assets/ESM_Correct_Answer_Bling_3_Sound_FX_Arcade_Casino_Kids_Mobile_App_Positive_Achievement_Win.wav"); // Correct first name
-    var ding2 = new Audio("assets/ESM_Correct_Answer_Bling_3_Sound_FX_Arcade_Casino_Kids_Mobile_App_Positive_Achievement_Win.wav"); // Correct last name
-    var newHighScoreSFX = new Audio("assets/ESM_Positive_Correct_Bling_v3_Sound_FX_Arcade_Casino_Kids_Mobile_App.wav");
-    var newRecordSFX = new Audio("assets/ESM_Casino_Win_Pattern_8_Sound_FX_Arcade_Kids_Mobile_App.wav");
+
+    const ding1 = new Audio("assets/ESM_Correct_Answer_Bling_3_Sound_FX_Arcade_Casino_Kids_Mobile_App_Positive_Achievement_Win.wav"); // Correct first name
+    const ding2 = new Audio("assets/ESM_Correct_Answer_Bling_3_Sound_FX_Arcade_Casino_Kids_Mobile_App_Positive_Achievement_Win.wav"); // Correct last name
+    const newHighScoreSFX = new Audio("assets/ESM_Positive_Correct_Bling_v3_Sound_FX_Arcade_Casino_Kids_Mobile_App.wav");
+    const newRecordSFX = new Audio("assets/ESM_Casino_Win_Pattern_8_Sound_FX_Arcade_Kids_Mobile_App.wav");
+    const countDownSFX = new Audio("assets/CountDownSFX.m4a");
+    const newOverallHighSFX = new Audio("assets/WowSFX.mp3");
+    countDownSFX.volume = 0.7;
     ding1.volume = 0.7;
     ding2.volume = 0.7;
     newHighScoreSFX.volume = 0.8;
-    document.getElementById("submit").disabled = true;
 
     // Set the player's name, start showing online activity status
     function setName(form) {
@@ -155,6 +159,7 @@
                     listItem.addEventListener('click', (function(selectedMode) {
                         return function() {
                             // Set the game mode
+                            updateTimer(gameLength);
                             gameModeId = selectedMode;
                             gameModeTitle = data[selectedMode]['display_name'];
                             console.log('Selected Game Mode: ' + gameModeTitle);
@@ -197,10 +202,10 @@
         });
     }
 
-    // Initialize game with specified time limit, reset score, start with first face 
+    // Initialize game with specified time limit, reset score, start countdown and load first face 
     function gameInit() {
-        clearInterval(gameTimer);
         scoreManager.resetScore();
+        clearInterval(gameTimer);
         document.getElementById("howToPlay").style.display = "none"; // Hide popup window
         document.getElementById("textinput").value = "";
         document.getElementById("gameoverWindow").style.display = "none";
@@ -210,6 +215,7 @@
         wrong = 0;
         skips = 0;
         document.getElementById("score").innerText = scoreManager.getScore();
+        document.getElementById("textinput").disabled = false;
         document.getElementById("textinput").focus();
 
         // Blur first image during countdown
@@ -226,6 +232,7 @@
         countdownText.innerHTML = '3';
         imgContainer.appendChild(countdownText);
         preLoadImages();
+        countDownSFX.play();
         const countDown = setInterval(function(){
             if (tMinus <= 0) {
                 imgContainer.lastChild.innerHTML = "";
@@ -233,7 +240,6 @@
                 imgDiv.style.filter = "none"; // Unblur first image when game start
                 document.getElementById("submit").disabled = false;
                 document.getElementById("skip").disabled = false;
-                document.getElementById("textinput").disabled = false;
                 startTimer(gameLength); // Start timer
                 clearInterval(countDown);
             } else {
@@ -418,7 +424,11 @@
                 else {
                     leaderboardTable = document.getElementById("leaderboard");
                     leaderboardWindow = document.getElementById("gameoverWindow");
-                    document.getElementById("leaderboardHeader").innerText = "HIGH SCORES\n" + gameModeTitle.toUpperCase() + " MODE";
+                    const leaderboardHeader = document.getElementById("leaderboardHeader");
+                    leaderboardHeader.innerHTML = "HIGH SCORES";
+                    let modeTitle = document.createElement("p");
+                    modeTitle.innerHTML = gameModeTitle.toUpperCase();
+                    leaderboardHeader.appendChild(modeTitle);
                 }
                 clearInterval(blinker);
                 leaderboardTable.innerHTML = "";
