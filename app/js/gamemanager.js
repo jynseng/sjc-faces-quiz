@@ -22,7 +22,7 @@
     const newRecordSFX = new Audio("assets/ESM_Casino_Win_Pattern_8_Sound_FX_Arcade_Kids_Mobile_App.wav");
     const countDownSFX = new Audio("assets/CountDownSFX.m4a");
     const newOverallHighSFX = new Audio("assets/WowSFX.mp3");
-    countDownSFX.volume = 0.7;
+    countDownSFX.volume = 0.5;
     ding1.volume = 0.7;
     ding2.volume = 0.7;
     newHighScoreSFX.volume = 0.8;
@@ -116,6 +116,7 @@
         document.getElementById('gameoverWindow').style.display = 'none';
         document.getElementById("confettiCanvas").style.display = 'none';
         document.getElementById("combinedLeaderboardWindow").style.display = "none";
+        document.getElementById("QuizContainer").style.filter = "blur(4px)";
         confetti = false;
     }
 
@@ -210,6 +211,7 @@
         document.getElementById("textinput").value = "";
         document.getElementById("gameoverWindow").style.display = "none";
         document.getElementById("confettiCanvas").style.display = "none";
+        document.getElementById("QuizContainer").style.filter = "none"; // Remove blur from quiz container
         faces_working = JSON.parse(JSON.stringify(faces_all));
         gameOver = false;
         wrong = 0;

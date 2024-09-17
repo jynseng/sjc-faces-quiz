@@ -21,6 +21,7 @@ body {
   background-color: pink;
   text-align: center;
   height: 100vh;
+  overflow: hidden;
   cursor: url("../assets/stamp_cursor_24.png") 12 1, auto !important;
 }
 
@@ -54,7 +55,7 @@ h3 {
   background-color: rgba(150, 255, 255, 0.96);
   border: 3px solid white;
   position: fixed;
-  width: 400px;
+  width: 430px;
   text-align: center;
   margin: 2px auto 2px auto;
   padding-top: 10px;
@@ -67,6 +68,7 @@ h3 {
   top: 470px;
   transform: translate(-50%, -50%);
   overflow-x: hidden;
+  z-index: 99;
 }
 .popup h3 {
   margin: 20px 0 20px 0;
@@ -132,6 +134,7 @@ input {
 
 input[type=text] {
   color: black;
+  margin: 4px;
 }
 
 #textinput {
@@ -139,7 +142,7 @@ input[type=text] {
 }
 
 #gameModeButtons button {
-  font-size: 18pt;
+  font-size: 16pt;
   padding: 6px;
   margin: 8px auto 8px auto;
 }
@@ -239,7 +242,6 @@ table {
 #countDown {
   font-size: 8rem;
   color: white;
-  z-index: 99;
   position: absolute;
   margin: 0;
 }

@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>SJC Faces Game</title>
-        <link rel="stylesheet" href="dist/style.css?=ver1.42">
+        <link rel="stylesheet" href="dist/style.css?=ver1.47">
         <link rel="icon" type="image/png" href="assets/newfavicon.png">
     </head>
     <body>
@@ -19,7 +19,7 @@
             <div class="popup" id="mainMenu" style="display: none;"><h3>Select Mode</h3>
                 <div id="gameModeButtons"></div>
             </div>
-            <div class="popup" id="howToPlay"><h3>Welcome to SJC Faces Game</h3><p>Good Luck!<br>-Daniel and Peter</p>
+            <div class="popup" id="howToPlay"><h3>Welcome to SJC Faces Game!</h3><p><strong>9/17 Update<br></strong>• New game modes added<br>• Overall total leaderboard<br>• New photos added<br>• See who's online<br><br>Good Luck!<br><em>-Daniel and Peter</em><br><br></p>
                 <form id="enterName" onsubmit="interface.setName(this); return false;">
                     <input type="text" id="playername" name="inputbox" placeholder="username" maxlength="7" size="12" required>
                     <br><button type="submit" id="submitName" disabled="true">Log in</button>
@@ -58,7 +58,7 @@
                     </table>
                 </div>
             </div>
-            <div class="QuizContainer">
+            <div id="QuizContainer" style="filter:blur(4px)">
                 <div id="Timer">00:00</div>
                 <div id="scorecard"><strong>Score: </strong><strong id="score"></strong></div>
                 <p id="nameOverlay">First Last</p>
@@ -78,7 +78,7 @@
         <canvas id="confettiCanvas"></canvas>
     </body>
     <script src="app/js/handlers.js?=ver1.25"></script>
-    <script src="app/js/gamemanager.js?=ver1.66"></script>
+    <script src="app/js/gamemanager.js?=ver1.68"></script>
     <script src="app/js/user_activity.js?=ver1.61"></script>
     <script src="app/js/confetti.js"></script>
 </html>
