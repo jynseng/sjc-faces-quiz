@@ -70,7 +70,7 @@
                 <div id="ImageContainer"><div class="image" id="imageElement" unselectable="on"></div></div>
                 <form id="quizForm">
                     <input type="text" id="textinput" name="inputbox" onkeypress="interface.preventInvalidInput(event)" placeholder="Who is this?" autocomplete="off">
-                    <input type="button" id="submit" onclick="interface.checkAnswer(this.form)" value=">">
+                    <input type="button" id="submit" onclick="interface.checkAnswer(this.form)" disabled="true" value=">">
                 </form>
                 <button onclick="interface.skipFace()" id="skip">Skip</button>
                 <button onclick="interface.gameInit()" id="restart">Restart</button>
@@ -79,7 +79,7 @@
         <canvas id="confettiCanvas"></canvas>
     </body>
     <script src="app/js/handlers.js?=ver1.29"></script>
-    <script src="app/js/gamemanager.js?=ver1.69"></script>
+    <script src="app/js/gamemanager.js?=ver1.70"></script>
     <script src="app/js/user_activity.js?=ver1.61"></script>
     <script src="app/js/confetti.js"></script>
 </html>
