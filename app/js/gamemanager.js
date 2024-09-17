@@ -59,21 +59,25 @@
         firstNameInput.setAttribute('type', 'text');
         firstNameInput.setAttribute('placeholder', 'First Name');
         firstNameInput.setAttribute('id', 'first-name');
+        firstNameInput.setAttribute('maxlength', '20');
+        firstNameInput.required = true;
 
         const lastNameInput = document.createElement('input');
         lastNameInput.setAttribute('type', 'text');
         lastNameInput.setAttribute('placeholder', 'Last Name');
         lastNameInput.setAttribute('id', 'last-name');
+        lastNameInput.setAttribute('maxlength', '20');
+        lastNameInput.required = true;
 
         const submitButton = document.createElement('button');
         submitButton.setAttribute('id', 'submitFirstLast');
         submitButton.textContent = 'Create profile';
-        newForm.addEventListener('input', preventBlankInput('submitFirstLast'));
+        submitButton.disabled = true;
 
         submitButton.addEventListener('click', function() {
-            let firstName = document.getElementById('first-name').value;
-            firstName = firstName.charAt(0).toUpperCase() + lastName.slice(1);
-            let lastName = document.getElementById('last-name').value;
+            let firstName = document.getElementById('first-name').value.replace(/[^a-zA-Z0-9\s-]/g, "").toLowerCase().trim();
+            firstName = firstName.charAt(0).toUpperCase() + firstName.slice(1);
+            let lastName = document.getElementById('last-name').value.replace(/[^a-zA-Z0-9\s-]/g, "").toLowerCase().trim();
             lastName = lastName.charAt(0).toUpperCase() + lastName.slice(1);
             document.body.removeChild(popupDiv); // Remove the popup after submission
             fetch('server/newUser.php?', { // Add new user to db
@@ -86,6 +90,10 @@
                 fetchActiveUsers(playerName, userId, 'true');
                 startActivity();
                 document.getElementById('mainMenu').style.display = 'block';    
+        });
+
+        newForm.addEventListener('input', function(e) {
+            preventBlankInput(e.target.value, 'submitFirstLast');
         });
 
         // Append the form elements to the popup
@@ -207,28 +215,31 @@
 
         // Blur first image during countdown
         const imgDiv = document.getElementById("imageElement");
-        imgDiv.setAttribute("filter", "blur(8px)");
+        imgDiv.style.filter = "blur(26px)";
         loadNewFace();
 
         // Start countdown to game start
-        let tMinus = 3;
-        const countdownText = document.createElement("h2");
-        countdownText.setAttribute("font-size", "6rem");
+        let tMinus = 2;
+        const countdownText = document.createElement("p");
+        countdownText.setAttribute("id", "countDown");
         const imgContainer = document.getElementById("ImageContainer");
+        countdownText.innerHTML = '3';
         imgContainer.appendChild(countdownText);
         const countDown = setInterval(function(){
-            imgContainer.lastChild.innerHTML = tMinus;
-            tMinus--;
             if (tMinus <= 0) {
+                imgContainer.lastChild.innerHTML = "";
                 imgContainer.lastChild.remove();
-                imgDiv.setAttribute("filter", "none"); // Unblur first image when game start
+                imgDiv.style.filter = "none"; // Unblur first image when game start
                 document.getElementById("submit").disabled = false;
                 document.getElementById("skip").disabled = false;
                 document.getElementById("textinput").disabled = false;
                 startTimer(gameLength); // Start timer
                 clearInterval(countDown);
+            } else {
+                imgContainer.lastChild.innerHTML = tMinus;
+                tMinus--;
             }
-        }, 700);
+        }, 1000);
     }
 
     // Choose a random person from the working set and load the image into the image container
@@ -493,7 +504,7 @@
     window.interface =  {
         setName: setName,
         gameInit: gameInit,
-        preventInvalidInput: preventInvalidInput,
+        //preventInvalidInput: preventInvalidInput,
         toggleLeaderboard: toggleLeaderboard,
         toggleCombinedLeaderboard: toggleCombinedLeaderboard,
         loadNewFace: loadNewFace,

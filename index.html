@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>SJC Faces Game</title>
-        <link rel="stylesheet" href="dist/style.css?=ver1.38">
+        <link rel="stylesheet" href="dist/style.css?=ver1.42">
         <link rel="icon" type="image/png" href="assets/newfavicon.png">
     </head>
     <body>
@@ -21,7 +21,7 @@
             </div>
             <div class="popup" id="howToPlay"><h3>Welcome to SJC Faces Game</h3><p>Good Luck!<br>-Daniel and Peter</p>
                 <form id="enterName" onsubmit="interface.setName(this); return false;">
-                    <input type="text" id="playername" name="inputbox" placeholder="username" maxlength="7" size="7">
+                    <input type="text" id="playername" name="inputbox" placeholder="username" maxlength="7" size="7" required>
                     <br><button type="submit" id="submitName" >Log in</button>
                 </form>
             </div>    
@@ -77,8 +77,8 @@
         </section>
         <canvas id="confettiCanvas"></canvas>
     </body>
-    <script src="app/js/handlers.js?=ver1.17"></script>
-    <script src="app/js/gamemanager.js?=ver1.42"></script>
-    <script src="app/js/user_activity.js?=ver1.58"></script>
+    <script src="app/js/handlers.js?=ver1.22"></script>
+    <script src="app/js/gamemanager.js?=ver1.55"></script>
+    <script src="app/js/user_activity.js?=ver1.59"></script>
     <script src="app/js/confetti.js"></script>
 </html>

@@ -169,11 +169,12 @@ button {
 
 #ImageContainer {
     display: flex;
+    position: relative;
+    justify-content: center;
+    align-items: center;
     width: 320px;
     height: 320px;
     overflow: hidden;
-    justify-content: left;
-    align-items: baseline;
     border-radius: 7px;
     border-width: 4px;
     border-color: white;
@@ -234,6 +235,14 @@ table {
     pointer-events: none;
 }
 
-#submitName {
+#submitName { // Button to submit username
     margin-top: 10px;
+}
+
+#countDown { // Countdown before round start
+    font-size: 8rem;
+    color: white;
+    z-index: 99;
+    position: absolute;
+    margin: 0;
 }
