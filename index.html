@@ -11,12 +11,12 @@
     <body>
         <section class="Main">
             <div class="Header"> 
-                <h1>SJC Faces Game</h1>
+                <h1 onclick="interface.resetGameMode()">SJC Faces Game</h1>
                 <div id="menu-bar">
                     <button id="lb-button" onclick="interface.toggleCombinedLeaderboard()"><img src="assets/leaderboard.png" alt="leaderboardicon"></button>
                 </div>
             </div>
-            <div class="popup" id="mainMenu" style="display: none;"><h3>Main Menu</h3>
+            <div class="popup" id="mainMenu" style="display: none;"><h3>Select Mode</h3>
                 <div id="gameModeButtons"></div>
             </div>
             <div class="popup" id="howToPlay"><h3>Welcome to SJC Faces Game</h3><p>Good Luck!<br>-Daniel and Peter</p>
@@ -78,7 +78,7 @@
         <canvas id="confettiCanvas"></canvas>
     </body>
     <script src="app/js/handlers.js?=ver1.22"></script>
-    <script src="app/js/gamemanager.js?=ver1.55"></script>
-    <script src="app/js/user_activity.js?=ver1.59"></script>
+    <script src="app/js/gamemanager.js?=ver1.58"></script>
+    <script src="app/js/user_activity.js?=ver1.61"></script>
     <script src="app/js/confetti.js"></script>
 </html>

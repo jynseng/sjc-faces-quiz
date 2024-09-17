@@ -1,7 +1,7 @@
 const checkIntervalActive = 5 * 1000; // Frequency of local activity check while user is active (5s)
 const checkIntervalInactive = .5 * 1000; // Frequency of local activity check while waiting for user to return (.5s)
 const sendInterval = 2 * 1000 // Frequency of activity refreshing to server (2s)
-const inactiveThreshold = .2 * 60 * 1000; // Local activity timeout threshold (12 sec)
+const inactiveThreshold = .5 * 60 * 1000; // Local activity timeout threshold (30 sec)
 var lastActivityTime = Date.now();
 activeUsers = [];
 userList = document.getElementById('userList');

@@ -111,6 +111,7 @@
         document.getElementById('mainMenu').style.display = 'block';
         document.getElementById('gameoverWindow').style.display = 'none';
         document.getElementById("confettiCanvas").style.display = 'none';
+        document.getElementById("combinedLeaderboardWindow").style.display = "none";
         confetti = false;
     }
 
@@ -156,9 +157,8 @@
                             // Set the game mode
                             gameModeId = selectedMode;
                             gameModeTitle = data[selectedMode]['display_name'];
-                            console.log('Selected Game Mode: ' + data[selectedMode]['display_name']);
+                            console.log('Selected Game Mode: ' + gameModeTitle);
                             getFaceData(data[selectedMode]['year'], data[selectedMode]['tags']);
-                            document.getElementById('mainMenu').style.display = 'none';
                         };
                     })(gameMode));
                     modeList.appendChild(listItem);
@@ -179,7 +179,6 @@
             })
             .then(data => {
                 faces_all = data;
-                preLoadImages();
                 gameInit();
             })
             .catch(error => {
@@ -217,6 +216,7 @@
         const imgDiv = document.getElementById("imageElement");
         imgDiv.style.filter = "blur(26px)";
         loadNewFace();
+        document.getElementById('mainMenu').style.display = 'none'; // Hide main menu
 
         // Start countdown to game start
         let tMinus = 2;
@@ -225,6 +225,7 @@
         const imgContainer = document.getElementById("ImageContainer");
         countdownText.innerHTML = '3';
         imgContainer.appendChild(countdownText);
+        preLoadImages();
         const countDown = setInterval(function(){
             if (tMinus <= 0) {
                 imgContainer.lastChild.innerHTML = "";
@@ -417,7 +418,7 @@
                 else {
                     leaderboardTable = document.getElementById("leaderboard");
                     leaderboardWindow = document.getElementById("gameoverWindow");
-                    document.getElementById("leaderboardHeader").innerText = "HIGH SCORES FOR " + gameModeTitle.toUpperCase() + " MODE";
+                    document.getElementById("leaderboardHeader").innerText = "HIGH SCORES\n" + gameModeTitle.toUpperCase() + " MODE";
                 }
                 clearInterval(blinker);
                 leaderboardTable.innerHTML = "";
@@ -504,7 +505,7 @@
     window.interface =  {
         setName: setName,
         gameInit: gameInit,
-        //preventInvalidInput: preventInvalidInput,
+        preventInvalidInput: preventInvalidInput,
         toggleLeaderboard: toggleLeaderboard,
         toggleCombinedLeaderboard: toggleCombinedLeaderboard,
         loadNewFace: loadNewFace,
