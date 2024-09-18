@@ -2,7 +2,7 @@
 if (isset($_GET['username'])) { 
     $username = $_GET['username'];
 }
-session_name($username);
+//session_name($username);
 session_start();
 $_SESSION['username'] = $username;
 // if (isset($_GET['userId'])) {
@@ -23,8 +23,8 @@ if (!isset($_SESSION['active_users'])) {
 session_write_close();
 
 $timeout = 20; // Seconds after last request before user is taken off active user list
-$sessionTimeout = 60 * 60; // Seconds after last request before session is destroyed (1hr)
-$sleepTime = 5000000; // Microsecond delay between loops (5 seconds)
+//$sessionTimeout = 60 * 60; // Seconds after last request before session is destroyed (1hr)
+$sleepTime = 1000000; // Microsecond delay between loops (1 seconds)
 //$sessionSavePath = '/opt/alt/php81/var/lib/php/session';
 //$sessionSavePath = '/Applications/MAMP/tmp/php';
 $sessionSavePath = '/home/u955586838/domains/sjcfacesgame.com/public_html/server/sessions';
@@ -45,12 +45,12 @@ while (true) {
             session_start();
             $data = $_SESSION;
 
-            if ($data['last_activity']) {
-                if ($currentTime - $data['last_activity'] <= $timeout && $data['username']) {
+            if (isset($data['last_activity'])) {
+                if ($currentTime - $data['last_activity'] <= $timeout && isset($data['username'])) {
                     $currentActiveUsers[] = $data['username'];
-                } else if ($currentTime - $data['last_activity'] >= $sessionTimeout) {
-                    session_destroy();
-                }
+                } //else if ($currentTime - $data['last_activity'] >= $sessionTimeout) {
+                //     session_destroy();
+                // }
             }
             session_write_close();
         }
@@ -59,16 +59,15 @@ while (true) {
 
     // Compare the current active users with the stored list
     $usersAdded = array_diff($currentActiveUsers, $storedActiveUsers);
-    $usersRemoved = array_diff($storedActiveUsers, $currentActiveUsers);
+    //$usersRemoved = array_diff($storedActiveUsers, $currentActiveUsers);
 
     // If there are any changes or if this is the first req, send the array of active users
-    if (!empty($usersAdded) || !empty($usersRemoved) || $init == 'true') {
+    if (!empty($usersAdded) || $init == 'true') {
         // Update the stored active users list
         session_start();
         $_SESSION['active_users'] = $currentActiveUsers;
         session_write_close();
         echo json_encode(['activeUsers' => $currentActiveUsers,]);
-        
         exit;
     }  
 
