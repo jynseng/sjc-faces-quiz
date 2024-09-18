@@ -17,7 +17,7 @@ if (isset($_GET['init'])) {
     $init = 'false';
 }
 if (!isset($_SESSION['active_users'])) {
-    $_SESSION['active_users'] = [$_SESSION['username']];
+    $_SESSION['active_users'] = [];//[$_SESSION['username']];
 }
 
 session_write_close();
