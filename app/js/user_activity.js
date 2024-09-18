@@ -11,26 +11,30 @@ var checkInterval = checkIntervalActive;
 
 // Long-polling for active user list updates
 function fetchActiveUsers(username, init='false') {
-    if (init == 'true') { loginSFX.play(); }
-    fetch('server/sessions.php?' + new URLSearchParams({username:username, init:init}), { method: 'GET' })
-        .then(response => response.json())
-        .then(data => {
-            if (data) {
-                activeUsers = data.activeUsers;
-                userList.innerHTML = '';
-                if (activeUsers[0] != 'empty') {
-                    activeUsers.forEach(user => {
-                        const li = document.createElement('li');
-                        li.textContent = user;
-                        userList.appendChild(li);
-                    });
-                }
-            }
-            fetchActiveUsers(username); // Call again to continue long-polling
-        })
-        .catch(error => {
-            console.error('There was a problem with the fetch operation: ', error);
-        });
+    console.log("Sorry, this isn't working");
+    // if (init == 'true') { loginSFX.play(); }
+    // fetch('server/sessions.php?' + new URLSearchParams({username:username, init:init}), { method: 'GET' })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         if (data) {
+    //             activeUsers = data.activeUsers;
+    //             userList.innerHTML = '';
+    //             if (activeUsers[0] != 'empty') {
+    //                 activeUsers.forEach(user => {
+    //                     const li = document.createElement('li');
+    //                     li.textContent = user;
+    //                     userList.appendChild(li);
+    //                 });
+    //             }
+    //         }
+    //         setTimeout(() => {
+    //             console.log("Delayed for 5 seconds.");
+    //           }, "5000");              
+    //         fetchActiveUsers(username); // Call again to continue long-polling
+    //     })
+    //     .catch(error => {
+    //         console.error('There was a problem with the fetch operation: ', error);
+    //     });
 }
 
 // Poll server every x seconds to keep session active

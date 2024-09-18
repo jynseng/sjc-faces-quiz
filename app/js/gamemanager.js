@@ -20,7 +20,7 @@
     function setName(form) {
         document.getElementById('howToPlay').style.display = 'none';
         playerName = form.inputbox.value.replace(/[^a-zA-Z0-9\s-]/g, "").toLowerCase().trim(); // Set player name, remove special characters
-        fetch('server/login.php?' + new URLSearchParams({username:playerName,init:'true'}), {
+        fetch('server/login.php?' + new URLSearchParams({username:playerName}), {
             method: 'GET',
         })
             .then(response => response.json())

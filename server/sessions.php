@@ -22,12 +22,12 @@ if (!isset($_SESSION['active_users'])) {
 
 session_write_close();
 
-$timeout = 20; // Seconds after last request before user is taken off active user list
+$timeout = 30; // Seconds after last request before user is taken off active user list
 //$sessionTimeout = 60 * 60; // Seconds after last request before session is destroyed (1hr)
 $sleepTime = 1000000; // Microsecond delay between loops (1 seconds)
 //$sessionSavePath = '/opt/alt/php81/var/lib/php/session';
-//$sessionSavePath = '/Applications/MAMP/tmp/php';
-$sessionSavePath = '/home/u955586838/domains/sjcfacesgame.com/public_html/server/sessions';
+$sessionSavePath = '/Applications/MAMP/tmp/php';
+//$sessionSavePath = '/home/u955586838/domains/sjcfacesgame.com/public_html/server/sessions';
 if (isset($_SESSION['active_users'])) { $storedActiveUsers = $_SESSION['active_users']; }
 $thisSession = $_SESSION;
 $currentTime = time();
@@ -43,6 +43,7 @@ while (true) {
             $sessionId = str_replace('sess_','',$session); // Remove 'sess_' prefix
             session_id($sessionId);
             session_start();
+            session_write_close();
             $data = $_SESSION;
 
             if (isset($data['last_activity'])) {
@@ -52,7 +53,6 @@ while (true) {
                 //     session_destroy();
                 // }
             }
-            session_write_close();
         }
     }
     $_SESSION = $thisSession; // Reset $_SESSION back to user's session
