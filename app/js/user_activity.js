@@ -11,6 +11,7 @@ var checkInterval = checkIntervalActive;
 
 // Long-polling for active user list updates
 function fetchActiveUsers(username, init='false') {
+    if (init == 'true') { loginSFX.play(); }
     fetch('server/sessions.php?' + new URLSearchParams({username:username, init:init}), { method: 'GET' })
         .then(response => response.json())
         .then(data => {

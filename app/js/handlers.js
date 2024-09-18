@@ -3,6 +3,7 @@ const ding1 = new Audio("assets/ESM_Correct_Answer_Bling_3_Sound_FX_Arcade_Casin
 const ding2 = new Audio("assets/ESM_Correct_Answer_Bling_3_Sound_FX_Arcade_Casino_Kids_Mobile_App_Positive_Achievement_Win.wav"); // Correct last name
 const newHighScoreSFX = new Audio("assets/ESM_Positive_Correct_Bling_v3_Sound_FX_Arcade_Casino_Kids_Mobile_App.wav");
 const newRecordSFX = new Audio("assets/ESM_Casino_Win_Pattern_8_Sound_FX_Arcade_Kids_Mobile_App.wav");
+const loginSFX = new Audio("assets/ESM_Vibrant_Game_Slot_Machine_Ding_1_Arcade_Cartoon_Quirky_Comedy_Comedic_Kid_Childish_Fun_Bouncy.wav");
 const countDownSFX = new Audio("assets/CountDownSFX.m4a");
 const newOverallHighSFX = new Audio("assets/WowSFX.mp3");
 countDownSFX.volume = 0.5;
@@ -83,6 +84,7 @@ function toggleMute() {
         ding1.volume = 0.7;
         ding2.volume = 0.7;
         newHighScoreSFX.volume = 0.8;
+        loginSFX.volume = 1;
         muted = false;
     } else {
         document.getElementById("muteButton").innerHTML = "🔇";
@@ -90,6 +92,7 @@ function toggleMute() {
         ding1.volume = 0;
         ding2.volume = 0;
         newHighScoreSFX.volume = 0;
+        loginSFX.volume = 0;
         muted = true;
     }
 }

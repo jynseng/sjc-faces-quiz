@@ -32,10 +32,10 @@ body {
 }
 
 #QuizContainer {
-  background-color: #90b4c6;
-  border-radius: 70px;
-  width: 600px;
-  padding: 55px;
+  background-color: #d0ba97;
+  border-radius: 12px;
+  width: 580px;
+  padding: 35px;
 }
 
 h1 {
@@ -62,7 +62,7 @@ h3 {
 #menu-bar button {
   border: none;
   background: transparent;
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   display: inline-flex;
   width: 40px;
   height: 40px;

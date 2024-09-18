@@ -98,6 +98,7 @@
 
         // Append the popup to the body
         document.body.appendChild(popupDiv);
+        document.getElementById("first-name").focus();
     }
 
     function resetGameMode() {
@@ -417,7 +418,7 @@
                     leaderboardWindow = document.getElementById("gameoverWindow");
                     const leaderboardHeader = document.getElementById("leaderboardHeader");
                     leaderboardHeader.innerHTML = "HIGH SCORES";
-                    let modeTitle = document.createElement("p");
+                    let modeTitle = document.createElement("small");
                     modeTitle.innerHTML = gameModeTitle.toUpperCase();
                     leaderboardHeader.appendChild(modeTitle);
                 }
