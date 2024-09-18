@@ -417,7 +417,7 @@
                     leaderboardTable = document.getElementById("leaderboard");
                     leaderboardWindow = document.getElementById("gameoverWindow");
                     const leaderboardHeader = document.getElementById("leaderboardHeader");
-                    leaderboardHeader.innerHTML = "HIGH SCORES";
+                    leaderboardHeader.innerHTML = "HIGH SCORES<br>";
                     let modeTitle = document.createElement("small");
                     modeTitle.innerHTML = gameModeTitle.toUpperCase();
                     leaderboardHeader.appendChild(modeTitle);

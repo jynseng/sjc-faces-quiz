@@ -6,7 +6,7 @@ const newRecordSFX = new Audio("assets/ESM_Casino_Win_Pattern_8_Sound_FX_Arcade_
 const loginSFX = new Audio("assets/ESM_Vibrant_Game_Slot_Machine_Ding_1_Arcade_Cartoon_Quirky_Comedy_Comedic_Kid_Childish_Fun_Bouncy.wav");
 const countDownSFX = new Audio("assets/CountDownSFX.m4a");
 const newOverallHighSFX = new Audio("assets/WowSFX.mp3");
-countDownSFX.volume = 0.5;
+countDownSFX.volume = 0.2;
 ding1.volume = 0.7;
 ding2.volume = 0.7;
 newHighScoreSFX.volume = 0.8;
@@ -80,7 +80,7 @@ function preventBlankInput(text, submitButton) {
 function toggleMute() {
     if (muted) {
         document.getElementById("muteButton").innerHTML = "🔊";
-        countDownSFX.volume = 0.5;
+        countDownSFX.volume = 0.2;
         ding1.volume = 0.7;
         ding2.volume = 0.7;
         newHighScoreSFX.volume = 0.8;
