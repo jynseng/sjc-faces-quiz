@@ -84,6 +84,7 @@ function toggleMute() {
         ding1.volume = 0.7;
         ding2.volume = 0.7;
         newHighScoreSFX.volume = 0.8;
+        newRecordSFX.volume = 1;
         loginSFX.volume = 1;
         muted = false;
     } else {
@@ -92,6 +93,7 @@ function toggleMute() {
         ding1.volume = 0;
         ding2.volume = 0;
         newHighScoreSFX.volume = 0;
+        newRecordSFX.volume = 0;
         loginSFX.volume = 0;
         muted = true;
     }
