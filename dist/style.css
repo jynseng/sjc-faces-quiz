@@ -261,4 +261,5 @@ table {
   color: white;
   position: absolute;
   margin: 0;
+  z-index: 10;
 }

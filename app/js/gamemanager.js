@@ -218,24 +218,28 @@
 
         // Start countdown to game start
         let tMinus = 2;
-        const countdownText = document.createElement("p");
-        countdownText.setAttribute("id", "countDown");
-        const imgContainer = document.getElementById("ImageContainer");
-        countdownText.innerHTML = '3';
-        imgContainer.appendChild(countdownText);
+        //const countdownText = document.createElement("p");
+        //countdownText.setAttribute("id", "countDown");
+        //const imgContainer = document.getElementById("ImageContainer");
+        var countdownText = document.getElementById("countDown");
+        countdownText.innerHTML = "3";
+        //imgContainer.appendChild(countdownText);
         preLoadImages();
         countDownSFX.play();
         const countDown = setInterval(function(){
             if (tMinus <= 0) {
-                imgContainer.lastChild.innerHTML = "";
-                imgContainer.lastChild.remove();
+                //imgContainer.lastChild.innerHTML = "";
+                //imgContainer.innerHTML = "";
+                //imgContainer.lastChild.remove();
+                countdownText.innerHTML = "";
                 imgDiv.style.filter = "none"; // Unblur first image when game start
                 document.getElementById("submit").disabled = false;
                 document.getElementById("skip").disabled = false;
                 startTimer(gameLength); // Start timer
                 clearInterval(countDown);
             } else {
-                imgContainer.lastChild.innerHTML = tMinus;
+                //imgContainer.lastChild.innerHTML = tMinus;
+                countdownText.innerHTML = tMinus;
                 tMinus--;
             }
         }, 1000);

@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>SJC Faces Game</title>
-        <link rel="stylesheet" href="dist/style.css?=ver1.53">
+        <link rel="stylesheet" href="dist/style.css?=ver1.54">
         <link rel="icon" type="image/png" href="assets/newfavicon.png">
     </head>
     <body>
@@ -67,7 +67,7 @@
                 <div id="Timer">00:00</div>
                 <div id="scorecard"><strong>Score: </strong><strong id="score"></strong></div>
                 <p id="nameOverlay">First Last</p>
-                <div id="ImageContainer"><div class="image" id="imageElement" unselectable="on"></div></div>
+                <div id="ImageContainer"><p id="countDown"></p><div class="image" id="imageElement" unselectable="on"></div></div>
                 <form id="quizForm">
                     <input type="text" id="textinput" name="inputbox" onkeypress="interface.preventInvalidInput(event)" placeholder="Who is this?" autocomplete="off">
                     <input type="button" id="submit" onclick="interface.checkAnswer(this.form)" disabled="true" value=">">
@@ -79,7 +79,7 @@
         <canvas id="confettiCanvas"></canvas>
     </body>
     <script src="app/js/handlers.js?=ver1.31"></script>
-    <script src="app/js/gamemanager.js?=ver1.71"></script>
+    <script src="app/js/gamemanager.js?=ver1.75"></script>
     <script src="app/js/user_activity.js?=ver1.62"></script>
     <script src="app/js/confetti.js"></script>
 </html>
