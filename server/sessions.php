@@ -1,9 +1,10 @@
 <?php
-session_start();
 if (isset($_GET['username'])) { 
     $username = $_GET['username'];
-    $_SESSION['username'] = $username;
 }
+session_name($username);
+session_start();
+$_SESSION['username'] = $username;
 // if (isset($_GET['userId'])) {
 //     $_SESSION['user_id'] = $_GET['userId'];
 // }
