@@ -44,7 +44,7 @@ while (true) {
             session_start();
             $data = $_SESSION;
 
-            if ($data_['last_activity']) {
+            if ($data['last_activity']) {
                 if ($currentTime - $data['last_activity'] <= $timeout && $data_['username']) {
                     $currentActiveUsers[] = $data['username'];
                 } else if ($currentTime - $data['last_activity'] >= $sessionTimeout) {
