@@ -1,0 +1,18 @@
+{
+    "name": "dank/server",
+    "autoload": {
+        "psr-4": {
+            "Dank\\Server\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Dan Kim"
+        }
+    ],
+    "require": {
+        "react/event-loop": "^1.5",
+        "clue/redis-react": "^2.7",
+        "cboden/ratchet": "^0.4.4"
+    }
+}

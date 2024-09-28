@@ -1,7 +1,7 @@
 const canvas = document.getElementById('confettiCanvas');
 const ctx = canvas.getContext('2d');
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+canvas.width = window.innerWidth * 1.2;
+canvas.height = window.innerHeight * 1.2;
 let animationID;
 
 const confettiColors = ['#f44336', '#ffeb3b', '#2196f3', '#4caf50', '#9c27b0', '#ff9800'];

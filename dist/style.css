@@ -69,6 +69,7 @@ h3 {
 }
 
 .popup {
+  font-family: monospace;
   background-color: rgba(150, 255, 255, 0.96);
   border: 3px solid white;
   position: fixed;

@@ -1,4 +1,6 @@
 <?php
+// This script accepts a username, queries the sqlite db for the matching user id, and echos it. 
+
 if (isset($_GET['username'])) { 
     $username = $_GET['username'];
 }

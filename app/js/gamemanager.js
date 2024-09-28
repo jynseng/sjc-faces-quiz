@@ -28,8 +28,9 @@
                 if (data) { // Existing user, login normally
                     userId = data;
                     loadModes();
-                    fetchActiveUsers(playerName, 'true');
-                    startActivity();
+                    sendUsername(playerName);
+                    //fetchActiveUsers(playerName, 'true');
+                    //startActivity();
                     document.getElementById('mainMenu').style.display = 'block';    
                 } else { // New user, need to get first and last name
                     addNewUser();

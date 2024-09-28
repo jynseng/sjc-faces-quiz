@@ -44,22 +44,22 @@
 // Please see https://bitbucket.org/phpliteadmin/public/wiki/Configuration for more details
 
 //password to gain access
-$password = 'Ramenstrainer1';
+$password = 'Ramenstrain3r?';
 
 //directory relative to this file to search for databases (if false, manually list databases in the $databases variable)
-$directory = false;
+$directory = true;
 
 //whether or not to scan the subdirectories of the above directory infinitely deep
-$subdirectories = false;
+$subdirectories = true;
 
 //if the above $directory variable is set to false, you must specify the databases manually in an array as the next variable
 //if any of the databases do not exist as they are referenced by their path, they will be created automatically
-$databases = array(
-	array(
-		'path'=> 'server/faces.db',
-		'name'=> 'Faces DB'
-	),
-);
+// $databases = array(
+// 	array(
+// 		'path'=> 'server/faces.db',
+// 		'name'=> 'FacesDB'
+// 	),
+// );
 
 
 /* ---- Interface settings ---- */
@@ -105,7 +105,7 @@ function leet_text($value)
 $cookie_name = 'pla3412';
 
 //whether or not to put the app in debug mode where errors are outputted
-$debug = false;
+$debug = true;
 
 // the user is allowed to create databases with only these extensions
 $allowed_extensions = array('db','db3','sqlite','sqlite3');

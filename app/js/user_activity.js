@@ -1,53 +1,50 @@
 const checkIntervalActive = 5 * 1000; // Frequency of local activity check while user is active (5s)
 const checkIntervalInactive = .5 * 1000; // Frequency of local activity check while waiting for user to return (.5s)
-const sendInterval = 2 * 1000 // Frequency of activity refreshing to server (2s)
-const inactiveThreshold = .5 * 60 * 1000; // Local activity timeout threshold (30 sec)
-var lastActivityTime = Date.now();
-activeUsers = [];
-userList = document.getElementById('userList');
-var refreshInterval;
-var loggedIn = false;
-var checkInterval = checkIntervalActive;
+const inactiveThreshold = 2 * 60 * 1000; // Local activity timeout threshold (2 mins)
+const userList = document.getElementById('userList');
 
-// Long-polling for active user list updates
-function fetchActiveUsers(username, init='false') {
-    console.log("Sorry, this isn't working");
-    // if (init == 'true') { loginSFX.play(); }
-    // fetch('server/sessions.php?' + new URLSearchParams({username:username, init:init}), { method: 'GET' })
-    //     .then(response => response.json())
-    //     .then(data => {
-    //         if (data) {
-    //             activeUsers = data.activeUsers;
-    //             userList.innerHTML = '';
-    //             if (activeUsers[0] != 'empty') {
-    //                 activeUsers.forEach(user => {
-    //                     const li = document.createElement('li');
-    //                     li.textContent = user;
-    //                     userList.appendChild(li);
-    //                 });
-    //             }
-    //         }
-    //         setTimeout(() => {
-    //             console.log("Delayed for 5 seconds.");
-    //           }, "5000");              
-    //         fetchActiveUsers(username); // Call again to continue long-polling
-    //     })
-    //     .catch(error => {
-    //         console.error('There was a problem with the fetch operation: ', error);
-    //     });
+let playerName;
+let lastActivityTime = Date.now();
+let activeUsers = [];
+let loggedIn = false;
+let active = true;
+let checkInterval = checkIntervalActive;
+
+let ws = new WebSocket('ws://157.173.212.243:8080/');
+//let ws = new WebSocket('wss://157.173.212.243:8080/');
+// ws.onopen = function(e) {
+//     console.log("Connection established!");
+// };
+
+ws.onmessage = function(msg) {
+    activeUsers = JSON.parse(msg.data);
+    loggedIn = true;
+    userList.innerHTML = '';
+    activeUsers.forEach(user => {
+        const li = document.createElement('li');
+        li.textContent = user;
+        userList.appendChild(li);
+    });
+};
+
+function sendUsername(username) {
+    playerName = username;
+    loggedIn = true;
+    console.log(playerName);
+    const message = JSON.stringify({
+        type: 'sign_in', 
+        username: playerName
+    });
+    loginSFX.play();
+    ws.send(message);
 }
 
-// Poll server every x seconds to keep session active
-function startActivity() {
-    loggedIn = true;
-    if (!refreshInterval) {
-        refreshInterval = setInterval(function() {
-            fetch('server/activity.php', { method: 'GET' })
-                .then(data=> { 
-                    //console.log(data); 
-                })
-        }, sendInterval);
-    }
+function sendInactive() {
+    const message = JSON.stringify({
+        type: 'sign_out', 
+        username: playerName
+    });
+    ws.send(message);
 }
 
 // Check if user is still active locally every 15 seconds
@@ -55,15 +52,14 @@ setInterval(function () {
     const currentTime = Date.now();
     const timeSinceLastActivity = currentTime - lastActivityTime;
 
-    if (timeSinceLastActivity > inactiveThreshold && refreshInterval) { // User is inactive
-        clearInterval(refreshInterval);
-        refreshInterval = null;
-        // console.log("Stopping activity");
+    if (loggedIn && timeSinceLastActivity > inactiveThreshold) { // User is inactive
         checkInterval = checkIntervalInactive;
-    } else if (loggedIn && timeSinceLastActivity < inactiveThreshold && !refreshInterval) {
-        startActivity(); // User is active
-        // console.log("starting activity");
+        active = false;
+        sendInactive(playerName);
+    } else if (!active && loggedIn && timeSinceLastActivity < inactiveThreshold) { // User is active
         checkInterval = checkIntervalActive;
+        sendUsername(playerName);
+        active = true;
     }
 }, checkInterval);
 
