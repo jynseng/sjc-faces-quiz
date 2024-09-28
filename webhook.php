@@ -21,7 +21,7 @@ if (isset($_SERVER['HTTP_X_HUB_SIGNATURE_256'])) {
 }
 
 // Pull the latest changes from the repository
-shell_exec('cd /var/www/html && git pull origin main 2>&1');
+shell_exec('cd /var/www/sjc-faces-quiz && git pull origin main 2>&1');
 error_log($output, 3, '/var/log/webhook_errors.log');
 
 http_response_code(200);
