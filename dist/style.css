@@ -36,6 +36,8 @@ body {
   border-radius: 12px;
   width: 580px;
   padding: 35px;
+  border-style: outset;
+  border-color: wheat;
 }
 
 h1 {
@@ -76,7 +78,7 @@ h3 {
   width: 430px;
   text-align: center;
   margin: 2px auto 2px auto;
-  padding-top: 10px;
+  padding-top: 20px;
   padding-bottom: 25px;
   padding-left: 40px;
   padding-right: 40px;
@@ -87,9 +89,6 @@ h3 {
   transform: translate(-50%, -50%);
   overflow-x: hidden;
   z-index: 99;
-}
-.popup h3 {
-  margin: 20px 0 20px 0;
 }
 
 #usersOverlay {

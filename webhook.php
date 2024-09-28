@@ -1,6 +1,7 @@
 <?php
 // Only accept POST requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    error_log("Invalid request method", 3, '/var/log/webhook_errors.log');
     http_response_code(405);
     exit;
 }
@@ -13,6 +14,7 @@ $secret = 'brunolives';
 if (isset($_SERVER['HTTP_X_HUB_SIGNATURE_256'])) {
     $signature = 'sha256=' . hash_hmac('sha256', $payload, $secret);
     if (!hash_equals($signature, $_SERVER['HTTP_X_HUB_SIGNATURE_256'])) {
+        error_log("Signature mismatch", 3, '/var/log/webhook_errors.log');
         http_response_code(403);
         exit;
     }
@@ -20,5 +22,6 @@ if (isset($_SERVER['HTTP_X_HUB_SIGNATURE_256'])) {
 
 // Pull the latest changes from the repository
 shell_exec('cd /var/www/html && git pull origin main 2>&1');
+error_log($output, 3, '/var/log/webhook_errors.log');
 
 http_response_code(200);
