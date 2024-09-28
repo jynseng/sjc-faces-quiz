@@ -43,7 +43,7 @@
         const popupDiv = document.createElement('div');
         popupDiv.className = 'popup';
 
-        const header = document.createElement('h3');
+        const header = document.createElement('h2');
         header.innerHTML = 'Enter name';
 
         const newForm = document.createElement('form');
@@ -431,6 +431,9 @@
                 leaderboardTable.innerHTML = "";
                 var sortedScores = data;
                 var index = 0;
+                if (document.getElementById("combinedLeaderboardWindow").checkVisibility()) {
+                    document.getElementById("combinedLeaderboardWindow").style.display = "none";
+                }
                 leaderboardWindow.style.display = "block"; // Show popup window
 
                 for (var i = 0; i<25; i++) {
