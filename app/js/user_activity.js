@@ -9,9 +9,11 @@ let activeUsers = [];
 let loggedIn = false;
 let active = true;
 let checkInterval = checkIntervalActive;
+let retryTimeout = 5000; // Time between reconnection attempts
+let ws;
 
 function initWebSocket() {
-    let ws = new WebSocket('wss://sjcfacesgame.com/ws/'); // wss for https
+    ws = new WebSocket('wss://sjcfacesgame.com/ws/'); // wss for https
 
     ws.onerror = function(event) {
         console.log("WS error: ".event.type);
