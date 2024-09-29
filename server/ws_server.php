@@ -80,7 +80,7 @@ $server = IoServer::factory(
         )
     ),
     8080,
-    '0.0.0.0',
+    '127.0.0.1',
     // $context
 );
 

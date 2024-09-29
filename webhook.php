@@ -1,7 +1,7 @@
 <?php
 // Only accept POST requests
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    error_log("Invalid request method", 3, '/var/log/webhook_errors.log');
+    error_log("Invalid request method", 3, '/var/www/sjc-faces-quiz/logs/webhook_errors.log');
     http_response_code(405);
     exit;
 }
