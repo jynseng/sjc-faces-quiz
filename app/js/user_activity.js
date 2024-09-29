@@ -16,7 +16,7 @@ function initWebSocket() {
     ws = new WebSocket('wss://sjcfacesgame.com/ws/'); // wss for https
 
     ws.onerror = function(event) {
-        console.log("WS error: ".event.type);
+        console.log("Websocket can't connect");
         setTimeout(initWebSocket, retryTimeout);
     }
 
