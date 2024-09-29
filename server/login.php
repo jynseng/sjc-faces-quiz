@@ -21,9 +21,6 @@ function selectID($username) {
     $userID = $id;
     if ($id) {
         $userID = $id['id'];
-        session_start();
-        $_SESSION['user_id'] = $userID;
-        session_write_close();
         logLoginToDb(); // Log this login to db
     }
     $db = null;

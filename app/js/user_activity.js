@@ -10,7 +10,7 @@ let loggedIn = false;
 let active = true;
 let checkInterval = checkIntervalActive;
 
-let ws = new WebSocket('wss://sjcfacesgame.com:443/'); // wss for https
+let ws = new WebSocket('wss://sjcfacesgame.com/ws/'); // wss for https
 
 ws.onmessage = function(msg) {
     activeUsers = JSON.parse(msg.data);
