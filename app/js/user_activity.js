@@ -10,7 +10,7 @@ let loggedIn = false;
 let active = true;
 let checkInterval = checkIntervalActive;
 
-let ws = new WebSocket('ws://157.173.212.243:8080/');
+let ws = new WebSocket('wss://157.173.212.243:8080/');
 //let ws = new WebSocket('wss://157.173.212.243:8080/');
 // ws.onopen = function(e) {
 //     console.log("Connection established!");
