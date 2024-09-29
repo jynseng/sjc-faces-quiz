@@ -5,7 +5,7 @@ require dirname(__DIR__) . '/server/vendor/autoload.php';
 use Ratchet\MessageComponentInterface;
 use Ratchet\ConnectionInterface;
 use Ratchet\Server\IoServer;
-use Ratchet\Http\HttpServer;
+use Ratchet\Http\HttpsServer;
 use Ratchet\WebSocket\WsServer;
 
 class Chat implements MessageComponentInterface {
@@ -64,13 +64,24 @@ class Chat implements MessageComponentInterface {
     }
 }
 
+$context = stream_context_create([
+    'ssl' => [
+        'local_cert' => '/etc/letsencrypt/live/sjcfacesgame.com/fullchain.pem',
+        'local_pk' => '/etc/letsencrypt/live/sjcfacesgame.com/privkey.pem',
+        'allow_self_signed' => false,
+        'verify_peer' => false
+    ]
+]);
+
 $server = IoServer::factory(
-    new HttpServer(
+    new HttpsServer(
         new WsServer(
             new Chat()
         )
     ),
-    '8080'
+    443,
+    '0.0.0.0',
+    $context
 );
 
 $server->run();
