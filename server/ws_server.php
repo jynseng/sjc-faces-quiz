@@ -79,7 +79,7 @@ $server = IoServer::factory(
             new Chat()
         )
     ),
-    443,
+    8080,
     '0.0.0.0',
     $context
 );
