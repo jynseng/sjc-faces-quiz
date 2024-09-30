@@ -28,7 +28,6 @@
                 if (data) { // Existing user, login normally
                     userId = data;
                     loadModes();
-                    initWebSocket();
                     sendUsername(playerName);
                     //fetchActiveUsers(playerName, 'true');
                     //startActivity();

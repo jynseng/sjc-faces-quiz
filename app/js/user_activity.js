@@ -15,8 +15,12 @@ let ws;
 function initWebSocket() {
     ws = new WebSocket('wss://sjcfacesgame.com/ws/'); // wss for https
 
+    ws.onopen = function (event) {
+        console.log("ws connection is open");
+    }
+
     ws.onerror = function(event) {
-        console.log("Websocket can't connect");
+        console.log("Websocket can't connect: "+event);
         setTimeout(initWebSocket, retryTimeout);
     }
 
@@ -33,7 +37,7 @@ function initWebSocket() {
 }
 
 function sendUsername(username) {
-    if (ws.readyState === WebSocket.OPEN) {
+    if (ws.readyState === 1) {
         playerName = username;
         loggedIn = true;
         console.log(playerName);
@@ -47,7 +51,7 @@ function sendUsername(username) {
 }
 
 function sendInactive() {
-    if (ws.readyState === WebSocket.OPEN) {
+    if (ws.readyState === 1) {
         const message = JSON.stringify({
             type: 'sign_out', 
             username: playerName
@@ -79,3 +83,5 @@ document.addEventListener('mousemove', function () {
 document.addEventListener('keydown', function () {
     lastActivityTime = Date.now(); // Update the time on mouse movement
 });
+
+initWebSocket();

@@ -1,5 +1,6 @@
 <?php
 error_reporting(E_ALL & ~E_DEPRECATED);
+ini_set('display_errors', 1);
 require __DIR__ . '/vendor/autoload.php';
 require dirname(__DIR__) . '/server/vendor/autoload.php';
 use Ratchet\MessageComponentInterface;
@@ -28,18 +29,19 @@ class Chat implements MessageComponentInterface {
     public function onMessage(ConnectionInterface $conn, $msg) {
         if ($msg) {
             $data = json_decode($msg, true);
-            $user = $data['username'];
+            if (isset($data['username'])) {
+                $user = $data['username'];
+                if ($data['type'] == 'sign_in') {
+                    echo $user." has logged on\n";
+                    $conn->username = $user;
+                    $this->redis->sAdd('active_users', $user);
+                } else if ($data['type'] == 'sign_out') {
+                    $this->redis->sRem('active_users', $conn->username);
+                    echo $conn->username." is inactive\n";
+                }
+                $this->sendUpdate();
+            }
         } else { return; }
-
-        if ($data['type'] == 'sign_in') {
-            echo $user." has logged on\n";
-            $conn->username = $user;
-            $this->redis->sAdd('active_users', $user);
-        } else if ($data['type'] == 'sign_out') {
-            $this->redis->sRem('active_users', $conn->username);
-            echo $conn->username." is inactive\n";
-        }
-        $this->sendUpdate();
     }
 
     public function onClose(ConnectionInterface $conn) {
@@ -64,15 +66,6 @@ class Chat implements MessageComponentInterface {
     }
 }
 
-// $context = stream_context_create([
-//     'ssl' => [
-//         'local_cert' => '/etc/letsencrypt/live/sjcfacesgame.com/fullchain.pem',
-//         'local_pk' => '/etc/letsencrypt/live/sjcfacesgame.com/privkey.pem',
-//         'allow_self_signed' => false,
-//         'verify_peer' => false
-//     ]
-// ]);
-
 $server = IoServer::factory(
     new HttpServer(
         new WsServer(
@@ -80,8 +73,9 @@ $server = IoServer::factory(
         )
     ),
     8080,
-    '127.0.0.1',
-    // $context
+    '0.0.0.0'
 );
+
+echo "WebSocket server started at ws://127.0.0.1:8080\n"; // Add this line for logging
 
 $server->run();
