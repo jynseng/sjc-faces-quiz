@@ -27,7 +27,7 @@ function initWebSocket() {
     ws.onmessage = function(msg) {
         let numActive = activeUsers.length;
         activeUsers = JSON.parse(msg.data);
-        if (numActive < activeUsers.lenth) {
+        if (numActive < activeUsers.length) {
             loginSFX.play();
         }
         // loggedIn = true;
