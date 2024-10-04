@@ -437,7 +437,7 @@
                 leaderboardWindow.style.display = "block"; // Show popup window
 
                 for (var i = 0; i<25; i++) {
-                    if (!data[i] && i == 10) { // If less than 10 scores to show, exit early
+                    if (!data[i] && i > 9) { // If less than 10 scores to show, exit early
                         return; 
                     }
 

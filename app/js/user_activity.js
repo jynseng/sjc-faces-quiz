@@ -29,7 +29,6 @@ function initWebSocket() {
         activeUsers = JSON.parse(msg.data);
         if (numActive < activeUsers.length) {
             loginSFX.play();
-            console.log("new login");
         }
         // loggedIn = true;
         userList.innerHTML = '';
