@@ -70,6 +70,10 @@ h3 {
   height: 40px;
 }
 
+small {
+  font-style: italic;
+}
+
 .popup {
   font-family: monospace;
   background-color: rgba(150, 255, 255, 0.96);
