@@ -29,6 +29,7 @@ function initWebSocket() {
         activeUsers = JSON.parse(msg.data);
         if (numActive < activeUsers.length) {
             loginSFX.play();
+            console.log("new login");
         }
         // loggedIn = true;
         userList.innerHTML = '';
@@ -57,7 +58,7 @@ function sendInactive() {
     if (ws.readyState === 1) {
         const message = JSON.stringify({
             type: 'sign_out', 
-            username: playerName0
+            username: playerName
         });
         ws.send(message);
     }
