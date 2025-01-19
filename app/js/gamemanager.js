@@ -81,8 +81,9 @@
                 .then(response => response.json())
                 .then(data => {userId = data;})
                 loadModes();
-                fetchActiveUsers(playerName, userId, 'true');
-                startActivity();
+                sendUsername(playerName);
+                //fetchActiveUsers(playerName, userId, 'true');
+                //startActivity();
                 document.getElementById('mainMenu').style.display = 'block';    
         });
 

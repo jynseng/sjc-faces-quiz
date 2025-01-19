@@ -16,7 +16,7 @@ function initWebSocket() {
     ws = new WebSocket('wss://sjcfacesgame.com/ws/'); // wss for https
 
     ws.onopen = function (event) {
-        console.log("ws connection is open");
+        console.log("Websocket connection is open");
     }
 
     ws.onerror = function(event) {
@@ -25,8 +25,10 @@ function initWebSocket() {
     }
 
     ws.onmessage = function(msg) {
+        console.log("Message recieved");
         let numActive = activeUsers.length;
         activeUsers = JSON.parse(msg.data);
+        console.log(msg);
         if (numActive < activeUsers.length) {
             loginSFX.play();
         }

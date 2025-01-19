@@ -23,6 +23,7 @@ class Chat implements MessageComponentInterface {
         // Store the new connection
         $this->clients->attach($conn);
         echo "New connection! ({$conn->resourceId})\n";
+        $conn->username = "guest";
         $this->sendUpdate();
     }
 
