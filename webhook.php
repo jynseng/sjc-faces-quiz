@@ -22,7 +22,7 @@ if (isset($_SERVER['HTTP_X_HUB_SIGNATURE_256'])) {
 
 // Reset and pull the latest changes from the repository
 $commands = [
-    'cd /var/www/sjc-faces-quiz',
+    'cd /var/www/html/sjcfacesgame',
     'git reset --hard HEAD',
     'git pull origin master'
 ];
