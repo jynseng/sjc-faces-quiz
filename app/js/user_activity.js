@@ -20,7 +20,7 @@ function initWebSocket() {
     }
 
     ws.onerror = function(event) {
-        console.log("Websocket can't connect: "+event);
+        console.log("Websocket can't connect: " + event);
         setTimeout(initWebSocket, retryTimeout);
     }
 

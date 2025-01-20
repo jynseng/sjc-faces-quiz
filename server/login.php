@@ -5,26 +5,39 @@ if (isset($_GET['username'])) {
     $username = $_GET['username'];
 }
 $userID = "";
-$db = new PDO('sqlite:faces.db');
-$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Enable exception mode
+try {
+    $db = new PDO('sqlite:faces.db');
+    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION); // Enable exception mode
+} catch (PDOException $e) {
+    // Handle db connection error
+    error_log("Database connection error: " . $e->getMessage());
+    die(json_encode(['error' => 'Could not connect to the database.']));
+}
 
 // Retrieve user's user_id from db
 function selectID($username) {
     global $userID, $db;
     
-    $selectId = $db->prepare("SELECT id FROM user WHERE username = :username");
-    if (!$selectId) {
-        throw new Exception('Failed to prepare statement.');
+    try {
+        $selectId = $db->prepare("SELECT id FROM user WHERE username = :username");
+        if (!$selectId) {
+            throw new Exception('Failed to prepare statement.');
+        }
+        $selectId->execute([':username' => $username]);
+        $id = $selectId->fetch(PDO::FETCH_ASSOC);
+        $userID = $id;
+        if ($id) {
+            $userID = $id['id'];
+            logLoginToDb(); // Add this login to faces.db "last_login" column
+        } else {
+            $id = 0;
+        }
+        return $id;
+    } catch (Exception $e) {
+        error_log("Database query error: " . $e->getMessage());
+    } finally {
+        $db = null;
     }
-    $selectId->execute([':username' => $username]);
-    $id = $selectId->fetch(PDO::FETCH_ASSOC);
-    $userID = $id;
-    if ($id) {
-        $userID = $id['id'];
-        logLoginToDb(); // Log this login to db
-    }
-    $db = null;
-    return $id;
 }
 
 // Update an existing user's last login timestamp in sqlite db
