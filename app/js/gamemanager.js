@@ -25,7 +25,7 @@
         })
             .then(response => response.json())
             .then(data => {
-                if (data & data !== 0) { // Existing user, login normally
+                if (data && data !== 0) { // Existing user, login normally
                     userId = data;
                     loadModes();
                     sendUsername(playerName);
