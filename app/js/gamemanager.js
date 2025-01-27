@@ -210,6 +210,8 @@
         skips = 0;
         document.getElementById("score").innerText = scoreManager.getScore();
         document.getElementById("textinput").disabled = false;
+        document.getElementById("submit").disabled = true;
+        document.getElementById("skip").disabled = true;
         document.getElementById("textinput").focus();
 
         // Blur first image during countdown
@@ -228,6 +230,7 @@
         //imgContainer.appendChild(countdownText);
         preLoadImages();
         countDownSFX.play();
+        
         const countDown = setInterval(function(){
             if (tMinus <= 0) {
                 //imgContainer.lastChild.innerHTML = "";
