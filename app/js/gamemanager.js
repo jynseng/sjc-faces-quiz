@@ -1,3 +1,4 @@
+import { showElement, hideElement, resetGameUI, showNewUserPopup } from './ui.js';
 (function () {
     let faces_all = [];
     let faces_working = [];
@@ -31,7 +32,7 @@
                     sendUsername(playerName);
                     //fetchActiveUsers(playerName, 'true');
                     //startActivity();
-                    document.getElementById('mainMenu').style.display = 'block';    
+                    showElement('mainMenu');    
                 } else { // New user, need to get first and last name
                     addNewUser();
                 }             
@@ -40,67 +41,19 @@
 
     // Prompt user for first and last name, write to db
     function addNewUser() {
-        const popupDiv = document.createElement('div');
-        popupDiv.className = 'popup';
-
-        const header = document.createElement('h2');
-        header.innerHTML = 'Enter name';
-
-        const newForm = document.createElement('form');
-        newForm.setAttribute('id', 'userFirstLast');
-
-        const firstNameInput = document.createElement('input');
-        firstNameInput.setAttribute('type', 'text');
-        firstNameInput.setAttribute('placeholder', 'First Name');
-        firstNameInput.setAttribute('id', 'first-name');
-        firstNameInput.setAttribute('maxlength', '20');
-        firstNameInput.required = true;
-
-        const lastNameInput = document.createElement('input');
-        lastNameInput.setAttribute('type', 'text');
-        lastNameInput.setAttribute('placeholder', 'Last Name');
-        lastNameInput.setAttribute('id', 'last-name');
-        lastNameInput.setAttribute('maxlength', '20');
-        lastNameInput.required = true;
-
-        const submitButton = document.createElement('button');
-        submitButton.setAttribute('id', 'submitFirstLast');
-        submitButton.textContent = 'Create profile';
-        submitButton.disabled = true;
-
-        submitButton.addEventListener('click', function() {
-            let firstName = document.getElementById('first-name').value.replace(/[^a-zA-Z0-9\s-]/g, "").toLowerCase().trim();
-            firstName = firstName.charAt(0).toUpperCase() + firstName.slice(1);
-            let lastName = document.getElementById('last-name').value.replace(/[^a-zA-Z0-9\s-]/g, "").toLowerCase().trim();
-            lastName = lastName.charAt(0).toUpperCase() + lastName.slice(1);
-            document.body.removeChild(popupDiv); // Remove the popup after submission
-            fetch('server/newUser.php?', { // Add new user to db
+        showNewUserPopup(playerName, (username, firstName, lastName) => {
+            fetch('server/newUser.php?', {
                 method: 'POST',
-                body: JSON.stringify({username:playerName, firstName:firstName, lastName:lastName})
-            }) 
-                .then(response => response.json())
-                .then(data => {userId = data;})
+                body: JSON.stringify({ username, firstName, lastName })
+            })
+            .then(response => response.json())
+            .then(data => {
+                userId = data;
                 loadModes();
                 sendUsername(playerName);
-                //fetchActiveUsers(playerName, userId, 'true');
-                //startActivity();
-                document.getElementById('mainMenu').style.display = 'block';    
+                showElement('mainMenu');
+            });
         });
-
-        newForm.addEventListener('input', function(e) {
-            preventBlankInput(e.target.value, 'submitFirstLast');
-        });
-
-        // Append the form elements to the popup
-        popupDiv.appendChild(header);
-        newForm.appendChild(firstNameInput);
-        newForm.appendChild(lastNameInput);
-        newForm.appendChild(submitButton);
-        popupDiv.appendChild(newForm);
-
-        // Append the popup to the body
-        document.body.appendChild(popupDiv);
-        document.getElementById("first-name").focus();
     }
 
     function resetGameMode() {
@@ -146,27 +99,34 @@
             .then(response => response.json())
             .then(data => {
                 const modeList = document.getElementById('gameModeButtons');
-                for (var gameMode in data) {
-                    const listItem = document.createElement('button');
-                    listItem.textContent = data[gameMode]['display_name'];
-                    listItem.addEventListener('click', (function(selectedMode) {
-                        return function() {
-                            // Set the game mode
-                            updateTimer(gameLength);
-                            gameModeId = selectedMode;
-                            gameModeTitle = data[selectedMode]['display_name'];
-                            console.log('Selected Game Mode: ' + gameModeTitle);
-                            getFaceData(data[selectedMode]['year'], data[selectedMode]['tags']);
-                        };
-                    })(gameMode));
-                    modeList.appendChild(listItem);
+                modeList.innerHTML = ""; // Clear old buttons
+                const entries = Object.entries(data); // Convert object -> array of [key, value] pairs
+                const sortedModes = entries.sort((a, b) => a[1].display_name.localeCompare(b[1].display_name)); // Sort alphabetically
+                sortedModes.forEach(([gameMode, details], index) => {
+                const listItem = document.createElement('button');
+                listItem.textContent = details.display_name;
+                listItem.addEventListener('click', (function(selectedMode) {
+                    return function() {
+                        updateTimer(gameLength);
+                        gameModeId = selectedMode;
+                        gameModeTitle = data[selectedMode]['display_name'];
+                        console.log('Selected Game Mode: ' + gameModeTitle);
+                        getFaceData(details.year, details.tags, details.role);
+                    };
+                })(gameMode));
+                modeList.appendChild(listItem);
+
+                // Focus the first one after building the list
+                if (index === 0) {
+                    listItem.focus();
                 }
+            });
             })
     }
 
     // Retrieve set of faces dictionary from server, faces mapped to array of img filepaths.
-    function getFaceData(gameModeYear, gameModeTag) {
-        fetch('server/data.php?' + new URLSearchParams({year:gameModeYear, set:gameModeTag}), {
+    function getFaceData(gameModeYear, gameModeTag, gameModeRole) {
+        fetch('server/data.php?' + new URLSearchParams({year:gameModeYear, tag:gameModeTag, role:gameModeRole}), {
             method: 'GET',
         })
             .then(response => {
@@ -304,12 +264,16 @@
 
     // Check if user's input is correct or not
     function checkAnswer(form) {
-        var input = form.inputbox.value.replace(/[^a-zA-Z0-9\s-]/g, "").toLowerCase().trim().split(" "); // Remove special characters, converter to lower
-        var correctAnswer = currentFace.toLowerCase().replace(/'/g, "").split("_");
+        let input = form.inputbox.value.replace(/[^a-zA-Z0-9\s-]/g, "").toLowerCase().trim().split(" "); // Remove special characters, converter to lower
+        let inputFirst = input.slice(0, -1).join(" ") || input[0]; // everything except last word, or just first word if only one
+        let inputLast = input.length > 1 ? input[input.length - 1] : "";
+        let correctAnswer = currentFace.toLowerCase().replace(/'/g, "").split("_"); // ["sue ann", "park"]
+        let correctFirst = correctAnswer.slice(0, -1).join(" ");
+        let correctLast = correctAnswer[correctAnswer.length - 1];
 
         if (input[0].length == 0) {
             skips++;
-        } else if (input[0] === correctAnswer[0] || (faces_all[currentFace].nicknames.includes(input[0]))) { // Check if input matches name or nickname
+        } else if (inputFirst === correctFirst || (faces_all[currentFace].nicknames.includes(inputFirst))) { // Check if input matches name or nickname
             scoreManager.incrementScore(); 
             
             // Play correct "ding" sfx
@@ -317,15 +281,16 @@
             flashGreen();
 
             // Check last name
-            if (input.length > 1 && input[1] === correctAnswer[1]) {
+            if (inputLast && inputLast === correctLast) {
                 scoreManager.incrementScore(); 
 
                 // Extra point for last names with hyphen
                 if (correctAnswer[1].includes('-')) {
                     scoreManager.incrementScore(); 
                 }
-                setTimeout(function() {
-                    ding2.play();}, 130);
+                setTimeout(() => ding2.play(), 130);
+                // setTimeout(function() {
+                //     ding2.play();}, 130);
             } 
         } else {
             wrong++;

@@ -1,98 +1,125 @@
 <?php
 $db = new SQLite3('faces.db');
 $facesDir = 'faces';
-$group="";
+$roles = ['staff', 'camper', 'alum', 'past', 'legacy'];
 $id="";
 $year=null;
-$set=null;
 $personName="";
 $imageCount=0;
 $removeCount=0;
 
-// Scan faces directory; add person to person table if needed, add img files to image table if needed. 
+function fetchPerson($personName) {
+    global $db;
+    $selectPerson = $db->prepare("SELECT id, role FROM person WHERE first_name = :first_name AND last_name = :last_name");
+    
+    // Select person from db
+    $selectPerson->bindValue(':first_name', $personName[0], SQLITE3_TEXT);
+    $selectPerson->bindValue(':last_name', $personName[1], SQLITE3_TEXT);
+    $result = $selectPerson->execute();
+    return($result->fetchArray(SQLITE3_ASSOC));
+}
+
+// Scan faces directory; add person to person table if needed, add img files to image table if needed.
+// Update each person's tags based on its enclosing folder, i.e. alum or staff
 function addToDB($dir, $db) {
-    global $group;
-    global $id;
-    global $year;
-    global $set;
-    global $personName;
-    global $imageCount;
+    global $id, $year, $roles, $personName, $imageCount, $facesDir;
     $files = scandir($dir);
 
-    $addFace = $db->prepare("INSERT OR IGNORE INTO person (first_name, last_name) VALUES (:first_name, :last_name)");
-    $addImg = $db->prepare("INSERT OR IGNORE INTO image (file_path, person_id, tags, year) VALUES (:file_path, :person_id, :tags, :year)");
-    $selectPerson = $db->prepare("SELECT id FROM person WHERE first_name = :first_name AND last_name = :last_name");
-    $selectImage = $db->prepare("SELECT * FROM image WHERE file_path = :file_path");
+    $addFace = $db->prepare("INSERT OR IGNORE INTO person (first_name, last_name, role) VALUES (:first_name, :last_name, :tag)");
+    $updateTag = $db->prepare("UPDATE person SET role = :tag WHERE id = :id");
 
-    foreach ($files as $file) {
-        if ($file === '.' || $file === '..') {
-            continue; // Skip current and parent directory references
+    foreach ($roles as $roleFolder) {
+        $rolePath = $facesDir . DIRECTORY_SEPARATOR . $roleFolder; // i.e. faces/staff
+        if (!is_dir($rolePath)) continue;
+
+        $peopleFolders = scandir($rolePath);
+        if ($peopleFolders === false) {
+            echo "Failed to read directory: $rolePath\n";
+            continue; // skip this folder
         }
 
-        $filePath = $dir.DIRECTORY_SEPARATOR.$file;
-        
-        if (is_dir($filePath)) {            
-            // If it's a directory, assume it's a person's folder and add to db if not already there.
-            $dirName = explode('_', basename($filePath));
-            if (sizeof($dirName) > 1) { // Person Folder
-                // Select person from db
-                $personName = $dirName;
-                $selectPerson->bindValue(':first_name', $personName[0], SQLITE3_TEXT);
-                $selectPerson->bindValue(':last_name', $personName[1], SQLITE3_TEXT);
-                $result = $selectPerson->execute();
-                $person = $result->fetchArray(SQLITE3_ASSOC);
+        foreach ($peopleFolders as $personFolder) { // Loop through person folders
+            // i.e. $personFolder = Andrew_Kim
+            if ($personFolder === '.' || $personFolder === '..') continue; // Skip current and parent directories
 
-                if (!$person) { // If not in db, add to db
-                    $addFace->bindValue(':first_name', $personName[0], SQLITE3_TEXT);
-                    $addFace->bindValue(':last_name', $personName[1], SQLITE3_TEXT);
-                    $addFace->execute();
-                    $id = null;
+            $fullPersonPath = $rolePath . DIRECTORY_SEPARATOR . $personFolder; // i.e. faces/staff/Andrew_Kim
+            if (!is_dir($fullPersonPath)) continue;
 
-                    echo "\r\n".$personName[0].' '.$personName[1].' added to person table'."\r\n";
-                } else {
-                    $id = $person['id'];
-                }
-            } else if ($file == "staff" || $file == "camper") {
-                $group = $file; // Staff or Camper directory
-            } else if (is_numeric($file)) {
-                    $year = $file;
-                    $set = null;
-            } else {
-                $year = null;
-                $set = ','.$file; // "stamp" or "baby"
-            }
+            $tag = $roleFolder;
 
-            // Recursively process the directory.
-            addToDB($filePath, $db);
-        } else {
-            // If it's a file, check if it's an image.
-            if (str_contains(mime_content_type($filePath), 'image')) {                
-                if (!$id) {
+            // Select person from db
+            $personName = explode('_', basename($personFolder));
+            $person = fetchPerson($personName);
 
-                    $selectPerson->bindValue(':first_name', $personName[0], SQLITE3_TEXT);
-                    $selectPerson->bindValue(':last_name', $personName[1], SQLITE3_TEXT);
-                    $result = $selectPerson->execute();
-                    $person = $result->fetchArray(SQLITE3_ASSOC);
-                    $id = $person['id'];
-                }
+            if (!$person) { // If person not in db, add to db
+                $addFace->bindValue(':first_name', $personName[0], SQLITE3_TEXT);
+                $addFace->bindValue(':last_name', $personName[1], SQLITE3_TEXT);
+                $addFace->bindValue(':tag', $tag, SQLITE3_TEXT);
+                $addFace->execute();
+                $id = fetchPerson($personName)['id'];
 
-                // Check if file exists in db already
-                $path = $group.'/'.basename(dirname(dirname($filePath))).'/'.basename(dirname($filePath)).'/'.$file;
-                $selectImage->bindValue(':file_path', $path, SQLITE3_TEXT);
-                $result = $selectImage->execute();
+                echo "\r\n".$personName[0].' '.$personName[1].' added to person table'."\r\n";
+            } else { // If already in db, just update their role
+                $id = $person['id'];
 
-                if (!$result->fetchArray(SQLITE3_ASSOC)) {
-                    // Insert the image path into the database
-                    $addImg->bindValue(':file_path', $path, SQLITE3_TEXT); // i.e. staff/Alex_Bae/2024/01.jpg
-                    $addImg->bindValue(':person_id', $id, SQLITE3_INTEGER);
-                    $addImg->bindValue(':tags', $group.$set, SQLITE3_TEXT);
-                    $addImg->bindValue(':year', $year, SQLITE3_INTEGER);
-                    $addImg->execute();
-
-                    $imageCount++;
-                    echo $file.' added to image table'."\r\n";
+                // Update their 'role' field with their role, i.e. past or camper
+                if ($person['role'] !== $tag) {
+                    $updateTag->bindValue(':tag', $tag, SQLITE3_TEXT);
+                    $updateTag->bindValue(':id', $id, SQLITE3_INTEGER);
+                    $updateTag->execute();
+                    if ($db->changes() > 0) {
+                        echo "\r\n".$personName[0].' '.$personName[1]." role updated to '$tag'\r\n";
+                    } else {
+                        echo "Update executed but no row changed\n";
+                    }
                 }
             }
+            loopContents($fullPersonPath, $id); // After checking person, check images. i.e. $personFolder = faces/staff/Andrew_Kim
+        }
+    }
+}
+
+# Recursively loop through contents of a person folder for images
+function loopContents($folder, $id, $set=null) {
+    // i.e. faces/staff/Andrew_Kim
+    global $facesDir, $year, $personName, $imageCount, $db, $roles;
+    $selectImage = $db->prepare("SELECT * FROM image WHERE file_path = :file_path");
+    $addImg = $db->prepare("INSERT OR IGNORE INTO image (file_path, person_id, tags, year) VALUES (:file_path, :person_id, :tag, :year)");
+
+    $year = $set;
+    $tag = $set;
+    if ($set && (filter_var($set, FILTER_VALIDATE_INT) !== false)) {
+        $year = (int)$tag;
+        $tag = null;
+    } else { $year = null; }
+
+    $items = scandir($folder);
+    
+    // Loop through contents of person folder. Contents may be image file or folder.
+    foreach ($items as $item) {
+        if ($item === '.' || $item === '..' || $item === '.DS_Store') continue; // Skip current and parent directories
+        $filePath = $folder . DIRECTORY_SEPARATOR . $item; // i.e. faces/staff/Andrew_Kim/2023
+
+        if (str_contains(mime_content_type($filePath), 'image')) { // item is image file        
+            $selectImage->bindValue(':file_path', $filePath, SQLITE3_TEXT);
+            $result = $selectImage->execute();
+
+            // If not in db, add to db
+            if (!$result->fetchArray(SQLITE3_ASSOC)) {
+                $parentDir = basename(dirname($filePath, 2));
+                if (in_array($parentDir, $roles)) { $year = null; }
+                // Insert the image path into the database
+                $addImg->bindValue(':file_path', $filePath, SQLITE3_TEXT); // i.e. staff/Alex_Bae/2024/01.jpg
+                $addImg->bindValue(':person_id', $id, SQLITE3_INTEGER);
+                $addImg->bindValue(':tag', $tag, SQLITE3_TEXT);
+                $addImg->bindValue(':year', $year, SQLITE3_INTEGER);
+                $addImg->execute();
+
+                $imageCount++;
+                echo $filePath.' added to image table'."\r\n";
+            }
+        } else if (is_dir($filePath)){
+            loopContents($filePath, $id, $item);
         }
     }
 }
@@ -106,7 +133,7 @@ function removeFromDB($db) {
 
     if ($result) {
         while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
-            if (!file_exists('faces/'.$row['file_path'])) {
+            if (!file_exists($row['file_path'])) {
                 $deleteImage = $db->prepare('DELETE FROM image WHERE file_path = :file_path');
                 $deleteImage->bindValue(':file_path', $row['file_path'], SQLITE3_TEXT);
                 $deleteImage->execute();
