@@ -24,11 +24,16 @@ function initWebSocket() {
         setTimeout(initWebSocket, retryTimeout);
     }
 
+    ws.onclose = () => {
+        console.log("Disconnected, retrying in 5s");
+        setTimeout(connect, retryTimeout);
+    };
+
     ws.onmessage = function(msg) {
-        console.log("Message recieved");
+        //console.log("Message recieved");
         let numActive = activeUsers.length;
         activeUsers = JSON.parse(msg.data);
-        console.log(msg);
+        //console.log(msg);
         if (numActive < activeUsers.length) {
             loginSFX.play();
         }
@@ -52,6 +57,8 @@ function sendUsername(username) {
         });
         loginSFX.play();
         ws.send(message);
+    } else {
+        console.log("Tried to send active, but failed :(");
     }
 }
 
@@ -62,6 +69,8 @@ function sendInactive() {
             username: playerName
         });
         ws.send(message);
+    } else {
+        console.log("Tried to send inactive, but failed :(");
     }
 }
 
@@ -71,6 +80,7 @@ setInterval(function () {
     const timeSinceLastActivity = currentTime - lastActivityTime;
 
     if (loggedIn && timeSinceLastActivity > inactiveThreshold) { // User is inactive
+        console.log("User is inactive");
         checkInterval = checkIntervalInactive;
         active = false;
         sendInactive(playerName);
@@ -79,6 +89,12 @@ setInterval(function () {
         sendUsername(playerName);
         active = true;
     }
+    
+    // Ping ws to keep connection alive
+    if (ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: "ping" }));
+    }
+
 }, checkInterval);
 
 // Check for client activity
@@ -88,5 +104,9 @@ document.addEventListener('mousemove', function () {
 document.addEventListener('keydown', function () {
     lastActivityTime = Date.now(); // Update the time on mouse movement
 });
+// On window close, send signout 
+// window.addEventListener("beforeunload", () => {
+//     navigator.sendBeacon("/signout.php", JSON.stringify({ type:"sign_out", username: playerName }));
+// });
 
 initWebSocket();
