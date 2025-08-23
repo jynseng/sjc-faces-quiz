@@ -182,20 +182,13 @@ import { showElement, hideElement, resetGameUI, showNewUserPopup } from './ui.js
 
         // Start countdown to game start
         let tMinus = 2;
-        //const countdownText = document.createElement("p");
-        //countdownText.setAttribute("id", "countDown");
-        //const imgContainer = document.getElementById("ImageContainer");
         var countdownText = document.getElementById("countDown");
         countdownText.innerHTML = "3";
-        //imgContainer.appendChild(countdownText);
         preLoadImages();
         countDownSFX.play();
         
         const countDown = setInterval(function(){
             if (tMinus <= 0) {
-                //imgContainer.lastChild.innerHTML = "";
-                //imgContainer.innerHTML = "";
-                //imgContainer.lastChild.remove();
                 countdownText.innerHTML = "";
                 imgDiv.style.filter = "none"; // Unblur first image when game start
                 document.getElementById("submit").disabled = false;
@@ -203,7 +196,6 @@ import { showElement, hideElement, resetGameUI, showNewUserPopup } from './ui.js
                 startTimer(gameLength); // Start timer
                 clearInterval(countDown);
             } else {
-                //imgContainer.lastChild.innerHTML = tMinus;
                 countdownText.innerHTML = tMinus;
                 tMinus--;
             }
@@ -303,6 +295,8 @@ import { showElement, hideElement, resetGameUI, showNewUserPopup } from './ui.js
         }
 
         console.log("Answer: " + correctAnswer);
+        if (faces_all[currentFace].nicknames) {
+        console.log("Accepted First Names: " + faces_all[currentFace].nicknames); }
         console.log("Entered: " + input  + " (Running score: " + scoreManager.getScore() + ")");
 
         // Update the score
