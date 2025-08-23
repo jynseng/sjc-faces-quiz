@@ -26,7 +26,7 @@ function initWebSocket() {
 
     ws.onclose = () => {
         console.log("Disconnected, retrying in 5s");
-        setTimeout(connect, retryTimeout);
+        setTimeout(initWebSocket, retryTimeout);
     };
 
     ws.onmessage = function(msg) {
