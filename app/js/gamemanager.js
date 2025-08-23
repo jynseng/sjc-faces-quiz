@@ -265,6 +265,7 @@ import { showElement, hideElement, resetGameUI, showNewUserPopup } from './ui.js
     // Check if user's input is correct or not
     function checkAnswer(form) {
         let input = form.inputbox.value.replace(/[^a-zA-Z0-9\s-]/g, "").toLowerCase().trim().split(" "); // Remove special characters, converter to lower
+        let inputFull = input.join(" ");
         let inputFirst = input.slice(0, -1).join(" ") || input[0]; // everything except last word, or just first word if only one
         let inputLast = input.length > 1 ? input[input.length - 1] : "";
         let correctAnswer = currentFace.toLowerCase().replace(/'/g, "").split("_"); // ["sue ann", "park"]
@@ -273,7 +274,12 @@ import { showElement, hideElement, resetGameUI, showNewUserPopup } from './ui.js
 
         if (input[0].length == 0) {
             skips++;
-        } else if (inputFirst === correctFirst || (faces_all[currentFace].nicknames.includes(inputFirst))) { // Check if input matches name or nickname
+        } else if ( // Check if input matches name or nickname
+            inputFirst === correctFirst || 
+            inputFull === correctFirst ||
+            faces_all[currentFace].nicknames.includes(inputFirst) ||
+            faces_all[currentFace].nicknames.includes(inputFull) // check entire input against nicknames
+        ) {
             scoreManager.incrementScore(); 
             
             // Play correct "ding" sfx
