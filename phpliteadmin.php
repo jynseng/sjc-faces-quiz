@@ -47,10 +47,10 @@
 $password = 'Ramenstrain3r?';
 
 //directory relative to this file to search for databases (if false, manually list databases in the $databases variable)
-$directory = '.';
+$directory = 'server';
 
 //whether or not to scan the subdirectories of the above directory infinitely deep
-$subdirectories = false;
+$subdirectories = true;
 
 //if the above $directory variable is set to false, you must specify the databases manually in an array as the next variable
 //if any of the databases do not exist as they are referenced by their path, they will be created automatically
