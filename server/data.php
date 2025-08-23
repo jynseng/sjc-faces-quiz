@@ -27,7 +27,7 @@ function getImageDict($year=null, $tag=null, $role=null, $db=null) {
 
     $whereClauses = [];
 
-    // Handle year filter
+    // 2025, 2024, etc.
     if (!is_null($year)) {
         $whereClauses[] = "year IN ($year)";
         if (is_null($role)) {
@@ -35,12 +35,12 @@ function getImageDict($year=null, $tag=null, $role=null, $db=null) {
         }
     }
 
-    // Handle tag filter (image tags)
+    // Baby, Camp Stamp modes
     if (!is_null($tag)) {
         $whereClauses[] = "i.tags LIKE '%" . SQLite3::escapeString($tag) . "%'";
     }
 
-    // Handle role filter (person tags)
+    // Alum, Staff, Camper modes
     if (!is_null($role)) {
         $roles = array_map('trim', explode(',', $role)); // ["camper", "staff"]
         $roleConditions = [];
@@ -50,6 +50,9 @@ function getImageDict($year=null, $tag=null, $role=null, $db=null) {
         }
         if (!empty($roleConditions)) {
             $whereClauses[] = "(" . implode(" OR ", $roleConditions) . ")";
+        }
+        if (is_null($tag)) {
+            $whereClauses[] = "i.tags IS NULL";
         }
     }
 
