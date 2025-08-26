@@ -38,7 +38,6 @@ function initWebSocket() {
         data = JSON.parse(msg.data);
         console.log(data);
         if (data.type === 'wave') {  // Handle wave case
-            console.log("Wave received");
             if (data.from) {
                 msg = "안녕! 👋 " + "<span class='sender'>" + data.from + "</span>  waved at you!";
                 showToast(msg);
@@ -54,20 +53,36 @@ function initWebSocket() {
             userList.innerHTML = '';
             activeUsers.forEach(user => { // List each active user under "Online Now" on page
                 const li = document.createElement('li');
-                li.textContent = user;
+                const span = document.createElement('span');
+                span.innerHTML = user;
+                li.appendChild(span);
                 if (user != playerName) { // If not self, add button to wave
-                    const button = document.createElement('button');
-                    button.textContent = 'wave 👋';
-                    button.addEventListener('click', () => {
-                        console.log("Waving to " + user);
-                        ws.send(JSON.stringify({ type: "wave", to: user }));
-                    });
-                    li.appendChild(button);
+                    li.appendChild(createWaveButton(user));
                 }
                 userList.appendChild(li);
             });
         }
     };
+}
+
+// Attach button element to given 
+function createWaveButton(user) {
+    const button = document.createElement('button');
+    button.className = 'wave-button';
+    button.textContent = '👋';
+    button.addEventListener('click', () => { 
+        ws.send(JSON.stringify({ type: "wave", to: user })); 
+        // Disable and hide button after clicking to prevent spam
+        button.disabled = true;
+        button.style.display = "none";
+
+        // Re-enable and show after 30s
+        setTimeout(() => {
+            button.disabled = false;
+            button.style.display = "inline";
+        }, 30000);
+    });
+    return button;
 }
 
 // Display discrete popup message
