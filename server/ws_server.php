@@ -17,6 +17,7 @@ class Chat implements MessageComponentInterface {
         $this->clients = new \SplObjectStorage;
         $this->redis = new Redis();
         $this->redis->connect('127.0.0.1', 6379);
+        $this->redis->del("active_users");
     }
 
     public function onOpen(ConnectionInterface $conn) {
@@ -28,21 +29,64 @@ class Chat implements MessageComponentInterface {
     }
 
     public function onMessage(ConnectionInterface $conn, $msg) {
-        if ($msg) {
-            $data = json_decode($msg, true);
-            if (isset($data['username'])) {
+        if (!$msg) return;
+        $data = json_decode($msg, true);
+        if (!$data) return;
+
+        switch ($data['type'] ?? '') {
+            case 'wave':
+                if (!isset($data['to'])) {
+                    echo "Wave processed but no recipient set!\n";
+                    return;
+                }
+
+                $toUser = $data['to'];
+                $fromUser = $conn->username ?? 'unknown';
+
+                // Prevent spamming same user with waves
+                $key = "wave_cooldown:{$fromUser}:{$toUser}";
+                if ($this->redis->exists($key)) { return; } // still on cooldown, ignore
+                $this->redis->setex($key, 30, 1); // otherwise, set cooldown
+
+                // Have to loop through clients to find recipient 
+                foreach ($this->clients as $client) {
+                    if (isset($client->username) && $client->username === $toUser) {
+                        $client->send(json_encode([
+                            'type' => 'wave',
+                            'from' => $fromUser
+                        ]));
+                        echo "Wave sent from $fromUser to $toUser\n";
+                        return; // stop after finding the recipient
+                    }
+                }
+
+                echo "Wave target $toUser not found online\n";
+                break;
+
+            case 'sign_in':
+                if (!isset($data['username'])) return;
+
                 $user = $data['username'];
-                if ($data['type'] == 'sign_in') {
-                    echo $user." has logged on\n";
-                    $conn->username = $user;
-                    $this->redis->sAdd('active_users', $user);
-                } else if ($data['type'] == 'sign_out') {
+                $conn->username = $user; // bind username to this connection
+                $this->redis->sAdd('active_users', $user);
+
+                echo "$user has logged on\n";
+                $this->sendUpdate();
+                break;
+
+            case 'sign_out':
+                if (isset($conn->username)) {
                     $this->redis->sRem('active_users', $conn->username);
-                    echo $conn->username." is inactive\n";
+                    echo $conn->username . " signed out\n";
+                    unset($conn->username);
                 }
                 $this->sendUpdate();
-            }
-        } else { return; }
+                break;
+
+            default:
+                echo "Unknown message type: " . ($data['type'] ?? 'missing') . "\n";
+                break;
+        }
     }
 
     public function onClose(ConnectionInterface $conn) {
@@ -65,6 +109,7 @@ class Chat implements MessageComponentInterface {
             $client->send($json);
         }
     }
+    
 }
 
 $server = IoServer::factory(

@@ -13,7 +13,11 @@ let retryTimeout = 5000; // Time between reconnection attempts
 let ws;
 
 function initWebSocket() {
-    ws = new WebSocket('wss://sjcfacesgame.com/ws/'); // wss for https
+    const WS_URL = location.hostname === "localhost"
+        ? "ws://localhost:8080/"
+        : "wss://sjcfacesgame.com/ws/";
+
+    ws = new WebSocket(WS_URL); // wss for https
 
     ws.onopen = function (event) {
         console.log("Websocket connection is open");
@@ -29,22 +33,59 @@ function initWebSocket() {
         setTimeout(initWebSocket, retryTimeout);
     };
 
+    // Receive ws messages- can be either wave or active user update
     ws.onmessage = function(msg) {
-        //console.log("Message recieved");
-        let numActive = activeUsers.length;
-        activeUsers = JSON.parse(msg.data);
-        //console.log(msg);
-        if (numActive < activeUsers.length) {
-            loginSFX.play();
+        data = JSON.parse(msg.data);
+        console.log(data);
+        if (data.type === 'wave') {  // Handle wave case
+            console.log("Wave received");
+            if (data.from) {
+                msg = "안녕! 👋 " + "<span class='sender'>" + data.from + "</span>  waved at you!";
+                showToast(msg);
+            } else {
+                console.log("Wave recieved but no fromUser");
+            }
+        } else { // Handle active user case
+            activeUsers = data;
+            let numActive = activeUsers.length;
+            if (numActive < activeUsers.length) {
+                loginSFX.play();
+            }
+            userList.innerHTML = '';
+            activeUsers.forEach(user => { // List each active user under "Online Now" on page
+                const li = document.createElement('li');
+                li.textContent = user;
+                if (user != playerName) { // If not self, add button to wave
+                    const button = document.createElement('button');
+                    button.textContent = 'wave 👋';
+                    button.addEventListener('click', () => {
+                        console.log("Waving to " + user);
+                        ws.send(JSON.stringify({ type: "wave", to: user }));
+                    });
+                    li.appendChild(button);
+                }
+                userList.appendChild(li);
+            });
         }
-        // loggedIn = true;
-        userList.innerHTML = '';
-        activeUsers.forEach(user => {
-            const li = document.createElement('li');
-            li.textContent = user;
-            userList.appendChild(li);
-        });
     };
+}
+
+// Display discrete popup message
+function showToast(message, duration = 3000) {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = message;
+    container.appendChild(toast);
+
+    // Trigger animation
+    setTimeout(() => toast.classList.add('show'), 50);
+
+    // Remove after duration
+    setTimeout(() => {
+    toast.classList.remove('show');
+    setTimeout(() => container.removeChild(toast), 300);
+    }, duration);
 }
 
 function sendUsername(username) {

@@ -1,21 +1,26 @@
 import { showElement, hideElement, resetGameUI, showNewUserPopup } from './ui.js';
+import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, incrementWrong } from './scoreboard.js?=ver1.1';
+//import { isDebugEnabled } from './handlers.js';
+
 (function () {
     let faces_all = [];
     let faces_working = [];
     let playerName;
     let userId;
-    let wrong = 0; // Number of wrong answers
-    let skips = 0; // Number of faces skipped
     let currentFace = ""; // Name of current person
     let gameOver = false;
     let gameTimer;
     let gameModeId;
     let gameModeTitle;
-    let blinker; // Makes high score blink on leaderboard
-    let confetti = false; // Has the confetti been animated already?
 
     const timer = document.getElementById("Timer");
-    const gameLength = 60; // Time in seconds each round lasts
+    let gameLength = 60; // Time in seconds each round lasts
+
+    // Debug mode
+    if (isDebugEnabled()) { 
+        gameLength = 5;
+        // Pause function
+    }
 
     // Set the player's name, start showing online activity status
     function setName(form) {
@@ -62,7 +67,7 @@ import { showElement, hideElement, resetGameUI, showNewUserPopup } from './ui.js
         document.getElementById("confettiCanvas").style.display = 'none';
         document.getElementById("combinedLeaderboardWindow").style.display = "none";
         document.getElementById("QuizContainer").style.filter = "blur(4px)";
-        confetti = false;
+        resetCounters();
     }
 
     // Set, increment, and track player score. Encapsulated to prevent tampering.
@@ -166,8 +171,7 @@ import { showElement, hideElement, resetGameUI, showNewUserPopup } from './ui.js
         document.getElementById("QuizContainer").style.filter = "none"; // Remove blur from quiz container
         faces_working = JSON.parse(JSON.stringify(faces_all));
         gameOver = false;
-        wrong = 0;
-        skips = 0;
+        resetCounters();
         document.getElementById("score").innerText = scoreManager.getScore();
         document.getElementById("textinput").disabled = false;
         document.getElementById("submit").disabled = true;
@@ -264,35 +268,38 @@ import { showElement, hideElement, resetGameUI, showNewUserPopup } from './ui.js
         let correctFirst = correctAnswer.slice(0, -1).join(" ");
         let correctLast = correctAnswer[correctAnswer.length - 1];
 
+        var pointAdded = false;
+
         if (input[0].length == 0) {
-            skips++;
+            incrementSkips();
         } else if ( // Check if input matches name or nickname
             inputFirst === correctFirst || 
             inputFull === correctFirst ||
             faces_all[currentFace].nicknames.includes(inputFirst) ||
             faces_all[currentFace].nicknames.includes(inputFull) // check entire input against nicknames
         ) {
-            scoreManager.incrementScore(); 
+            scoreManager.incrementScore();
+            pointAdded = true; 
             
             // Play correct "ding" sfx
             ding1.play();
             flashGreen();
-
-            // Check last name
-            if (inputLast && inputLast === correctLast) {
-                scoreManager.incrementScore(); 
-
-                // Extra point for last names with hyphen
-                if (correctAnswer[1].includes('-')) {
-                    scoreManager.incrementScore(); 
-                }
-                setTimeout(() => ding2.play(), 130);
-                // setTimeout(function() {
-                //     ding2.play();}, 130);
-            } 
-        } else {
-            wrong++;
         }
+
+        // Check last name
+        if (inputLast && inputLast === correctLast || inputFull === correctLast
+        ) {
+            scoreManager.incrementScore(); 
+            pointAdded = true; 
+
+            // Extra point for last names with hyphen
+            if (correctAnswer[1].includes('-')) {
+                scoreManager.incrementScore(); 
+            }
+            setTimeout(() => ding2.play(), 130);
+        } 
+
+        if (input && pointAdded == false) {incrementWrong()}
 
         console.log("Answer: " + correctAnswer);
         if (faces_all[currentFace].nicknames) {
@@ -313,6 +320,7 @@ import { showElement, hideElement, resetGameUI, showNewUserPopup } from './ui.js
         }, 600);
 
         document.getElementById("textinput").value = ""; // Reset input box
+        console.log("Loading new face...");
         loadNewFace();
     }
 
@@ -328,7 +336,8 @@ import { showElement, hideElement, resetGameUI, showNewUserPopup } from './ui.js
 
     // Called when "skip" button is clicked
     function skipFace() {
-        skips++;
+        console.log("Skipped");
+        incrementSkips();
         loadNewFace();
     }
 
@@ -339,9 +348,10 @@ import { showElement, hideElement, resetGameUI, showNewUserPopup } from './ui.js
         document.getElementById("textinput").disabled = true;
         document.getElementById("finalScore").innerText = scoreManager.getScore();
         gameOver = true;
-        console.log("Skips: " + skips);
-        console.log("Errors: " + wrong);
-        fetchScores();
+        console.log("Skips: " + getSkips());
+        console.log("Errors: " + getWrong());
+        toggleLeaderboard();
+        //(userId, scoreManager.getScore(), gameModeId, false, true);
     }
 
     function toggleCombinedLeaderboard() {
@@ -349,7 +359,7 @@ import { showElement, hideElement, resetGameUI, showNewUserPopup } from './ui.js
         if (document.getElementById("combinedLeaderboardWindow").checkVisibility()) {
             document.getElementById("combinedLeaderboardWindow").style.display = "none";
         } else {
-            fetchScores(true);
+            fetchScores(userId, null, null, null, true, gameOver);
         }
     }
 
@@ -358,123 +368,8 @@ import { showElement, hideElement, resetGameUI, showNewUserPopup } from './ui.js
         if (document.getElementById("gameoverWindow").checkVisibility()) {
             document.getElementById("gameoverWindow").style.display = "none";
         } else {
-            fetchScores();
+            fetchScores(userId, scoreManager.getScore(), gameModeId, gameModeTitle, false, true);
         }
-    }
-
-    function fetchScores(combined=false) {
-        var fetchURL;
-        var fetchOptions;
-        if (combined) {
-            fetchURL = 'server/combinedLeaderboard.php';
-            fetchOptions = {method: 'GET'}
-        }
-        else {
-            // Send name-score pair to server, returns updated leaderboard
-            fetchURL = 'server/updateScores.php';
-            fetchOptions = {
-                method: 'POST',
-                body: JSON.stringify({status: gameOver, name: playerName, userId: userId, score: scoreManager.getScore(), gameModeId: gameModeId, errors: wrong, skips: skips})
-            }
-        }
-        fetch(fetchURL, fetchOptions)
-            .then(response => response.json())
-            .then(data => {
-                // Display top score leaderboard
-                var leaderboardTable;
-                var leaderboardWindow;
-                if (combined) {
-                    leaderboardTable = document.getElementById("combinedLeaderboard");
-                    leaderboardWindow = document.getElementById("combinedLeaderboardWindow");
-                }
-                else {
-                    leaderboardTable = document.getElementById("leaderboard");
-                    leaderboardWindow = document.getElementById("gameoverWindow");
-                    const leaderboardHeader = document.getElementById("leaderboardHeader");
-                    leaderboardHeader.innerHTML = "HIGH SCORES<br>";
-                    let modeTitle = document.createElement("small");
-                    modeTitle.innerHTML = gameModeTitle.toUpperCase();
-                    leaderboardHeader.appendChild(modeTitle);
-                }
-                clearInterval(blinker);
-                leaderboardTable.innerHTML = "";
-                var sortedScores = data;
-                var index = 0;
-                if (document.getElementById("combinedLeaderboardWindow").checkVisibility()) {
-                    document.getElementById("combinedLeaderboardWindow").style.display = "none";
-                }
-                leaderboardWindow.style.display = "block"; // Show popup window
-
-                for (var i = 0; i<25; i++) {
-                    if (!data[i] && i > 9) { // If less than 10 scores to show, exit early
-                        return; 
-                    }
-
-                    var ending = "th";
-                    if (i === 0 || i === 20) {
-                        ending = "st"; 
-                    } else if (i === 1 || i === 21) {
-                        ending = "nd";
-                    } else if (i === 2 || i === 22) {
-                        ending = "rd";
-                    }
-
-                    // Create new row with three cells and append to table
-                    const row = document.createElement('tr');
-                    
-                    const cell1 = document.createElement('td');
-                    cell1.textContent = i + 1 + ending.toUpperCase();
-                    row.appendChild(cell1);
-
-                    const cell2 = document.createElement('td');
-                    var username = 'EMPTY';
-                    var highScore = 0;
-                    if (data[i]) {
-                        username = data[i].username.toUpperCase();
-                        highScore = data[i].high_score;
-                    }
-                    cell2.textContent = username;
-                    row.appendChild(cell2);
-
-                    const cell3 = document.createElement('td');
-                    cell3.textContent = highScore;
-                    row.appendChild(cell3);
-                    row.style.color = "black";
-                    leaderboardTable.appendChild(row);
-
-                    // If player score is top ten and new, highlight & blink 
-                    if (data[i]) {
-                        if (!combined && sortedScores[index].high_score == scoreManager.getScore() && data[i].username == playerName) {
-                            row.style.color = "white";
-
-                            // Make score blink for 15 seconds
-                            var text = row;
-                            blinker = setInterval(function() {
-                                text.style.opacity = (text.style.opacity == '0' ? '1' : '0');
-                            }, 400);
-                            setTimeout(function() {
-                                clearInterval(blinker);
-                                text.style.opacity = "1";
-                            }, 15000);
-
-                            // If new top score, play confetti and sfx
-                            if (i === 0) {
-                                newRecordSFX.play();
-                                document.getElementById("confettiCanvas").style.display = "block";
-                                if (!confetti) { animate(); } // Play confetti visual effect
-                                alert("Congrats on setting the new high score!\nYou are SO SMART and SO CAPABLE.");
-                            } else {
-                                newHighScoreSFX.play();
-                            }
-                        }
-                    }
-                    index++;
-                }
-                scoreManager.resetScore();
-            })
-            .catch(error => {
-                console.error('Fetch error:', error);
-            })
     }
 
     function setGameMode(modeId) {

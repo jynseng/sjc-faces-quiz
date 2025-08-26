@@ -11,6 +11,22 @@ countDownSFX.volume = 0.2;
 ding1.volume = 0.7;
 ding2.volume = 0.7;
 newHighScoreSFX.volume = 0.8;
+let debugEnabled = false;
+
+// Debug mode
+window.__enableDebug = function() {
+    debugEnabled = true;
+    console.log("Debug mode enabled");
+};
+
+window.__disableDebug = function() {
+    debugEnabled = false;
+    console.log("Debug mode disabled");
+};
+
+function isDebugEnabled() {
+    return debugEnabled;
+}
 
 // Set focus to the input field when the page loads
 document.addEventListener('DOMContentLoaded', function() {
@@ -40,6 +56,7 @@ document.getElementById("enterName").addEventListener("keypress", function(event
 // Register enter key as a click on submit button
 document.getElementById("quizForm").addEventListener("keypress", function(event) {
     if (event.key === "Enter") {
+        console.log("Enter key hit");
         event.preventDefault(); // Prevent form submission
         document.getElementById("submit").click(); // Simulate a click on the submit button
     }
