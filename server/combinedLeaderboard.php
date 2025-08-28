@@ -17,5 +17,8 @@ $db = null;
 while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
     $scoreDict[] = $row;
 }
-
-echo json_encode($scoreDict);
+$data = json_encode([
+    'newPersonalBest' => false,
+    'scores' => $scoreDict
+]);
+echo $data; // Send back combined scoreboard
