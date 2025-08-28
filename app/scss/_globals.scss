@@ -321,6 +321,10 @@ table {
   transform: translateY(20px);
   transition: opacity 0.3s, transform 0.3s;
 }
+.toast.wave {
+  border: 2px solid rgba(150, 255, 255, 0.96);
+}
+
 .toast.show {
   opacity: .9;
   transform: translateY(0);
@@ -328,5 +332,9 @@ table {
 
 .toast .sender {
   color: rgba(150, 255, 255, 0.96);
-  font-weight: bold;
+  font-weight: italic;
+}
+
+.toast .score {
+    color: white;
 }

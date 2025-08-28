@@ -9,22 +9,53 @@ use Ratchet\Server\IoServer;
 use Ratchet\Http\HttpServer;
 use Ratchet\WebSocket\WsServer;
 
+use React\EventLoop\Factory;
+use Clue\React\Redis\Factory as RedisFactory;
+
 class Chat implements MessageComponentInterface {
     protected $clients;
     protected $redis;
+    protected $loop;
 
-    public function __construct() {
-        $this->clients = new \SplObjectStorage;
-        $this->redis = new Redis();
-        $this->redis->connect('127.0.0.1', 6379);
-        $this->redis->del("active_users");
+    public function __construct($loop) {
+        $this->loop = $loop;
+        $this->clients = new \SplObjectStorage();
+
+        $factory = new RedisFactory($loop); // Create Redis factory tied to this loop
+
+        // Normal redis client
+        $factory->createClient('redis://127.0.0.1:6379')->then(function ($client) use (&$redis) {
+            $this->redis = $client;
+            $client->del('active_users');
+            echo "Normal Redis client connected\n";
+        });
+
+        // Subscriber redis client
+        $factory->createClient('redis://127.0.0.1:6379')->then(function ($client) use (&$subscriber) {
+            $this->subscriber = $client;
+            echo "Subscriber Redis client connected\n";
+
+            $client->subscribe('scores');
+            $client->on('message', function ($channel, $message) {
+                $data = json_decode($message, true);
+                foreach ($this->clients as $wsClient) {
+                    $wsClient->send(json_encode([
+                        'type' => 'score',
+                        'user' => $data['user'],
+                        'score' => $data['score'],
+                        'gameMode' => $data['gameMode'],
+                        'newPersonalBest' => $data['newPersonalBest']
+                    ]));
+                }
+            });
+        });
     }
 
     public function onOpen(ConnectionInterface $conn) {
         // Store the new connection
         $this->clients->attach($conn);
         echo "New connection! ({$conn->resourceId})\n";
-        $conn->username = "guest";
+        $conn->username = "unknown";
         $this->sendUpdate();
     }
 
@@ -35,6 +66,7 @@ class Chat implements MessageComponentInterface {
 
         switch ($data['type'] ?? '') {
             case 'wave':
+                echo "Wave processing...";
                 if (!isset($data['to'])) {
                     echo "Wave processed but no recipient set!\n";
                     return;
@@ -45,22 +77,23 @@ class Chat implements MessageComponentInterface {
 
                 // Prevent spamming same user with waves
                 $key = "wave_cooldown:{$fromUser}:{$toUser}";
-                if ($this->redis->exists($key)) { return; } // still on cooldown, ignore
-                $this->redis->setex($key, 30, 1); // otherwise, set cooldown
+                $this->redis->exists($key)->then(function ($exists) use ($key, $fromUser, $toUser, $conn) {
+                    if ($exists) return; // still on cooldown
 
-                // Have to loop through clients to find recipient 
-                foreach ($this->clients as $client) {
-                    if (isset($client->username) && $client->username === $toUser) {
-                        $client->send(json_encode([
-                            'type' => 'wave',
-                            'from' => $fromUser
-                        ]));
-                        echo "Wave sent from $fromUser to $toUser\n";
-                        return; // stop after finding the recipient
+                    $this->redis->setex($key, 30, 1);
+
+                    foreach ($this->clients as $client) {
+                        if (($client->username ?? null) === $toUser) {
+                            $client->send(json_encode([
+                                'type' => 'wave',
+                                'from' => $fromUser
+                            ]));
+                            echo "Wave sent from $fromUser to $toUser\n";
+                            return;
+                        }
                     }
-                }
-
-                echo "Wave target $toUser not found online\n";
+                    echo "Wave target $toUser not found online\n";
+                });
                 break;
 
             case 'sign_in':
@@ -68,19 +101,25 @@ class Chat implements MessageComponentInterface {
 
                 $user = $data['username'];
                 $conn->username = $user; // bind username to this connection
-                $this->redis->sAdd('active_users', $user);
-
-                echo "$user has logged on\n";
-                $this->sendUpdate();
+                $this->redis->sadd('active_users', $user)->then(function() use ($user) {
+                    echo $user . " has logged on\n";
+                    $this->sendUpdate();
+                });
                 break;
 
             case 'sign_out':
                 if (isset($conn->username)) {
-                    $this->redis->sRem('active_users', $conn->username);
-                    echo $conn->username . " signed out\n";
+                    $user = $conn->username;
+                    $this->redis->srem('active_users', $user)->then(function () use ($user) {
+                        echo $user . " signed out\n";
+                        $this->sendUpdate();
+
+                    });
                     unset($conn->username);
                 }
-                $this->sendUpdate();
+                break;
+
+            case 'ping':
                 break;
 
             default:
@@ -90,10 +129,17 @@ class Chat implements MessageComponentInterface {
     }
 
     public function onClose(ConnectionInterface $conn) {
-        $this->redis->sRem('active_users', $conn->username);
-        $this->clients->detach($conn);
-        echo "Connection {$conn->resourceId} has disconnected\n";
-        $this->sendUpdate();
+        if (isset($conn->username)) {
+            $user = $conn->username;
+            $this->redis->srem('active_users', $user)->then(function () use ($conn, $user) {
+                $this->clients->detach($conn);
+                echo "Connection {$conn->resourceId} ($user) has disconnected\n";
+                $this->sendUpdate();
+            });
+        } else {
+            $this->clients->detach($conn);
+            echo "Connection {$conn->resourceId} has disconnected (no username)\n";
+        }
     }
 
     public function onError(ConnectionInterface $conn, \Exception $e) {
@@ -102,26 +148,34 @@ class Chat implements MessageComponentInterface {
     }
 
     public function sendUpdate() {
-        // Broadcast the message to all WebSocket clients
-        $usersArray = $this->redis->sMembers('active_users');
-        $json = json_encode($usersArray);
-        foreach ($this->clients as $client) {
-            $client->send($json);
+        if (!$this->redis) {
+            echo "Redis not connected yet, skipping update\n";
+            return;
         }
+        
+        // Broadcast the message to all WebSocket clients
+        $this->redis->smembers('active_users')->then(function ($users) {
+            $usersArray = $users;
+            $json = json_encode($usersArray);
+            foreach ($this->clients as $client) {
+                $client->send($json);
+            }
+        });
     }
     
 }
 
-$server = IoServer::factory(
+$loop = Factory::create();
+$chatApp = new Chat($loop);
+
+$server = new IoServer(
     new HttpServer(
-        new WsServer(
-            new Chat()
-        )
+        new WsServer($chatApp)
     ),
-    8080,
-    '0.0.0.0'
+    new React\Socket\Server('0.0.0.0:8080', $loop),
+    $loop
 );
 
 echo "WebSocket server started at ws://127.0.0.1:8080\n"; // Add this line for logging
 
-$server->run();
+$loop->run();

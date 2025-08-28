@@ -1,5 +1,5 @@
 import { showElement, hideElement, resetGameUI, showNewUserPopup } from './ui.js';
-import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, incrementWrong } from './scoreboard.js?=ver1.1';
+import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, incrementWrong } from './scoreboard.js?=ver2.0';
 //import { isDebugEnabled } from './handlers.js';
 
 (function () {
@@ -287,7 +287,9 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
         }
 
         // Check last name
-        if (inputLast && inputLast === correctLast || inputFull === correctLast
+        if (inputLast && inputLast === correctLast ||
+            inputFull === correctLast
+            // || faces_all[currentFace].acceptedLastNames.includes(inputLast) // check alternate last names
         ) {
             scoreManager.incrementScore(); 
             pointAdded = true; 

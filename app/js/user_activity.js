@@ -1,6 +1,6 @@
-const checkIntervalActive = 5 * 1000; // Frequency of local activity check while user is active (4s)
-const checkIntervalInactive = .5 * 1000; // Frequency of local activity check while waiting for user to return (.5s)
-const inactiveThreshold = 2.5 * 60 * 1000; // Local activity timeout threshold (2.5 mins)
+const checkIntervalActive = 8 * 1000; // Frequency of local activity check while user is active (8s)
+const checkIntervalInactive = .3 * 1000; // Frequency of local activity check while waiting for user to return (.3s)
+const inactiveThreshold = 3 * 60 * 1000; // Local activity timeout threshold (3 mins)
 const userList = document.getElementById('userList');
 
 let playerName;
@@ -36,31 +36,44 @@ function initWebSocket() {
     // Receive ws messages- can be either wave or active user update
     ws.onmessage = function(msg) {
         data = JSON.parse(msg.data);
-        console.log(data);
-        if (data.type === 'wave') {  // Handle wave case
-            if (data.from) {
-                msg = "안녕! 👋 " + "<span class='sender'>" + data.from + "</span>  waved at you!";
-                showToast(msg);
-            } else {
-                console.log("Wave recieved but no fromUser");
-            }
-        } else { // Handle active user case
-            activeUsers = data;
-            let numActive = activeUsers.length;
-            if (numActive < activeUsers.length) {
-                loginSFX.play();
-            }
-            userList.innerHTML = '';
-            activeUsers.forEach(user => { // List each active user under "Online Now" on page
-                const li = document.createElement('li');
-                const span = document.createElement('span');
-                span.innerHTML = user;
-                li.appendChild(span);
-                if (user != playerName) { // If not self, add button to wave
-                    li.appendChild(createWaveButton(user));
+        
+        switch (data.type) {
+            case 'wave':
+                if (data.from) {
+                    toastMsg = "안녕! 👋 " + "<span class='sender'>" + data.from + "</span>  waved at you!";
+                    waveSFX.play();
+                    showToast(toastMsg, 'wave');
+                } else {
+                    console.log("Wave recieved but no fromUser");
                 }
-                userList.appendChild(li);
-            });
+                break;
+            case 'score':
+                toastMsg = "";
+                if (data.newPersonalBest) {
+                    toastMsg =  "<span class='sender'>" + data.user + "</span> just got <span class='score'>" + data.score + "</span> on " + data.gameMode + " mode! 👏";
+                } else {
+                    toastMsg += "<span class='sender'>" + data.user + "</span> got a measly <span class='score'>" + data.score + "</span> on " + data.gameMode + " mode 😢";
+                }
+                showToast(toastMsg);
+                break;
+            default:
+                activeUsers = data;
+                let numActive = activeUsers.length;
+                if (numActive < activeUsers.length) {
+                    loginSFX.play();
+                }
+                userList.innerHTML = '';
+                activeUsers.forEach(user => { // List each active user under "Online Now" on page
+                    const li = document.createElement('li');
+                    const span = document.createElement('span');
+                    span.innerHTML = user;
+                    li.appendChild(span);
+                    if (user != playerName && loggedIn) { // If logged in, add button to wave to other users
+                        li.appendChild(createWaveButton(user));
+                    }
+                    userList.appendChild(li);
+                });
+                break;
         }
     };
 }
@@ -86,10 +99,11 @@ function createWaveButton(user) {
 }
 
 // Display discrete popup message
-function showToast(message, duration = 3000) {
+function showToast(message, type, duration = 4000) {
     const container = document.getElementById('toast-container');
     const toast = document.createElement('div');
     toast.className = 'toast';
+    if (type == 'wave') { toast.classList.add('wave'); }
     toast.innerHTML = message;
     container.appendChild(toast);
 
@@ -146,12 +160,17 @@ setInterval(function () {
         active = true;
     }
     
+
+
+}, checkInterval);
+
+// Ping server to keep ws connection alive
+setInterval(function () {
     // Ping ws to keep connection alive
     if (ws.readyState === WebSocket.OPEN) {
         ws.send(JSON.stringify({ type: "ping" }));
     }
-
-}, checkInterval);
+}, checkIntervalActive);
 
 // Check for client activity
 document.addEventListener('mousemove', function () {

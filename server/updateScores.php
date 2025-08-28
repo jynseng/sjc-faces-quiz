@@ -25,25 +25,66 @@ $errors = $data["errors"];
 $skips = $data["skips"];
 $userId = $data["userId"];
 
-try {
-// Insert new score into score table
-$insertScoreSql = "INSERT INTO score (username, user_id, mode_id, score, errors, skips) values ('{$name}', {$userId}, {$gameModeId}, {$score}, {$errors}, {$skips})";
-$db->exec($insertScoreSql);
+$newPersonalBest = false;
 
-// Get leaderboard for current game mode
-$getScoreSql = "SELECT username, max(score) AS high_score FROM score
-                WHERE mode_id = {$gameModeId}
-                    AND score > 0
-                GROUP BY username
-                ORDER BY high_score DESC
-                LIMIT {$leaderboardSlots}";
-$result = $db->query($getScoreSql);
+try {
+    // Get user's personal best score for current game mode
+    $getTopScore = "SELECT max(score) AS high_score FROM score
+                    WHERE mode_id = {$gameModeId}
+                    AND user_id = {$userId}
+                    AND score > 0";
+    $result = $db->query($getTopScore);
+    if ($result) {
+        $personalBest = $result->fetchArray(SQLITE3_ASSOC)['high_score'];
+        if ($personalBest < $score) { $newPersonalBest = true; }
+    }
 } catch (Exception $e) {
     echo 'General error: '.$e->getMessage();
 }
+
+try {
+    // Insert new score into score table
+    $insertScoreSql = "INSERT INTO score (username, user_id, mode_id, score, errors, skips) values ('{$name}', {$userId}, {$gameModeId}, {$score}, {$errors}, {$skips})";
+    $db->exec($insertScoreSql);
+
+    // Get leaderboard for current game mode
+    $getScoreSql = "SELECT username, max(score) AS high_score FROM score
+                    WHERE mode_id = {$gameModeId}
+                        AND score > 0
+                    GROUP BY username
+                    ORDER BY high_score DESC
+                    LIMIT {$leaderboardSlots}";
+    $result = $db->query($getScoreSql);
+} catch (Exception $e) {
+    echo 'General error: '.$e->getMessage();
+}
+
 $scoreDict = [];
 while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
     $scoreDict[] = $row;
 }
+$data = json_encode([
+    'newPersonalBest' => $newPersonalBest,
+    'scores' => $scoreDict
+]);
+echo $data; // Send back updated scoreboard
+
+// Get gamemode name from id
+$getModeNameSql = "SELECT display_name FROM mode WHERE id = {$gameModeId}";
+$result = $db->query($getModeNameSql);
+if ($result) {
+    $modeName = $result->fetchArray(SQLITE3_ASSOC)['display_name'];
+}
 $db = null;
-echo json_encode($scoreDict);
+
+// Publish score to redis, to broadcast to other users
+$redis = new Redis();
+$redis->connect('127.0.0.1', 6379);
+$message = json_encode([
+    'type' => 'score',
+    'user' => $name,
+    'score' => $score,
+    'gameMode' => $modeName,
+    'newPersonalBest' => $newPersonalBest
+]);
+$redis->publish('scores', $message);

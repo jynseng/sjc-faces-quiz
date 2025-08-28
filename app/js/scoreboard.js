@@ -1,6 +1,6 @@
 let wrong = 0; // Number of wrong answers
 let skips = 0; // Number of faces skipped
-let currentTopScore = 0; // The user's current top score 
+//let currentTopScore = 0; // The user's current top score 
 let blinker; // Makes high score blink on leaderboard
 let confetti = false; // Has the confetti been animated already?
 
@@ -14,8 +14,8 @@ export function fetchScores(userId, score=0, gameModeId=null, gameModeTitle=null
     }
     else {
         // Send name-score pair to server, returns updated leaderboard
-        console.log(gameModeId);
-        currentTopScore = fetchTopScore(userId, gameModeId); // Get user's current best, to compare later
+        //currentTopScore = fetchTopScore(userId, gameModeId); // Get user's current best, to compare later
+        //currentTopScore = 10;
         fetchURL = 'server/updateScores.php';
         fetchOptions = {
             method: 'POST',
@@ -33,12 +33,15 @@ export function fetchScores(userId, score=0, gameModeId=null, gameModeTitle=null
         .then(response => response.json())
         .then(data => {
             // Display top score leaderboard
+            const newPersonalBest = data.newPersonalBest;
+            const scores = data.scores;
+
             var leaderboardTable;
             var leaderboardWindow;
-            if (combined) {
+            if (combined) { // Combined leaderboard
                 leaderboardTable = document.getElementById("combinedLeaderboard");
                 leaderboardWindow = document.getElementById("combinedLeaderboardWindow"); 
-            } else {
+            } else { // Normal leaderboard for that game mode
                 leaderboardTable = document.getElementById("leaderboard");
                 leaderboardWindow = document.getElementById("gameoverWindow");
                 const leaderboardHeader = document.getElementById("leaderboardHeader");
@@ -49,7 +52,7 @@ export function fetchScores(userId, score=0, gameModeId=null, gameModeTitle=null
             }
             clearInterval(blinker);
             leaderboardTable.innerHTML = "";
-            var sortedScores = data;
+            var sortedScores = scores;
             var index = 0;
             if (document.getElementById("combinedLeaderboardWindow").checkVisibility()) {
                 document.getElementById("combinedLeaderboardWindow").style.display = "none";
@@ -57,7 +60,7 @@ export function fetchScores(userId, score=0, gameModeId=null, gameModeTitle=null
             leaderboardWindow.style.display = "block"; // Show popup window
 
             for (var i = 0; i<25; i++) {
-                if (!data[i] && i > 9) { // If less than 10 scores to show, exit early
+                if (!scores[i] && i > 9) { // If less than 10 scores to show, exit early
                     return; 
                 }
 
@@ -80,9 +83,9 @@ export function fetchScores(userId, score=0, gameModeId=null, gameModeTitle=null
                 const cell2 = document.createElement('td');
                 var username = 'EMPTY';
                 var highScore = 0;
-                if (data[i]) {
-                    username = data[i].username.toUpperCase();
-                    highScore = data[i].high_score;
+                if (scores[i]) {
+                    username = scores[i].username.toUpperCase();
+                    highScore = scores[i].high_score;
                 }
                 cell2.textContent = username;
                 row.appendChild(cell2);
@@ -94,11 +97,12 @@ export function fetchScores(userId, score=0, gameModeId=null, gameModeTitle=null
                 leaderboardTable.appendChild(row);
 
                 // If player score is top ten and new, highlight & blink 
-                if (data[i]) {
+                if (scores[i]) {
                     if (!combined && 
                         sortedScores[index].high_score == score && 
-                        data[i].username == playerName &&
-                        currentTopScore < score
+                        scores[i].username == playerName &&
+                        //currentTopScore < score
+                        newPersonalBest
                     ) {
                         row.style.color = "white";
 
@@ -125,25 +129,24 @@ export function fetchScores(userId, score=0, gameModeId=null, gameModeTitle=null
                 }
                 index++;
             }
-            scoreManager.resetScore();
         })
         .catch(error => {
             console.error('Fetch error:', error);
         })
 }
 
-function fetchTopScore(userId, gameModeId) {
-    var fetchURL;
-    var fetchOptions;
-    fetchURL = 'server/getTopScore.php';
-    fetchOptions = {
-        method: 'POST',
-        body: JSON.stringify({ userId: userId, gameModeId: gameModeId })
-    }
-    fetch(fetchURL, fetchOptions)
-            .then(response => response.json())
-            .then(data => { return data; })
-}
+// function fetchTopScore(userId, gameModeId) {
+//     var fetchURL;
+//     var fetchOptions;
+//     fetchURL = 'server/getTopScore.php';
+//     fetchOptions = {
+//         method: 'POST',
+//         body: JSON.stringify({ userId: userId, gameModeId: gameModeId })
+//     }
+//     fetch(fetchURL, fetchOptions)
+//             .then(response => response.json())
+//             .then(data => { return data; })
+// }
 
 export function incrementSkips() {
     skips++;

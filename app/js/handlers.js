@@ -6,11 +6,13 @@ const newRecordSFX = new Audio("assets/ESM_Casino_Win_Pattern_8_Sound_FX_Arcade_
 const loginSFX = new Audio("assets/ESM_Vibrant_Game_Slot_Machine_Ding_1_Arcade_Cartoon_Quirky_Comedy_Comedic_Kid_Childish_Fun_Bouncy.wav");
 const countDownSFX = new Audio("assets/CountDownSFX.m4a");
 const newOverallHighSFX = new Audio("assets/WowSFX.mp3");
+const waveSFX = new Audio("assets/ESM_Congrats_Bell_Sound_FX_Arcade_Synth_Musical_Chord_Bling_Electronic_Casino_Kids_Mobile_Positive_Achievement_Score.wav");
 loginSFX.volume = 0.2;
 countDownSFX.volume = 0.2;
 ding1.volume = 0.7;
 ding2.volume = 0.7;
 newHighScoreSFX.volume = 0.8;
+waveSFX.volume = 0.3;
 let debugEnabled = false;
 
 // Debug mode
@@ -56,7 +58,6 @@ document.getElementById("enterName").addEventListener("keypress", function(event
 // Register enter key as a click on submit button
 document.getElementById("quizForm").addEventListener("keypress", function(event) {
     if (event.key === "Enter") {
-        console.log("Enter key hit");
         event.preventDefault(); // Prevent form submission
         document.getElementById("submit").click(); // Simulate a click on the submit button
     }
@@ -104,6 +105,7 @@ function toggleMute() {
         newHighScoreSFX.volume = 0.8;
         newRecordSFX.volume = 1;
         loginSFX.volume = 0.2;
+        waveSFX.volume = 0.3;
         muted = false;
     } else {
         document.getElementById("muteButton").innerHTML = "🔇";
@@ -113,6 +115,7 @@ function toggleMute() {
         newHighScoreSFX.volume = 0;
         newRecordSFX.volume = 0;
         loginSFX.volume = 0;
+        waveSFX.volume = 0;
         muted = true;
     }
 }
