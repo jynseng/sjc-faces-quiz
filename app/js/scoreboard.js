@@ -1,6 +1,5 @@
 let wrong = 0; // Number of wrong answers
 let skips = 0; // Number of faces skipped
-//let currentTopScore = 0; // The user's current top score 
 let blinker; // Makes high score blink on leaderboard
 let confetti = false; // Has the confetti been animated already?
 
@@ -13,9 +12,6 @@ export function fetchScores(userId, score=0, gameModeId=null, gameModeTitle=null
         fetchOptions = {method: 'GET'}
     }
     else {
-        // Send name-score pair to server, returns updated leaderboard
-        //currentTopScore = fetchTopScore(userId, gameModeId); // Get user's current best, to compare later
-        //currentTopScore = 10;
         fetchURL = 'server/updateScores.php';
         fetchOptions = {
             method: 'POST',
@@ -33,8 +29,8 @@ export function fetchScores(userId, score=0, gameModeId=null, gameModeTitle=null
         .then(response => response.json())
         .then(data => {
             // Display top score leaderboard
-            const newPersonalBest = data.newPersonalBest;
-            const scores = data.scores;
+            const newPersonalBest = data.newPersonalBest; // Boolean, sent by server
+            const scores = data.scores; // Array of username-score pairs
 
             var leaderboardTable;
             var leaderboardWindow;
@@ -73,7 +69,7 @@ export function fetchScores(userId, score=0, gameModeId=null, gameModeTitle=null
                     ending = "rd";
                 }
 
-                // Create new row with three cells and append to table
+                // Create new row with three cells (for place, name, and score) and append to table
                 const row = document.createElement('tr');
                 
                 const cell1 = document.createElement('td');
@@ -101,7 +97,6 @@ export function fetchScores(userId, score=0, gameModeId=null, gameModeTitle=null
                     if (!combined && 
                         sortedScores[index].high_score == score && 
                         scores[i].username == playerName &&
-                        //currentTopScore < score
                         newPersonalBest
                     ) {
                         row.style.color = "white";
@@ -134,19 +129,6 @@ export function fetchScores(userId, score=0, gameModeId=null, gameModeTitle=null
             console.error('Fetch error:', error);
         })
 }
-
-// function fetchTopScore(userId, gameModeId) {
-//     var fetchURL;
-//     var fetchOptions;
-//     fetchURL = 'server/getTopScore.php';
-//     fetchOptions = {
-//         method: 'POST',
-//         body: JSON.stringify({ userId: userId, gameModeId: gameModeId })
-//     }
-//     fetch(fetchURL, fetchOptions)
-//             .then(response => response.json())
-//             .then(data => { return data; })
-// }
 
 export function incrementSkips() {
     skips++;

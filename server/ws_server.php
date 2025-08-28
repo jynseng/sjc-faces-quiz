@@ -64,7 +64,7 @@ class Chat implements MessageComponentInterface {
         $data = json_decode($msg, true);
         if (!$data) return;
 
-        switch ($data['type'] ?? '') {
+        switch ($data['type'] ?? '') { // Possible message types: wave, score, sign in, sign out, ping
             case 'wave':
                 echo "Wave processing...";
                 if (!isset($data['to'])) {
@@ -128,6 +128,7 @@ class Chat implements MessageComponentInterface {
         }
     }
 
+    // When a connection closes, update clients and remove from redis
     public function onClose(ConnectionInterface $conn) {
         if (isset($conn->username)) {
             $user = $conn->username;
