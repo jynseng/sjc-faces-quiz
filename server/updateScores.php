@@ -25,18 +25,32 @@ $errors = $data["errors"];
 $skips = $data["skips"];
 $userId = $data["userId"];
 
-$newPersonalBest = false;
+$scoreStatus = 'none'; // Personal best, high score, etc.
 
 try {
     // Get user's personal best score for current game mode
-    $getTopScore = "SELECT max(score) AS high_score FROM score
+    $getUserBest = "SELECT max(score) AS high_score FROM score
                     WHERE mode_id = {$gameModeId}
                     AND user_id = {$userId}
                     AND score > 0";
-    $result = $db->query($getTopScore);
-    if ($result) {
-        $personalBest = $result->fetchArray(SQLITE3_ASSOC)['high_score'];
-        if ($personalBest < $score) { $newPersonalBest = true; }
+    $result = $db->query($getUserBest);
+    $personalBest = $result->fetchArray(SQLITE3_ASSOC)['high_score']; // User's best ever score for game mode
+
+    // Get current best score from anyone
+    $getHighScore = "SELECT max(score) AS high_score FROM score
+                    WHERE mode_id = {$gameModeId}
+                    AND score > 0";
+    $result = $db->query($getHighScore);
+    $highScore = $result->fetchArray(SQLITE3_ASSOC)['high_score']; // Top score on leaderboard
+
+    if ($highScore < $score) {
+        $scoreStatus = 'new high score';
+    } else if ($personalBest < $score) {
+        $scoreStatus = 'personal best';
+    } else if ($personalBest > $score*1.5 && $score > 7) {
+        $scoreStatus = 'poor';
+    } else if ($score < 8) {
+        $scoreStatus = 'pathetic';
     }
 } catch (Exception $e) {
     echo 'General error: '.$e->getMessage();
@@ -64,7 +78,7 @@ while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
     $scoreDict[] = $row;
 }
 $data = json_encode([
-    'newPersonalBest' => $newPersonalBest,
+    'scoreStatus' => $scoreStatus,
     'scores' => $scoreDict
 ]);
 echo $data; // Send back updated scoreboard
@@ -85,6 +99,6 @@ $message = json_encode([
     'user' => $name,
     'score' => $score,
     'gameMode' => $modeName,
-    'newPersonalBest' => $newPersonalBest
+    'scoreStatus' => $scoreStatus
 ]);
 $redis->publish('scores', $message);

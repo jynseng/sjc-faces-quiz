@@ -29,7 +29,7 @@ export function fetchScores(userId, score=0, gameModeId=null, gameModeTitle=null
         .then(response => response.json())
         .then(data => {
             // Display top score leaderboard
-            const newPersonalBest = data.newPersonalBest; // Boolean, sent by server
+            const scoreStatus = data.scoreStatus; // High score, personal high score, etc.
             const scores = data.scores; // Array of username-score pairs
 
             var leaderboardTable;
@@ -97,7 +97,8 @@ export function fetchScores(userId, score=0, gameModeId=null, gameModeTitle=null
                     if (!combined && 
                         sortedScores[index].high_score == score && 
                         scores[i].username == playerName &&
-                        newPersonalBest
+                        scoreStatus == 'new high score' ||
+                        scoreStatus == 'personal best'
                     ) {
                         row.style.color = "white";
 

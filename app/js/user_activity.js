@@ -49,14 +49,26 @@ function initWebSocket() {
                 break;
             case 'score':
                 toastMsg = "";
-                if (data.newPersonalBest) {
-                    toastMsg =  "<span class='sender'>" + data.user + "</span> just got <span class='score'>" + data.score + "</span> on " + data.gameMode + " mode! 👏";
-                } else {
-                    toastMsg += "<span class='sender'>" + data.user + "</span> got a measly <span class='score'>" + data.score + "</span> on " + data.gameMode + " mode 😢";
+                if (data.score == 0) { break; }
+                switch (data.scoreStatus) {
+                    case 'new high score': 
+                        toastMsg =  "<span class='sender'>" + data.user + "</span> just set a new high score of <span class='score'>" + data.score + "</span> on " + data.gameMode + " mode! 🤯";
+                        break;
+                    case 'personal best':
+                        toastMsg =  "<span class='sender'>" + data.user + "</span> just got <span class='score'>" + data.score + "</span> on " + data.gameMode + " mode! 👏";
+                        break;
+                    case 'poor':
+                        toastMsg = "<span class='sender'>" + data.user + "</span> got a measly <span class='score'>" + data.score + "</span> on " + data.gameMode + " mode 😢";
+                        break;
+                    case 'pathetic':
+                        toastMsg = "<span class='sender'>" + data.user + "</span> got an astoshingly pitiful <span class='score'>" + data.score + "</span> on " + data.gameMode + " mode 🤔";
+                        break;
+                    default: 
+                        break;
                 }
-                showToast(toastMsg);
+                showToast(toastMsg, 'score');
                 break;
-            default:
+            default: // Default message is online user update
                 activeUsers = data;
                 let numActive = activeUsers.length;
                 if (numActive < activeUsers.length) {
@@ -123,7 +135,8 @@ function sendUsername(username) {
         loggedIn = true;
         const message = JSON.stringify({
             type: 'sign_in', 
-            username: playerName
+            username: playerName,
+            //userId: userId
         });
         loginSFX.play();
         ws.send(message);

@@ -44,7 +44,7 @@ class Chat implements MessageComponentInterface {
                         'user' => $data['user'],
                         'score' => $data['score'],
                         'gameMode' => $data['gameMode'],
-                        'newPersonalBest' => $data['newPersonalBest']
+                        'scoreStatus' => $data['scoreStatus']
                     ]));
                 }
             });
