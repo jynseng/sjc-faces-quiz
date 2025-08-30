@@ -64,6 +64,7 @@ function initWebSocket() {
                         toastMsg = "<span class='sender'>" + data.user + "</span> got an astoshingly pitiful <span class='score'>" + data.score + "</span> on " + data.gameMode + " mode 🤔";
                         break;
                     default: 
+                        toastMsg =  "<span class='sender'>" + data.user + "</span> just got <span class='score'>" + data.score + "</span> on " + data.gameMode + " mode";
                         break;
                 }
                 showToast(toastMsg, 'score');
