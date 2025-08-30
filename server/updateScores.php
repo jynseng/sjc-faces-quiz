@@ -26,15 +26,6 @@ $skips = $data["skips"];
 $userId = $data["userId"];
 
 $scoreStatus = 'none'; // Personal best, high score, etc.
-if ($highScore < $score) {
-    $scoreStatus = 'new high score';
-} else if ($personalBest < $score) {
-    $scoreStatus = 'personal best';
-} else if ($personalBest > $score*1.5 && $score > 7) {
-    $scoreStatus = 'poor';
-} else if ($score < 8) {
-    $scoreStatus = 'pathetic';
-}
 
 try {
     // Get user's personal best score for current game mode
@@ -51,6 +42,16 @@ try {
                     AND score > 0";
     $result = $db->query($getHighScore);
     $highScore = $result->fetchArray(SQLITE3_ASSOC)['high_score']; // Top score on leaderboard
+
+    if ($highScore < $score) {
+        $scoreStatus = 'new high score';
+    } else if ($personalBest < $score) {
+        $scoreStatus = 'personal best';
+    } else if ($personalBest > $score*1.5 && $score > 7) {
+        $scoreStatus = 'poor';
+    } else if ($score < 8) {
+        $scoreStatus = 'pathetic';
+    }
 } catch (Exception $e) {
     echo 'General error: '.$e->getMessage();
 }
