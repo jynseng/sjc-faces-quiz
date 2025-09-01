@@ -1,4 +1,4 @@
-import { showElement, hideElement, resetGameUI, showNewUserPopup } from './ui.js';
+import { showElement, hideElement, resetGameUI, showNewUserPopup } from './ui.js?=ver1.2';
 import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, incrementWrong } from './scoreboard.js?=ver2.0';
 //import { isDebugEnabled } from './handlers.js';
 
@@ -34,9 +34,7 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
                 if (data && data !== 0) { // Existing user, login normally
                     userId = data;
                     loadModes();
-                    sendUsername(playerName);
-                    //fetchActiveUsers(playerName, 'true');
-                    //startActivity();
+                    sendUsername(playerName, userId); // Send user info to ws
                     showElement('mainMenu');    
                 } else { // New user, need to get first and last name
                     addNewUser();
@@ -46,16 +44,16 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
 
     // Prompt user for first and last name, write to db
     function addNewUser() {
-        showNewUserPopup(playerName, (username, firstName, lastName) => {
+        showNewUserPopup(playerName, (username, firstName, lastName, codeword) => {
             fetch('server/newUser.php?', {
                 method: 'POST',
-                body: JSON.stringify({ username, firstName, lastName })
+                body: JSON.stringify({ username, firstName, lastName, codeword })
             })
             .then(response => response.json())
             .then(data => {
                 userId = data;
                 loadModes();
-                sendUsername(playerName);
+                sendUsername(playerName, userId); // Send user info to ws to login
                 showElement('mainMenu');
             });
         });
@@ -100,7 +98,10 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
 
     // Get gamemode info
     function loadModes() {
-        fetch('server/modes.php')
+        fetch('server/modes.php', {
+            method: 'POST',
+                body: JSON.stringify({ userId })
+        })
             .then(response => response.json())
             .then(data => {
                 const modeList = document.getElementById('gameModeButtons');

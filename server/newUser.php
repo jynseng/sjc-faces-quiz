@@ -10,6 +10,7 @@ $data = json_decode($json, true);
 $username = $data['username'];
 $first_name = $data['firstName'];
 $last_name = $data['lastName'];
+$codeword = $data['codeword'];
 
 try {
     $db = new PDO('sqlite:faces.db');
@@ -19,12 +20,16 @@ try {
     die(json_encode(['error' => 'Could not connect to the database.']));
 }
 
+$permission_level = 0;
+if ($codeword == 'Bruno') { $permission_level = 1; }
+
 try {
-    $addUser = $db->prepare("INSERT INTO user (username, first_name, last_name) VALUES (:username, :first_name, :last_name)");
+    $addUser = $db->prepare("INSERT INTO user (username, first_name, last_name, access_level) VALUES (:username, :first_name, :last_name, :access_level)");
     $addUser->execute([
         ':username' => $username,
         ':first_name' => $first_name,
-        ':last_name' => $last_name
+        ':last_name' => $last_name,
+        ':access_level' => $access_level
     ]);
 } catch (Exception $e) {
     error_log("Database query error: " . $e->getMessage());

@@ -130,14 +130,16 @@ function showToast(message, type, duration = 4000) {
     }, duration);
 }
 
-function sendUsername(username) {
+
+// Send user info to websocket to track online status
+function sendUsername(username, userId) {
     if (ws.readyState === 1) {
         playerName = username;
         loggedIn = true;
         const message = JSON.stringify({
             type: 'sign_in', 
             username: playerName,
-            //userId: userId
+            userId: userId
         });
         loginSFX.play();
         ws.send(message);

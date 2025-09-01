@@ -11,7 +11,7 @@ function convertNullString($str) {
     return $str;
 }
 
-// // Query faces.db to get dictionary of names mapped to image filepaths for given set.
+// Query faces.db to get dictionary of names mapped to image filepaths for given set.
 function getImageDict($year=null, $tag=null, $role=null, $db=null) {
     if ($db === null) {
         $db = new SQLite3("faces.db");

@@ -15,7 +15,7 @@ export function showNewUserPopup(playerName, onSubmit) {
     popupDiv.className = 'popup';
 
     const header = document.createElement('h2');
-    header.innerHTML = 'Enter name';
+    header.innerHTML = 'Create New Profile';
 
     const newForm = document.createElement('form');
     newForm.setAttribute('id', 'userFirstLast');
@@ -34,9 +34,16 @@ export function showNewUserPopup(playerName, onSubmit) {
     lastNameInput.maxLength = 20;
     lastNameInput.required = true;
 
+    const codewordInput = document.createElement('input');
+    codewordInput.type = 'text';
+    codewordInput.placeholder = 'Who lived in cabin 9?';
+    codewordInput.id = 'codeword';
+    codewordInput.maxLength = 20;
+    codewordInput.required = true;
+
     const submitButton = document.createElement('button');
     submitButton.id = 'submitFirstLast';
-    submitButton.textContent = 'Create profile';
+    submitButton.textContent = 'Submit';
     submitButton.disabled = true;
 
     newForm.addEventListener('input', function(e) {
@@ -47,12 +54,14 @@ export function showNewUserPopup(playerName, onSubmit) {
     submitButton.addEventListener('click', function () {
         let firstName = sanitizeAndCapitalize(document.getElementById('first-name').value);
         let lastName = sanitizeAndCapitalize(document.getElementById('last-name').value);
+        let codeword = sanitizeAndCapitalize(document.getElementById('codeword').value);
         document.body.removeChild(popupDiv);
-        onSubmit(playerName, firstName, lastName);
+        onSubmit(playerName, firstName, lastName, codeword);
     });
 
     newForm.appendChild(firstNameInput);
     newForm.appendChild(lastNameInput);
+    newForm.appendChild(codewordInput);
     newForm.appendChild(submitButton);
 
     popupDiv.appendChild(header);
