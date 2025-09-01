@@ -20,8 +20,8 @@ try {
     die(json_encode(['error' => 'Could not connect to the database.']));
 }
 
-$permission_level = 0;
-if ($codeword == 'Bruno') { $permission_level = 1; }
+$access_level = 0;
+if ($codeword == 'Bruno') { $access_level = 1; }
 
 try {
     $addUser = $db->prepare("INSERT INTO user (username, first_name, last_name, access_level) VALUES (:username, :first_name, :last_name, :access_level)");
