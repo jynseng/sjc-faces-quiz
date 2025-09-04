@@ -9,7 +9,7 @@ let activeUsers = [];
 let loggedIn = false;
 let active = true;
 let checkInterval = checkIntervalActive;
-let retryTimeout = 5000; // Time between reconnection attempts
+const retryTimeout = 5000; // Time between reconnection attempts
 let ws;
 
 function initWebSocket() {
@@ -35,12 +35,12 @@ function initWebSocket() {
 
     // Receive ws messages- can be either wave or active user update
     ws.onmessage = function(msg) {
-        data = JSON.parse(msg.data);
+        let data = JSON.parse(msg.data);
         
         switch (data.type) {
             case 'wave':
                 if (data.from) {
-                    toastMsg = "안녕! 👋 " + "<span class='sender'>" + data.from + "</span>  waved at you!";
+                    let toastMsg = "안녕! 👋 " + "<span class='sender'>" + data.from + "</span>  waved at you!";
                     waveSFX.play();
                     showToast(toastMsg, 'wave');
                 } else {
@@ -48,23 +48,26 @@ function initWebSocket() {
                 }
                 break;
             case 'score':
-                toastMsg = "";
+                let toastMsg = "";
+                const insults = ['measly', 'paltry', 'pitiful', 'sad', 'disappointing', 'weak'];
+                const randomInsult = insults[Math.floor(Math.random() * insults.length)];
+
                 if (data.score == 0) { break; }
                 switch (data.scoreStatus) {
                     case 'new high score': 
                         toastMsg =  "<span class='sender'>" + data.user + "</span> just set a new high score of <span class='score'>" + data.score + "</span> on " + data.gameMode + " mode! 🤯";
                         break;
                     case 'personal best':
-                        toastMsg =  "<span class='sender'>" + data.user + "</span> just got <span class='score'>" + data.score + "</span> on " + data.gameMode + " mode! 👏";
+                        toastMsg =  "<span class='sender'>" + data.user + "</span> just got <span class='score'>" + data.score + "</span> on " + data.gameMode + " mode! 👏\n That's really good... for them";
                         break;
                     case 'poor':
-                        toastMsg = "<span class='sender'>" + data.user + "</span> got a measly <span class='score'>" + data.score + "</span> on " + data.gameMode + " mode 😢";
+                        toastMsg = "<span class='sender'>" + data.user + "</span> just got a " + randomInsult +  " <span class='score'>" + data.score + "</span> on " + data.gameMode + " mode 😢";
                         break;
                     case 'pathetic':
-                        toastMsg = "<span class='sender'>" + data.user + "</span> got an astoshingly pitiful <span class='score'>" + data.score + "</span> on " + data.gameMode + " mode 🤔";
+                        toastMsg = "<span class='sender'>" + data.user + "</span> just embarassed themselves with a <span class='score'>" + data.score + "</span> on " + data.gameMode + " mode 🤦";
                         break;
                     default: 
-                        toastMsg =  "<span class='sender'>" + data.user + "</span> just got <span class='score'>" + data.score + "</span> on " + data.gameMode + " mode";
+                        toastMsg =  "<span class='sender'>" + data.user + "</span> got a pretty mid score of <span class='score'>" + data.score + "</span> on " + data.gameMode + " mode";
                         break;
                 }
                 showToast(toastMsg, 'score');

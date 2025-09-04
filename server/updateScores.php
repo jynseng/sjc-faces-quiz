@@ -47,7 +47,7 @@ try {
         $scoreStatus = 'new high score';
     } else if ($personalBest < $score) {
         $scoreStatus = 'personal best';
-    } else if ($personalBest > $score*1.5 && $score > 7) {
+    } else if ($personalBest > $score*1.1 && $score > 7) {
         $scoreStatus = 'poor';
     } else if ($score < 8) {
         $scoreStatus = 'pathetic';
