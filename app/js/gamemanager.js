@@ -1,5 +1,5 @@
 import { showElement, hideElement, resetGameUI, showNewUserPopup } from './ui.js?=ver1.2';
-import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, incrementWrong } from './scoreboard.js?=ver2.1';
+import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, incrementWrong } from './scoreboard.js?=ver2.3';
 
 (function () {
     let faces_all = [];

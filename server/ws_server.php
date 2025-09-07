@@ -41,10 +41,11 @@ class Chat implements MessageComponentInterface {
                 foreach ($this->clients as $wsClient) {
                     $wsClient->send(json_encode([
                         'type' => 'score',
-                        'user' => $data['user'],
-                        'score' => $data['score'],
-                        'gameMode' => $data['gameMode'],
-                        'scoreStatus' => $data['scoreStatus']
+                        'scoreBroadcast' => $data
+                        // 'user' => $data['user'],
+                        // 'score' => $data['score'],
+                        // 'gameMode' => $data['gameMode'],
+                        // 'scoreStatus' => $data['scoreStatus']
                     ]));
                 }
             });

@@ -18,7 +18,7 @@ $json = file_get_contents('php://input');
 $data = json_decode($json, true);
 
 $status = $data["status"];
-$name = $data["name"];
+$name = $data["name"]; // User's username
 $score = $data["score"];
 $gameModeId = $data["gameModeId"];
 $errors = $data["errors"];
@@ -26,6 +26,15 @@ $skips = $data["skips"];
 $userId = $data["userId"];
 
 $scoreStatus = 'none'; // Personal best, high score, etc.
+$scoreBroadcast = ''; // Message to broadcast to other online users
+$modeName = '';
+
+// Get gamemode name from id
+$getModeNameSql = "SELECT display_name FROM mode WHERE id = {$gameModeId}";
+$result = $db->query($getModeNameSql);
+if ($result) {
+    $modeName = $result->fetchArray(SQLITE3_ASSOC)['display_name'];
+}
 
 try {
     // Get user's personal best score for current game mode
@@ -43,15 +52,32 @@ try {
     $result = $db->query($getHighScore);
     $highScore = $result->fetchArray(SQLITE3_ASSOC)['high_score']; // Top score on leaderboard
 
-    if ($highScore < $score) {
-        $scoreStatus = 'new high score';
-    } else if ($personalBest < $score) {
-        $scoreStatus = 'personal best';
-    } else if ($personalBest > $score*1.1 && $score > 7) {
-        $scoreStatus = 'poor';
-    } else if ($score < 8) {
-        $scoreStatus = 'pathetic';
+    $insults = ['a measly', 'a paltry', 'a pitiful', 'a sad', 'a disappointing', 'a weak', 'an abysmal', 'an insulting'];
+    $randomInsult = $insults[array_rand($insults)];
+
+    switch (true) {
+        case $score > $highScore:
+            $scoreBroadcast = "<span class='sender'>" . $name . "</span> just set a new high score of <span class='score'>" . $score . "</span> on " . $modeName . " mode! 🤯\nThe rest of you better step it up 👀";
+            $scoreStatus = "new high score";
+            break;
+        case $score == $highScore:
+            $scoreBroadcast = "<span class='sender'>" . $name . "</span> just tied the high score of <span class='score'>" . $score . "</span> on " . $modeName . " mode! 😲\nTry harder!";
+            break;
+        case $score > $personalBest:
+            $scoreBroadcast = "<span class='sender'>" . $name . "</span> just got a pr of <span class='score'>" . $score . "</span> on " . $modeName . " mode! 👏\nThat's really good... for them";
+            $scoreStatus = "new personal best";
+            break;
+        case $score == $personalBest;
+            $scoreBroadcast = "<span class='sender'>" . $name . "</span> just tied their pr of <span class='score'>" . $score . "</span> on " . $modeName . " mode!\n Next round for sure...";    
+            break;
+        case $score < $personalBest && $score > 11:
+            $scoreBroadcast = "<span class='sender'>" . $name . "</span> just got " . $randomInsult .  " <span class='score'>" . $score . "</span> on " . $modeName . " mode 😢";
+            break;
+        case $score < 12:
+            $scoreBroadcast = "<span class='sender'>" . $name . "</span> just embarassed themselves with a <span class='score'>" . $score . "</span> on " . $modeName . " mode 🤦";
+            break;
     }
+
 } catch (Exception $e) {
     echo 'General error: '.$e->getMessage();
 }
@@ -82,23 +108,17 @@ $data = json_encode([
     'scores' => $scoreDict
 ]);
 echo $data; // Send back updated scoreboard
-
-// Get gamemode name from id
-$getModeNameSql = "SELECT display_name FROM mode WHERE id = {$gameModeId}";
-$result = $db->query($getModeNameSql);
-if ($result) {
-    $modeName = $result->fetchArray(SQLITE3_ASSOC)['display_name'];
-}
 $db = null;
 
 // Publish score to redis, to broadcast to other users
 $redis = new Redis();
 $redis->connect('127.0.0.1', 6379);
-$message = json_encode([
-    'type' => 'score',
-    'user' => $name,
-    'score' => $score,
-    'gameMode' => $modeName,
-    'scoreStatus' => $scoreStatus
-]);
+// $message = json_encode([
+//     'type' => 'score',
+//     'user' => $name,
+//     'score' => $score,
+//     'gameMode' => $modeName,
+//     'scoreStatus' => $scoreStatus
+// ]);
+$message = json_encode($scoreBroadcast);
 $redis->publish('scores', $message);

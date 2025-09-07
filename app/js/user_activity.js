@@ -48,29 +48,29 @@ function initWebSocket() {
                 }
                 break;
             case 'score':
-                let toastMsg = "";
-                const insults = ['measly', 'paltry', 'pitiful', 'sad', 'disappointing', 'weak'];
-                const randomInsult = insults[Math.floor(Math.random() * insults.length)];
+                let toastMsg = data.scoreBroadcast;
+                // const insults = ['measly', 'paltry', 'pitiful', 'sad', 'disappointing', 'weak'];
+                // const randomInsult = insults[Math.floor(Math.random() * insults.length)];
 
-                if (data.score == 0) { break; }
-                switch (data.scoreStatus) {
-                    case 'new high score': 
-                        toastMsg =  "<span class='sender'>" + data.user + "</span> just set a new high score of <span class='score'>" + data.score + "</span> on " + data.gameMode + " mode! 🤯";
-                        break;
-                    case 'personal best':
-                        toastMsg =  "<span class='sender'>" + data.user + "</span> just got <span class='score'>" + data.score + "</span> on " + data.gameMode + " mode! 👏\n That's really good... for them";
-                        break;
-                    case 'poor':
-                        toastMsg = "<span class='sender'>" + data.user + "</span> just got a " + randomInsult +  " <span class='score'>" + data.score + "</span> on " + data.gameMode + " mode 😢";
-                        break;
-                    case 'pathetic':
-                        toastMsg = "<span class='sender'>" + data.user + "</span> just embarassed themselves with a <span class='score'>" + data.score + "</span> on " + data.gameMode + " mode 🤦";
-                        break;
-                    default: 
-                        toastMsg =  "<span class='sender'>" + data.user + "</span> got a pretty mid score of <span class='score'>" + data.score + "</span> on " + data.gameMode + " mode";
-                        break;
-                }
-                showToast(toastMsg, 'score');
+                // if (data.score == 0) { break; }
+                // switch (data.scoreStatus) {
+                //     case 'new high score': 
+                //         toastMsg =  "<span class='sender'>" + data.user + "</span> just set a new high score of <span class='score'>" + data.score + "</span> on " + data.gameMode + " mode! 🤯";
+                //         break;
+                //     case 'personal best':
+                //         toastMsg =  "<span class='sender'>" + data.user + "</span> just got <span class='score'>" + data.score + "</span> on " + data.gameMode + " mode! 👏\n That's really good... for them";
+                //         break;
+                //     case 'poor':
+                //         toastMsg = "<span class='sender'>" + data.user + "</span> just got a " + randomInsult +  " <span class='score'>" + data.score + "</span> on " + data.gameMode + " mode 😢";
+                //         break;
+                //     case 'pathetic':
+                //         toastMsg = "<span class='sender'>" + data.user + "</span> just embarassed themselves with a <span class='score'>" + data.score + "</span> on " + data.gameMode + " mode 🤦";
+                //         break;
+                //     default: 
+                //         toastMsg =  "<span class='sender'>" + data.user + "</span> got a pretty mid score of <span class='score'>" + data.score + "</span> on " + data.gameMode + " mode";
+                //         break;
+                // }
+                if (toastMsg) { showToast(toastMsg, 'score'); }
                 break;
             default: // Default message is online user update
                 activeUsers = data;
