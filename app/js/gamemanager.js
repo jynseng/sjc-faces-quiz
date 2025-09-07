@@ -13,6 +13,9 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
     let gameModeId;
     let gameModeTitle;
 
+    let rng; // global PRNG
+    let seed; // store seed so players can share it
+
     const timer = document.getElementById("Timer");
     let gameLength = 60; // Time in seconds each round lasts
 
@@ -182,7 +185,8 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
         // Blur first image during countdown
         const imgDiv = document.getElementById("imageElement");
         imgDiv.style.filter = "blur(26px)";
-        loadNewFace(); // Change to seed based order
+        initRNG();
+        loadNewFace(rng);
         document.getElementById('mainMenu').style.display = 'none'; // Hide main menu
 
         // Start countdown to game start
@@ -208,7 +212,7 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
     }
 
     // Choose a random person from the working set and load the image into the image container
-    function loadNewFace() {
+    function loadNewFace(rng) {
         // If working faces array is empty, recycle the set.
         if (Object.keys(faces_working).length === 0) {
             faces_working = JSON.parse(JSON.stringify(faces_all));
@@ -216,14 +220,56 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
 
         // Randomly choose face from working faces array
         var keys = Object.keys(faces_working);
-        var randomIndex = Math.floor(Math.random() * keys.length); 
-        currentFace = keys[randomIndex];
 
-        // Choose a random img in folder (if more than one) and set img src
-        var randomImg = Math.floor(Math.random() * faces_working[currentFace].images.length);
+        // var randomIndex = Math.floor(Math.random() * keys.length); 
+        // currentFace = keys[randomIndex];
+
+        // // Choose a random img in folder (if more than one) and set img src
+        // var randomImg = Math.floor(Math.random() * faces_working[currentFace].images.length);
+
+        var randomIndex = Math.floor(rng() * keys.length); 
+        currentFace = keys[randomIndex];
+        var randomImg = Math.floor(rng() * faces_working[currentFace].images.length);
+
         var path = faces_working[currentFace].images[randomImg];
         document.getElementById("imageElement").style.backgroundImage = 'url("'+path+'")';
+
         delete faces_working[currentFace]; // Remove face from working array so it's not repeated
+    }
+
+    function initRNG() {
+        const seedInput = document.getElementById("seedInput").value.trim();
+
+        if (seedInput) {
+            // Use typed seed
+            let seedGen = xmur3(seedInput);
+            seed = seedGen();
+        } else {
+            // Generate random default seed
+            seed = Math.floor(Math.random() * 2**32);
+        }
+
+        rng = mulberry32(seed);
+        console.log("Game started with seed:", seed);
+    }
+
+    function xmur3(str) {
+        for(var i = 0, h = 1779033703 ^ str.length; i < str.length; i++)
+            h = Math.imul(h ^ str.charCodeAt(i), 3432918353);
+        return function() {
+            h = Math.imul(h ^ h >>> 16, 2246822507);
+            h = Math.imul(h ^ h >>> 13, 3266489909);
+            return (h ^= h >>> 16) >>> 0;
+        }
+    }
+
+    function mulberry32(seed) {
+        return function() {
+            seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+            var t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+            t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+            return ((t ^ t >>> 14) >>> 0) / 4294967296;
+        }
     }
 
     // Start a countdown timer for game
@@ -324,7 +370,7 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
 
         document.getElementById("textinput").value = ""; // Reset input box
         console.log("Loading new face...");
-        loadNewFace();
+        loadNewFace(rng);
     }
 
     // Flash the score text green for .3 seconds
@@ -341,7 +387,7 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
     function skipFace() {
         console.log("Skipped");
         incrementSkips();
-        loadNewFace();
+        loadNewFace(rng);
     }
 
     // Handle end of game, lock input, show leaderboard

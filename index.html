@@ -23,6 +23,8 @@
             </div>
             <div class="popup" id="mainMenu" style="display: none;"><h3>Select Mode</h3><br>
                 <div id="gameModeButtons"></div>
+                <label for="seedInput">Seed (optional):</label>
+                <input type="text" id="seedInput" placeholder="Leave blank for random">
             </div>
             <div class="popup" id="howToPlay"><h3>Welcome to SJC Faces Game!</h3><p><strong>8/28/25 Update<br></strong>• Wave to other online users 👋<br>• New alum faces added<br>• 2025 & Alum game modes added<br>• New photos added<br><br><br></p>
                 <form id="enterName" onsubmit="interface.setName(this); return false;">
@@ -80,7 +82,7 @@
         <div id="toast-container"></div>
     </body>
     <script src="app/js/handlers.js?=ver1.50"></script>
-    <script type="module" src="app/js/gamemanager.js?=ver1.60"></script>
+    <script type="module" src="app/js/gamemanager.js?=ver1.64"></script>
     <script src="app/js/user_activity.js?=ver1.11"></script>
     <script src="app/js/confetti.js?=ver1.0"></script>
 </html>
