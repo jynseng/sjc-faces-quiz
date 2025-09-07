@@ -1,5 +1,5 @@
 import { showElement, hideElement, resetGameUI, showNewUserPopup } from './ui.js?=ver1.2';
-import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, incrementWrong } from './scoreboard.js?=ver2.0';
+import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, incrementWrong } from './scoreboard.js?=ver2.1';
 //import { isDebugEnabled } from './handlers.js';
 
 (function () {
@@ -156,7 +156,7 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
             data.images.forEach((image) => {
                 const img = new Image();
                 img.src = image;
-                console.log(image + " cached\n");
+                // console.log(image + " cached\n");
             });
         });
     }
@@ -182,7 +182,7 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
         // Blur first image during countdown
         const imgDiv = document.getElementById("imageElement");
         imgDiv.style.filter = "blur(26px)";
-        loadNewFace();
+        loadNewFace(); // Change to seed based order
         document.getElementById('mainMenu').style.display = 'none'; // Hide main menu
 
         // Start countdown to game start

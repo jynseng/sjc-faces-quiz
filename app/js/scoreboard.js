@@ -97,8 +97,8 @@ export function fetchScores(userId, score=0, gameModeId=null, gameModeTitle=null
                     if (!combined && 
                         sortedScores[index].high_score == score && 
                         scores[i].username == playerName &&
-                        scoreStatus == 'new high score' ||
-                        scoreStatus == 'personal best'
+                        (scoreStatus == 'new high score' ||
+                        scoreStatus == 'personal best')
                     ) {
                         row.style.color = "white";
 
@@ -113,7 +113,7 @@ export function fetchScores(userId, score=0, gameModeId=null, gameModeTitle=null
                         }, 15000);
 
                         // If new top score, play confetti and sfx
-                        if (i === 0) {
+                        if (scoreStatus == 'new high score') {
                             newRecordSFX.play();
                             document.getElementById("confettiCanvas").style.display = "block";
                             if (!confetti) { animate(); } // Play confetti visual effect
