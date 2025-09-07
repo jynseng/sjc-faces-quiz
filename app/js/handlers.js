@@ -119,3 +119,12 @@ function toggleMute() {
         muted = true;
     }
 }
+
+function showSettings() {
+    let seedInput = document.getElementById("seedDiv");
+    if (seedInput.style.display == 'block') {
+        seedInput.style.display = 'none';
+    } else {
+        seedInput.style.display = 'block';
+    }
+}

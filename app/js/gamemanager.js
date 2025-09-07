@@ -1,27 +1,30 @@
 import { showElement, hideElement, resetGameUI, showNewUserPopup } from './ui.js?=ver1.2';
 import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, incrementWrong } from './scoreboard.js?=ver2.1';
-//import { isDebugEnabled } from './handlers.js';
 
 (function () {
     let faces_all = [];
-    let faces_working = [];
-    let playerName;
-    let userId;
-    let currentFace = ""; // Name of current person
-    let gameOver = false;
+    let faces_working = []; // faces removed after shown
+    let playerName; // i.e. talldan
+    let userId; // i.e. 89
+    let currentFace = ""; // name of current person
+
+    let gameOver = false; // track status of game round
     let gameTimer;
     let gameModeId;
     let gameModeTitle;
 
     let rng; // global PRNG
     let seed; // store seed so players can share it
+    let isSeedSet = false; // has user set the seed or is it random?
 
     const timer = document.getElementById("Timer");
-    let gameLength = 60; // Time in seconds each round lasts
+    let gameLength = 60; // time in seconds each round lasts
+
+    let debugEnabled;
 
     // Debug mode
-    if (isDebugEnabled()) { 
-        gameLength = 5;
+    if (debugEnabled) { 
+        // gameLength = 5;
         // Pause function
     }
 
@@ -39,6 +42,7 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
                     loadModes();
                     sendUsername(playerName, userId); // Send user info to ws
                     showElement('mainMenu');    
+                    if (playerName == "talldan") { debugEnabled = true; } else { debugEnabled = false; }
                 } else { // New user, need to get first and last name
                     addNewUser();
                 }             
@@ -244,9 +248,11 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
             // Use typed seed
             let seedGen = xmur3(seedInput);
             seed = seedGen();
+            isSeedSet = true;
         } else {
             // Generate random default seed
             seed = Math.floor(Math.random() * 2**32);
+            isSeedSet = false;
         }
 
         rng = mulberry32(seed);
@@ -417,7 +423,10 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
         if (document.getElementById("gameoverWindow").checkVisibility()) {
             document.getElementById("gameoverWindow").style.display = "none";
         } else {
-            fetchScores(userId, scoreManager.getScore(), gameModeId, gameModeTitle, false, true);
+            // Only send score if seed wasn't set. Setting seed disqualifies score from leaderboard
+            let sendScore;
+            if (isSeedSet) { sendScore = 0; } else { sendScore = scoreManager.getScore() }
+            fetchScores(userId, sendScore, gameModeId, gameModeTitle, false, true);
         }
     }
 
