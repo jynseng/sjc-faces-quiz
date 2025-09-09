@@ -1,5 +1,5 @@
 import { showElement, hideElement, resetGameUI, showNewUserPopup } from './ui.js?=ver1.2';
-import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, incrementWrong } from './scoreboard.js?=ver2.3';
+import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, incrementWrong } from './scoreboard.js?=ver2.8';
 
 (function () {
     let faces_all = [];
@@ -172,14 +172,18 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
     function gameInit() {
         scoreManager.resetScore();
         clearInterval(gameTimer);
+        gameOver = false;
+        resetCounters();
+        initRNG();
+        faces_working = JSON.parse(JSON.stringify(faces_all));
+
         document.getElementById("howToPlay").style.display = "none"; // Hide popup window
         document.getElementById("textinput").value = "";
         document.getElementById("gameoverWindow").style.display = "none";
         document.getElementById("confettiCanvas").style.display = "none";
+        document.getElementById("seedDisplay").style.display = "none";
         document.getElementById("QuizContainer").style.filter = "none"; // Remove blur from quiz container
-        faces_working = JSON.parse(JSON.stringify(faces_all));
-        gameOver = false;
-        resetCounters();
+        document.getElementById("seedInput").value = "";
         document.getElementById("score").innerText = scoreManager.getScore();
         document.getElementById("textinput").disabled = false;
         document.getElementById("submit").disabled = true;
@@ -189,7 +193,6 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
         // Blur first image during countdown
         const imgDiv = document.getElementById("imageElement");
         imgDiv.style.filter = "blur(26px)";
-        initRNG();
         loadNewFace(rng);
         document.getElementById('mainMenu').style.display = 'none'; // Hide main menu
 
@@ -243,6 +246,7 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
 
     function initRNG() {
         const seedInput = document.getElementById("seedInput").value.trim();
+        console.log(seedInput);
 
         if (seedInput) {
             // Use typed seed
@@ -358,7 +362,7 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
 
         console.log("Answer: " + correctAnswer);
         if (faces_all[currentFace].nicknames) {
-        console.log("Accepted First Names: " + faces_all[currentFace].nicknames); }
+        console.log("Accepted Nicknames: " + faces_all[currentFace].nicknames); }
         console.log("Entered: " + input  + " (Running score: " + scoreManager.getScore() + ")");
 
         // Update the score
@@ -402,11 +406,14 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
         document.getElementById("skip").disabled = true;
         document.getElementById("textinput").disabled = true;
         document.getElementById("finalScore").innerText = scoreManager.getScore();
+        if (isSeedSet) { 
+            document.getElementById("seedDisplay").innerText = "Seed: " + seed;
+            document.getElementById("seedDisplay").style.display = "inline";
+        }
         gameOver = true;
         console.log("Skips: " + getSkips());
         console.log("Errors: " + getWrong());
         toggleLeaderboard();
-        //(userId, scoreManager.getScore(), gameModeId, false, true);
     }
 
     function toggleCombinedLeaderboard() {
@@ -424,9 +431,9 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
             document.getElementById("gameoverWindow").style.display = "none";
         } else {
             // Only send score if seed wasn't set. Setting seed disqualifies score from leaderboard
-            let sendScore;
-            if (isSeedSet) { sendScore = 0; } else { sendScore = scoreManager.getScore() }
-            fetchScores(userId, sendScore, gameModeId, gameModeTitle, false, true);
+            let scoreValid;
+            if (isSeedSet || !gameOver) { scoreValid = false; } else { scoreValid = true; }
+            fetchScores(userId, scoreManager.getScore(), gameModeId, gameModeTitle, false, scoreValid, seed);
         }
     }
 

@@ -3,10 +3,9 @@ let skips = 0; // Number of faces skipped
 let blinker; // Makes high score blink on leaderboard
 let confetti = false; // Has the confetti been animated already?
 
-export function fetchScores(userId, score=0, gameModeId=null, gameModeTitle=null, combined=false, gameOver=true) {
+export function fetchScores(userId, score=0, gameModeId=null, gameModeTitle=null, combined=false, scoreValid=true, seed) {
     var fetchURL;
     var fetchOptions;
-
     if (combined || !gameModeId) {
         fetchURL = 'server/combinedLeaderboard.php';
         fetchOptions = {method: 'GET'}
@@ -16,13 +15,14 @@ export function fetchScores(userId, score=0, gameModeId=null, gameModeTitle=null
         fetchOptions = {
             method: 'POST',
             body: JSON.stringify({
-                status: gameOver, 
+                scoreValid: scoreValid, // Should the score count for the leaderboard?
                 name: playerName, 
                 userId: userId, 
                 score: score, 
                 gameModeId: gameModeId, 
                 errors: wrong, 
-                skips: skips})
+                skips: skips,
+                seed: seed})
         }
     }
     fetch(fetchURL, fetchOptions)
@@ -42,6 +42,7 @@ export function fetchScores(userId, score=0, gameModeId=null, gameModeTitle=null
                 leaderboardWindow = document.getElementById("gameoverWindow");
                 const leaderboardHeader = document.getElementById("leaderboardHeader");
                 leaderboardHeader.innerHTML = "HIGH SCORES<br>";
+
                 let modeTitle = document.createElement("small");
                 modeTitle.innerHTML = gameModeTitle.toUpperCase();
                 leaderboardHeader.appendChild(modeTitle);

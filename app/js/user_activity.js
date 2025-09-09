@@ -115,7 +115,7 @@ function createWaveButton(user) {
 }
 
 // Display discrete popup message
-function showToast(message, type, duration = 4000) {
+function showToast(message, type, duration = 4500) {
     const container = document.getElementById('toast-container');
     const toast = document.createElement('div');
     toast.className = 'toast';

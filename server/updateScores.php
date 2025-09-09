@@ -17,13 +17,14 @@ if (!$postedData) {
 $json = file_get_contents('php://input');
 $data = json_decode($json, true);
 
-$status = $data["status"];
+$scoreValid = $data["scoreValid"]; // Bool, should the score count for the leaderboard or just be entered to the db?
 $name = $data["name"]; // User's username
 $score = $data["score"];
 $gameModeId = $data["gameModeId"];
 $errors = $data["errors"];
 $skips = $data["skips"];
 $userId = $data["userId"];
+$seed = $data["seed"];
 
 $scoreStatus = 'none'; // Personal best, high score, etc.
 $scoreBroadcast = ''; // Message to broadcast to other online users
@@ -52,29 +53,32 @@ try {
     $result = $db->query($getHighScore);
     $highScore = $result->fetchArray(SQLITE3_ASSOC)['high_score']; // Top score on leaderboard
 
-    $insults = ['a measly', 'a paltry', 'a pitiful', 'a sad', 'a disappointing', 'a weak', 'an abysmal', 'an insulting'];
+    $insults = ['a measly', 'a paltry', 'a pitiful', 'a sad little', 'a disappointing', 'a weak', 'an abysmal'];
     $randomInsult = $insults[array_rand($insults)];
 
     switch (true) {
-        case $score > $highScore:
-            $scoreBroadcast = "<span class='sender'>" . $name . "</span> just set a new high score of <span class='score'>" . $score . "</span> on " . $modeName . " mode! 🤯\nThe rest of you better step it up 👀";
+        case $score > $highScore && $scoreValid:
+            $scoreBroadcast = "<span class='sender'>" . $name . "</span> just set a new high score of <span class='score'>" . $score . "</span> on " . $modeName . " mode! 🤯<br>The rest of you better step it up 👀";
             $scoreStatus = "new high score";
             break;
         case $score == $highScore:
-            $scoreBroadcast = "<span class='sender'>" . $name . "</span> just tied the high score of <span class='score'>" . $score . "</span> on " . $modeName . " mode! 😲\nTry harder!";
+            $scoreBroadcast = "<span class='sender'>" . $name . "</span> just tied the high score of <span class='score'>" . $score . "</span> on " . $modeName . " mode! 😲<br>Try harder!";
             break;
         case $score > $personalBest:
-            $scoreBroadcast = "<span class='sender'>" . $name . "</span> just got a pr of <span class='score'>" . $score . "</span> on " . $modeName . " mode! 👏\nThat's really good... for them";
+            $scoreBroadcast = "<span class='sender'>" . $name . "</span> just got a pr of <span class='score'>" . $score . "</span> on " . $modeName . " mode! 👏<br>That's really good... for them";
             $scoreStatus = "new personal best";
             break;
         case $score == $personalBest;
-            $scoreBroadcast = "<span class='sender'>" . $name . "</span> just tied their pr of <span class='score'>" . $score . "</span> on " . $modeName . " mode!\n Next round for sure...";    
+            $scoreBroadcast = "<span class='sender'>" . $name . "</span> just tied their pr of <span class='score'>" . $score . "</span> on " . $modeName . " mode!<br>Next round for sure...";    
             break;
         case $score < $personalBest && $score > 11:
-            $scoreBroadcast = "<span class='sender'>" . $name . "</span> just got " . $randomInsult .  " <span class='score'>" . $score . "</span> on " . $modeName . " mode 😢";
+            $scoreBroadcast = "<span class='sender'>" . $name . "</span> just got " . $randomInsult .  " <span class='score'>" . $score . "</span> on " . $modeName . " mode 😢<br>I'm sure that was just a warm-up";
             break;
         case $score < 12:
             $scoreBroadcast = "<span class='sender'>" . $name . "</span> just embarassed themselves with a <span class='score'>" . $score . "</span> on " . $modeName . " mode 🤦";
+            break;
+        default:
+            $scoreBroadcast = "<span class='sender'>" . $name . "</span> just got a <span class='score'>" . $score . "</span> on " . $modeName . " mode";
             break;
     }
 
@@ -84,13 +88,20 @@ try {
 
 try {
     // Insert new score into score table
-    $insertScoreSql = "INSERT INTO score (username, user_id, mode_id, score, errors, skips) values ('{$name}', {$userId}, {$gameModeId}, {$score}, {$errors}, {$skips})";
-    $db->exec($insertScoreSql);
+    $valid = 1;
+    if ($scoreValid) { $valid = 1; } else { $valid = 0; }
+    $insertScoreSql = "INSERT INTO score (username, user_id, mode_id, score, errors, skips, valid, seed) values ('{$name}', {$userId}, {$gameModeId}, {$score}, {$errors}, {$skips}, {$valid}, {$seed})";
+    //$db->exec($insertScoreSql);
+    if (!$db->exec($insertScoreSql)) {
+        echo "Insert failed: " . $db->lastErrorMsg();
+    }
+
 
     // Get leaderboard for current game mode
     $getScoreSql = "SELECT username, max(score) AS high_score FROM score
                     WHERE mode_id = {$gameModeId}
                         AND score > 0
+                        AND valid = 1
                     GROUP BY username
                     ORDER BY high_score DESC
                     LIMIT {$leaderboardSlots}";
@@ -113,12 +124,5 @@ $db = null;
 // Publish score to redis, to broadcast to other users
 $redis = new Redis();
 $redis->connect('127.0.0.1', 6379);
-// $message = json_encode([
-//     'type' => 'score',
-//     'user' => $name,
-//     'score' => $score,
-//     'gameMode' => $modeName,
-//     'scoreStatus' => $scoreStatus
-// ]);
 $message = json_encode($scoreBroadcast);
 $redis->publish('scores', $message);
