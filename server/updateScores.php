@@ -72,7 +72,7 @@ try {
             $scoreBroadcast = "<span class='sender'>" . $name . "</span> just tied their pr of <span class='score'>" . $score . "</span> on " . $modeName . " mode!<br>Next round for sure...";    
             break;
         case $score < $personalBest && $score > 11:
-            $scoreBroadcast = "<span class='sender'>" . $name . "</span> just got " . $randomInsult .  " <span class='score'>" . $score . "</span> on " . $modeName . " mode 😢<br>I'm sure that was just a warm-up";
+            $scoreBroadcast = "<span class='sender'>" . $name . "</span> just got " . $randomInsult .  " <span class='score'>" . $score . "</span> on " . $modeName . " mode 😢<br>I'm sure that was just a warm-up...";
             break;
         case $score < 12:
             $scoreBroadcast = "<span class='sender'>" . $name . "</span> just embarassed themselves with a <span class='score'>" . $score . "</span> on " . $modeName . " mode 🤦";

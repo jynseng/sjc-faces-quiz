@@ -1,4 +1,4 @@
-import { showElement, hideElement, resetGameUI, showNewUserPopup } from './ui.js?=ver1.2';
+import { showElement, hideElement, resetGameUI, showNewUserPopup } from './ui.js?=ver1.4';
 import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, incrementWrong } from './scoreboard.js?=ver2.8';
 
 (function () {

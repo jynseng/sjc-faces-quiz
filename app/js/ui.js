@@ -36,31 +36,33 @@ export function showNewUserPopup(playerName, onSubmit) {
 
     const codewordInput = document.createElement('input');
     codewordInput.type = 'text';
-    codewordInput.placeholder = 'Who lived in cabin 9?';
+    codewordInput.placeholder = 'Leave blank to play as guest';
     codewordInput.id = 'codeword';
     codewordInput.maxLength = 20;
-    codewordInput.required = true;
+    codewordInput.required = false;
+
+    const codewordLabel = document.createElement('label');
+    codewordLabel.innerHTML = '<br><br>Verification: Who lived in cabin 9<br>before it burned down?';
 
     const submitButton = document.createElement('button');
     submitButton.id = 'submitFirstLast';
     submitButton.textContent = 'Submit';
-    submitButton.disabled = true;
 
-    newForm.addEventListener('input', function(e) {
-        const value = e.target.value.trim();
-        submitButton.disabled = value.length === 0;
-    });
-
-    submitButton.addEventListener('click', function () {
-        let firstName = sanitizeAndCapitalize(document.getElementById('first-name').value);
-        let lastName = sanitizeAndCapitalize(document.getElementById('last-name').value);
-        let codeword = sanitizeAndCapitalize(document.getElementById('codeword').value);
+    newForm.addEventListener('submit', function (e) {
+        e.preventDefault(); // stop native submission, but keep validation
+        if (!newForm.checkValidity()) return; // run HTML5 required checks
+        
+        let firstName = sanitizeAndCapitalize(firstNameInput.value);
+        let lastName = sanitizeAndCapitalize(lastNameInput.value);
+        let codeword = sanitizeAndCapitalize(codewordInput.value);
         document.body.removeChild(popupDiv);
         onSubmit(playerName, firstName, lastName, codeword);
     });
 
+
     newForm.appendChild(firstNameInput);
     newForm.appendChild(lastNameInput);
+    newForm.appendChild(codewordLabel);
     newForm.appendChild(codewordInput);
     newForm.appendChild(submitButton);
 
