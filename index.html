@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>SJC Faces Game</title>
-        <link rel="stylesheet" href="dist/style.css?=ver1.88">
+        <link rel="stylesheet" href="dist/style.css?=ver1.81">
         <link rel="icon" type="image/png" href="assets/newfavicon.png">
     </head>
     <body>
@@ -25,8 +25,10 @@
                 <button id="gameSettingsBtn" onclick="showSettings()">⚙️</button>
                 <div id="gameModeButtons"></div>
                 <div id="seedDiv" style="display: none;">
-                    <label for="seedInput"><br>Seed (optional, disqualifies leaderboard):</label>
+                    <label for="seedInput"><br>Seed (disqualifies leaderboard):</label>
                     <input type="text" id="seedInput" placeholder="Leave blank for random">
+                    <label for="quizModeBox" title="Timer off, name every face in set"><br><br>Quiz Mode</label>
+                    <input type="checkbox" id="quizModeBox" value="true">
                 </div>
             </div>
             <div class="popup" id="howToPlay"><h3>Welcome to SJC Faces Game!</h3><p><strong>8/28/25 Update<br></strong>• Wave to other online users 👋<br>• New alum faces added<br>• 2025 & Alum game modes added<br>• New photos added<br><br><br></p>
@@ -85,8 +87,8 @@
         <canvas id="confettiCanvas"></canvas>
         <div id="toast-container"></div>
     </body>
-    <script src="app/js/handlers.js?=ver1.53"></script>
-    <script type="module" src="app/js/gamemanager.js?=ver1.79"></script>
-    <script src="app/js/user_activity.js?=ver1.11"></script>
+    <script src="app/js/handlers.js?=ver1.54"></script>
+    <script type="module" src="app/js/gamemanager.js?=ver1.83"></script>
+    <script src="app/js/user_activity.js?=ver1.12"></script>
     <script src="app/js/confetti.js?=ver1.0"></script>
 </html>

@@ -99,6 +99,7 @@ function createWaveButton(user) {
     const button = document.createElement('button');
     button.className = 'wave-button';
     button.textContent = '👋';
+    button.title = 'Wave to user';
     button.addEventListener('click', () => { 
         ws.send(JSON.stringify({ type: "wave", to: user })); 
         // Disable and hide button after clicking to prevent spam

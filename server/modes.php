@@ -29,6 +29,7 @@ while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
     $gamemodeDict[$row["id"]]["year"] = $row["year"];
     $gamemodeDict[$row["id"]]["tags"] = $row["tags"];
     $gamemodeDict[$row["id"]]["role"] = $row["role"];
+    $gamemodeDict[$row["id"]]["description"] = $row["description"];
 }
 
 $db = null;

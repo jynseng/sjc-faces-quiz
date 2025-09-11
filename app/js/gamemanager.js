@@ -12,6 +12,7 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
     let gameTimer;
     let gameModeId;
     let gameModeTitle;
+    let quizMode; // Timer off, cycle through all faces in set
 
     let rng; // global PRNG
     let seed; // store seed so players can share it
@@ -116,24 +117,25 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
                 const entries = Object.entries(data); // Convert object -> array of [key, value] pairs
                 const sortedModes = entries.sort((a, b) => a[1].display_name.localeCompare(b[1].display_name)); // Sort alphabetically
                 sortedModes.forEach(([gameMode, details], index) => {
-                const listItem = document.createElement('button');
-                listItem.textContent = details.display_name;
-                listItem.addEventListener('click', (function(selectedMode) {
-                    return function() {
-                        updateTimer(gameLength);
-                        gameModeId = selectedMode;
-                        gameModeTitle = data[selectedMode]['display_name'];
-                        console.log('Selected Game Mode: ' + gameModeTitle);
-                        getFaceData(details.year, details.tags, details.role);
-                    };
-                })(gameMode));
-                modeList.appendChild(listItem);
+                    const listItem = document.createElement('button');
+                    listItem.title = details.description;
+                    listItem.textContent = details.display_name;
+                    listItem.addEventListener('click', (function(selectedMode) {
+                        return function() {
+                            updateTimer(gameLength);
+                            gameModeId = selectedMode;
+                            gameModeTitle = data[selectedMode]['display_name'];
+                            console.log('Selected Game Mode: ' + gameModeTitle);
+                            getFaceData(details.year, details.tags, details.role);
+                        };
+                    })(gameMode));
+                    modeList.appendChild(listItem);
 
-                // Focus the first one after building the list
-                if (index === 0) {
-                    listItem.focus();
-                }
-            });
+                    // Focus the first one after building the list
+                    if (index === 0) {
+                        listItem.focus();
+                    }
+                });
             })
     }
 
@@ -190,6 +192,17 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
         document.getElementById("skip").disabled = true;
         document.getElementById("textinput").focus();
 
+        // Set countdown timer unless quiz mode is on
+        let timer = document.getElementById("Timer");
+        let quizModeBox = document.getElementById("quizModeBox");
+        if (quizModeBox.checked) { 
+            quizMode = true;
+            timer.style.display = "none"; 
+        } else { 
+            quizMode = false;
+            timer.style.display = "inline"; 
+        }
+
         // Blur first image during countdown
         const imgDiv = document.getElementById("imageElement");
         imgDiv.style.filter = "blur(26px)";
@@ -209,7 +222,7 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
                 imgDiv.style.filter = "none"; // Unblur first image when game start
                 document.getElementById("submit").disabled = false;
                 document.getElementById("skip").disabled = false;
-                startTimer(gameLength); // Start timer
+                if (!quizMode) { startTimer(gameLength); } // Start timer
                 clearInterval(countDown);
             } else {
                 countdownText.innerHTML = tMinus;
@@ -222,6 +235,7 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
     function loadNewFace(rng) {
         // If working faces array is empty, recycle the set.
         if (Object.keys(faces_working).length === 0) {
+            if (quizMode) { gameEnd(); }
             faces_working = JSON.parse(JSON.stringify(faces_all));
         }
 
@@ -246,7 +260,6 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
 
     function initRNG() {
         const seedInput = document.getElementById("seedInput").value.trim();
-        console.log(seedInput);
 
         if (seedInput) {
             // Use typed seed
@@ -379,7 +392,6 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
         }, 600);
 
         document.getElementById("textinput").value = ""; // Reset input box
-        console.log("Loading new face...");
         loadNewFace(rng);
     }
 
@@ -395,7 +407,6 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
 
     // Called when "skip" button is clicked
     function skipFace() {
-        console.log("Skipped");
         incrementSkips();
         loadNewFace(rng);
     }
@@ -432,7 +443,7 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
         } else {
             // Only send score if seed wasn't set. Setting seed disqualifies score from leaderboard
             let scoreValid;
-            if (isSeedSet || !gameOver) { scoreValid = false; } else { scoreValid = true; }
+            if (isSeedSet || !gameOver || quizMode) { scoreValid = false; } else { scoreValid = true; }
             fetchScores(userId, scoreManager.getScore(), gameModeId, gameModeTitle, false, scoreValid, seed);
         }
     }

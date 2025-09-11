@@ -122,9 +122,12 @@ function toggleMute() {
 
 function showSettings() {
     let seedInput = document.getElementById("seedDiv");
+    let quizModeBox = document.getElementById("quizModeBox");
     if (seedInput.style.display == 'block') {
         seedInput.style.display = 'none';
+        quizModeBox.style.display = 'none';
     } else {
         seedInput.style.display = 'block';
+        quizModeBox.style.display = 'inline';
     }
 }
