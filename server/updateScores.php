@@ -77,6 +77,8 @@ try {
         case $score < 12 && $score > 0:
             $scoreBroadcast = "<span class='sender'>" . $name . "</span> just embarassed themselves with a <span class='score'>" . $score . "</span> on " . $modeName . " mode 🤦";
             break;
+        case $score == 0:
+            break;
         default:
             $scoreBroadcast = "<span class='sender'>" . $name . "</span> just got a <span class='score'>" . $score . "</span> on " . $modeName . " mode";
             break;

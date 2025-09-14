@@ -4,6 +4,7 @@ let blinker; // Makes high score blink on leaderboard
 let confetti = false; // Has the confetti been animated already?
 
 export function fetchScores(userId, score=0, gameModeId=null, gameModeTitle=null, combined=false, scoreValid=true, seed) {
+    console.log("Fetching scores for " + userId);
     var fetchURL;
     var fetchOptions;
     if (combined || !gameModeId) {

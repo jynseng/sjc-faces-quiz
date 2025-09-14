@@ -20,6 +20,7 @@ class Chat implements MessageComponentInterface {
     public function __construct($loop) {
         $this->loop = $loop;
         $this->clients = new \SplObjectStorage();
+        $this->lastBroadcast = [];
 
         $factory = new RedisFactory($loop); // Create Redis factory tied to this loop
 
@@ -37,15 +38,14 @@ class Chat implements MessageComponentInterface {
 
             $client->subscribe('scores');
             $client->on('message', function ($channel, $message) {
+                if (isset($this->lastBroadcast[$channel]) && $this->lastBroadcast[$channel] === $message) { return; }
+                $this->lastBroadcast[$channel] = $message;
+
                 $data = json_decode($message, true);
                 foreach ($this->clients as $wsClient) {
                     $wsClient->send(json_encode([
                         'type' => 'score',
                         'scoreBroadcast' => $data
-                        // 'user' => $data['user'],
-                        // 'score' => $data['score'],
-                        // 'gameMode' => $data['gameMode'],
-                        // 'scoreStatus' => $data['scoreStatus']
                     ]));
                 }
             });

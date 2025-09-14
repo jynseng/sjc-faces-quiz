@@ -9,16 +9,19 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
     let currentFace = ""; // name of current person
 
     let gameOver = false; // track status of game round
-    let gameTimer;
+    let gameTimer = null; // Internal js timer for game round
+    let isGameTimerRunning = false;
+    let countDownTimer = null; // 3, 2, 1 before round start
     let gameModeId;
     let gameModeTitle;
-    let quizMode; // Timer off, cycle through all faces in set
+    let quizMode = false; // Timer off, cycle through all faces in set
+    let restartCooldown = 1.0;
 
     let rng; // global PRNG
     let seed; // store seed so players can share it
     let isSeedSet = false; // has user set the seed or is it random?
 
-    const timer = document.getElementById("Timer");
+    const timerDiv = document.getElementById("timerDiv"); // Ref to front-end countdown clock
     let gameLength = 60; // time in seconds each round lasts
 
     let debugEnabled;
@@ -122,7 +125,7 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
                     listItem.textContent = details.display_name;
                     listItem.addEventListener('click', (function(selectedMode) {
                         return function() {
-                            updateTimer(gameLength);
+                            //updateTimer(gameLength);
                             gameModeId = selectedMode;
                             gameModeTitle = data[selectedMode]['display_name'];
                             console.log('Selected Game Mode: ' + gameModeTitle);
@@ -172,8 +175,19 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
 
     // Initialize game with specified time limit, reset score, start countdown and load first face 
     function gameInit() {
+        // Optionally disable restart UI to prevent spamming
+        const restartBtn = document.getElementById('restart');
+        if (restartBtn) restartBtn.disabled = true;
+
         scoreManager.resetScore();
-        clearInterval(gameTimer);
+        if (gameTimer) { 
+            clearInterval(gameTimer); 
+            gameTimer = null;
+        }
+        if (countDownTimer) {
+            clearInterval(countDownTimer);
+            countDownTimer = null;
+        }
         gameOver = false;
         resetCounters();
         initRNG();
@@ -193,14 +207,13 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
         document.getElementById("textinput").focus();
 
         // Set countdown timer unless quiz mode is on
-        let timer = document.getElementById("Timer");
         let quizModeBox = document.getElementById("quizModeBox");
         if (quizModeBox.checked) { 
             quizMode = true;
-            timer.style.display = "none"; 
+            timerDiv.style.display = "none"; 
         } else { 
             quizMode = false;
-            timer.style.display = "inline"; 
+            timerDiv.style.display = "inline"; 
         }
 
         // Blur first image during countdown
@@ -214,16 +227,23 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
         var countdownText = document.getElementById("countDown");
         countdownText.innerHTML = "3";
         preLoadImages();
+        countDownSFX.pause();
+        countDownSFX.currentTime = 0;
         countDownSFX.play();
         
-        const countDown = setInterval(function(){
+        countDownTimer = setInterval(function(){
             if (tMinus <= 0) {
                 countdownText.innerHTML = "";
                 imgDiv.style.filter = "none"; // Unblur first image when game start
                 document.getElementById("submit").disabled = false;
                 document.getElementById("skip").disabled = false;
                 if (!quizMode) { startTimer(gameLength); } // Start timer
-                clearInterval(countDown);
+                clearInterval(countDownTimer);
+                countDownTimer = null;
+
+                // re-enable restart and clear initializing flag
+                if (restartBtn) restartBtn.disabled = false;
+                return;
             } else {
                 countdownText.innerHTML = tMinus;
                 tMinus--;
@@ -295,8 +315,14 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
         }
     }
 
-    // Start a countdown timer for game
+    // Start a timer for game round that counts down from the total time
     function startTimer(seconds) {
+        if (isGameTimerRunning) {
+            clearInterval(gameTimer);
+            gameTimer = null;
+            isGameTimerRunning = false;
+        }
+        
         var timeRemaining = seconds;
         
         // Start first second of timer
@@ -304,10 +330,12 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
         timeRemaining -= 1;
 
         gameTimer = setInterval(function() {
+            isGameTimerRunning = true;
             if (timeRemaining <= 0 || gameOver) {
                 clearInterval(gameTimer);
+                gameTimer = null;
                 gameEnd();
-                timer.innerHTML = "00:00";
+                document.getElementById("timerDiv").innerHTML = "00:00";
                 return;
             }
             updateTimer(timeRemaining);
@@ -315,17 +343,17 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
         }, 1000);
     }
 
-    // Update the timer element in html with leading zeros.
+    // Update the front-end timer element in html with leading zeros.
     function updateTimer(timeRemaining) {
         var minutes = Math.floor(timeRemaining / 60);
-            var remainingSeconds = timeRemaining % 60;
-            
-            // Add leading zero to seconds and minutes
-            var formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
-            var formattedSeconds = remainingSeconds < 10 ? "0" + remainingSeconds : remainingSeconds;
-            formattedMinutes + ":" + formattedSeconds;
-            
-            timer.innerHTML = formattedMinutes + ":" + formattedSeconds;
+        var remainingSeconds = timeRemaining % 60;
+        
+        // Add leading zero to seconds and minutes
+        var formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
+        var formattedSeconds = remainingSeconds < 10 ? "0" + remainingSeconds : remainingSeconds;
+        formattedMinutes + ":" + formattedSeconds;
+        
+        timerDiv.innerHTML = formattedMinutes + ":" + formattedSeconds;
     }
 
     // Check if user's input is correct or not
@@ -413,6 +441,7 @@ import { fetchScores, getSkips, getWrong, resetCounters, incrementSkips, increme
 
     // Handle end of game, lock input, show leaderboard
     function gameEnd() {
+        if (gameOver) return;
         document.getElementById("submit").disabled = true;
         document.getElementById("skip").disabled = true;
         document.getElementById("textinput").disabled = true;

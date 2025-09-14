@@ -33,6 +33,7 @@ function isDebugEnabled() {
 // Set focus to the input field when the page loads
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById("playername").focus();
+    document.getElementById("quizModeBox").unchecked;
     if (!document.getElementById('playername').value.trim()) {
         document.getElementById('submitName').disabled = true;
     }
