@@ -27,6 +27,8 @@ function getImageDict($year=null, $tag=null, $role=null, $db=null) {
 
     $whereClauses = [];
 
+    // If camper/staff roles, prefer newer images
+
     // 2025, 2024, etc.
     if (!is_null($year)) {
         $whereClauses[] = "year IN ($year)";
@@ -54,6 +56,14 @@ function getImageDict($year=null, $tag=null, $role=null, $db=null) {
         if (is_null($tag)) {
             $whereClauses[] = "i.tags IS NULL";
         }
+
+        // Only use most recent year for each person
+        $whereClauses[] = "i.year = (
+            SELECT MAX(i2.year)
+            FROM image i2
+            WHERE i2.person_id = p.id
+            AND i2.tags IS NULL
+        )";
     }
 
     // Build final SQL
